@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Search Results</title>
+    <meta charset='UTF-8'>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/jquery.dataTables.min.css" rel="stylesheet">
+    <link href="css/buttons.dataTables.min.css" rel="stylesheet">
+    <style>
+    </style>
+
+    <script src="js/jquery-1.11.1.js"></script>
+    <script src="js/jquery.dataTables.min.js"></script>
+    <script src="js/dataTables.buttons.min.js"></script>
+    <script src="js/buttons.colVis.min.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script src="js/thrift.js"></script>
+    <script src="js/concrete.js"></script>
+    <script src="js/concrete-widgets.js"></script>
+    <script src="js/concrete-services.js"></script>
+    <script src="js/cadet.js"></script>
+    <script>
+    /* globals AnnotationTaskType, CADET */
+
+    $(document).ready(function() {
+        CADET.init();
+
+        var searchResultsList = CADET.results.getSearchResults(AnnotationTaskType.NER, 0);
+
+        if (searchResultsList.length === 0) {
+            $('#search_results').append(
+                $('<h1>').text('No saved search results found'));
+        }
+        else {
+            var resultsTable = $('<table>')
+                .addClass('table table-striped')
+                .attr('id', 'results_table')
+                .append(
+                    $('<thead>').append(
+                        $('<tr>')
+                            .append(
+                                $('<th>').text('User ID'))
+                            .append(
+                                $('<th>').text('Terms'))
+                            .append(
+                                $('<th>').text('Questions'))
+                            .append(
+                                $('<th>').text('# Results'))
+                            .append(
+                                $('<th>'))));
+            var resultsTableBody = $('<tbody>');
+
+            for (var i = 0; i < searchResultsList.length; i++) {
+                var searchResults = searchResultsList[i];
+
+                var termsText = '';
+                if (searchResults.searchQuery.terms) {
+                    termsText = searchResults.searchQuery.terms.join(', ');
+                }
+
+                var questionsText = '';
+                if (searchResults.searchQuery.questions) {
+                    questionsText = searchResults.searchQuery.questions.join(', ');
+                }
+
+                resultsTableBody.append(
+                    $('<tr>')
+                        .append(
+                            $('<td>').text(searchResults.searchQuery.userId))
+                        .append(
+                            $('<td>').text(termsText))
+                        .append(
+                            $('<td>').text(questionsText))
+                        .append(
+                            $('<td>').text(searchResults.searchResults.length))
+                        .append(
+                            $('<td>').append(
+                                $('<a>')
+                                    .addClass('btn btn-primary btn-sm')
+                                    .attr('href', 'ner.html?searchResultsId=' + searchResults.uuid.uuidString)
+                                    .text('Annotate')
+                                )));
+            }
+            resultsTable.append(resultsTableBody);
+            resultsTable.dataTable();
+
+            $('#search_results').append(resultsTable);
+        }
+    });
+    </script>
+</head>
+<body>
+    <div class="container-fluid">
+        <h4>
+            <a href="index.html">Search</a>
+        </h4>
+        <div style="padding-top: 3em;"></div>
+        <div id="errors"></div>
+        <ul id="nav-tabs" class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#search_results">Search Result Sets</a></li>
+        </ul>
+        <div id="tab-content" class="tab-content">
+            <div id="search_results" class="tab-pane active">
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</body>
+</html>

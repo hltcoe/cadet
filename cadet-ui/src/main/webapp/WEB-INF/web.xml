@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+	
+	<display-name>CADET Search</display-name>
+
+	<listener>
+		<listener-class>edu.jhu.hlt.cadet.BootLoader</listener-class>
+	</listener>
+
+	<servlet>
+		<display-name>SearchServlet</display-name>
+		<servlet-name>SearchServlet</servlet-name>
+		<servlet-class>edu.jhu.hlt.concrete.search.SearchServlet</servlet-class>
+	</servlet>
+
+	<servlet>
+		<display-name>RetrieverServlet</display-name>
+		<servlet-name>RetrieverServlet</servlet-name>
+		<servlet-class>edu.jhu.hlt.concrete.retriever.RetrieverServlet</servlet-class>
+	</servlet>
+
+	<servlet>
+		<display-name>FeedbackServlet</display-name>
+		<servlet-name>FeedbackServlet</servlet-name>
+		<servlet-class>edu.jhu.hlt.concrete.feedback.FeedbackServlet</servlet-class>
+	</servlet>
+
+	<servlet>
+		<display-name>ViewFeedback</display-name>
+		<servlet-name>ViewFeedbackServlet</servlet-name>
+		<servlet-class>edu.jhu.hlt.concrete.feedback.ViewFeedbackServlet</servlet-class>
+	</servlet>
+
+	<servlet>
+		<display-name>DumpFeedback</display-name>
+		<servlet-name>DumpFeedbackServlet</servlet-name>
+		<servlet-class>edu.jhu.hlt.concrete.feedback.DumpFeedbackServlet</servlet-class>
+	</servlet>
+
+	<servlet>
+		<display-name>ResultsServer</display-name>
+		<servlet-name>ResultsServerServlet</servlet-name>
+		<servlet-class>edu.jhu.hlt.concrete.results.ResultsServlet</servlet-class>
+	</servlet>
+
+	<servlet>
+		<display-name>ViewSessions</display-name>
+		<servlet-name>ViewSessionsServlet</servlet-name>
+		<servlet-class>edu.jhu.hlt.concrete.results.ViewSessionsServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>SearchServlet</servlet-name>
+		<url-pattern>/SearchServlet</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>RetrieverServlet</servlet-name>
+		<url-pattern>/RetrieverServlet</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>FeedbackServlet</servlet-name>
+		<url-pattern>/FeedbackServlet</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>ViewFeedbackServlet</servlet-name>
+		<url-pattern>/ViewFeedback</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>DumpFeedbackServlet</servlet-name>
+		<url-pattern>/DumpFeedback</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>ResultsServerServlet</servlet-name>
+		<url-pattern>/ResultsServer</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>ViewSessionsServlet</servlet-name>
+		<url-pattern>/ViewSessions</url-pattern>
+	</servlet-mapping>
+
+</web-app>
