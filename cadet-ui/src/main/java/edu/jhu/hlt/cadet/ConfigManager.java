@@ -4,7 +4,7 @@ import edu.jhu.hlt.cadet.learn.ActiveLearningClient;
 import edu.jhu.hlt.cadet.learn.SortReceiverHandler;
 import edu.jhu.hlt.cadet.learn.SortReceiverServer;
 import edu.jhu.hlt.concrete.feedback.FeedbackHandler;
-import edu.jhu.hlt.concrete.feedback.MemoryFeedbackStore;
+import edu.jhu.hlt.concrete.feedback.store.MemoryFeedbackStore;
 import edu.jhu.hlt.concrete.results.MemorySessionStore;
 import edu.jhu.hlt.concrete.results.MemoryResultsStore;
 import edu.jhu.hlt.concrete.results.ResultsHandler;

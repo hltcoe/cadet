@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.apache.thrift.TException;
 
 import edu.jhu.hlt.concrete.UUID;
+import edu.jhu.hlt.concrete.feedback.store.FeedbackStore;
 import edu.jhu.hlt.concrete.search.Feedback;
 import edu.jhu.hlt.concrete.search.SearchFeedback;
 import edu.jhu.hlt.concrete.search.SearchResults;

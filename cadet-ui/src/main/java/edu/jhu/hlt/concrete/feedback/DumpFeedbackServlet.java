@@ -31,6 +31,7 @@ import com.typesafe.config.Config;
 
 import edu.jhu.hlt.cadet.CadetConfig;
 import edu.jhu.hlt.cadet.ConfigManager;
+import edu.jhu.hlt.concrete.feedback.store.FeedbackStore;
 import edu.jhu.hlt.concrete.search.SearchFeedback;
 import edu.jhu.hlt.concrete.search.SearchResult;
 import edu.jhu.hlt.concrete.search.SearchResults;

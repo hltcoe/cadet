@@ -1,4 +1,4 @@
-package edu.jhu.hlt.concrete.feedback;
+package edu.jhu.hlt.concrete.feedback.store;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,6 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.jhu.hlt.concrete.UUID;
+import edu.jhu.hlt.concrete.feedback.CommunicationFeedback;
+import edu.jhu.hlt.concrete.feedback.FeedbackException;
+import edu.jhu.hlt.concrete.feedback.SentenceFeedback;
+import edu.jhu.hlt.concrete.feedback.SentenceIdentifier;
 import edu.jhu.hlt.concrete.search.SearchFeedback;
 import edu.jhu.hlt.concrete.search.SearchResults;
 import edu.jhu.hlt.concrete.util.ConcreteException;

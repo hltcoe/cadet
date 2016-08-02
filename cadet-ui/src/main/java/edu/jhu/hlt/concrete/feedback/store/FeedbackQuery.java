@@ -1,4 +1,4 @@
-package edu.jhu.hlt.concrete.feedback;
+package edu.jhu.hlt.concrete.feedback.store;
 
 import java.util.Date;
 
