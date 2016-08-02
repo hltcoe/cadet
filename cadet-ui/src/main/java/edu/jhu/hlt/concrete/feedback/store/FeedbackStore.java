@@ -3,6 +3,7 @@ package edu.jhu.hlt.concrete.feedback.store;
 import java.util.Map;
 import java.util.Set;
 
+import edu.jhu.hlt.cadet.Provider;
 import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.search.SearchFeedback;
 import edu.jhu.hlt.concrete.search.SearchResults;
@@ -15,7 +16,7 @@ import edu.jhu.hlt.concrete.feedback.SentenceIdentifier;
 /**
  * Store search relevance feedback
  */
-public interface FeedbackStore {
+public interface FeedbackStore extends Provider {
     /**
      * Enroll a search result for feedback
      *

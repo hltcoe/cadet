@@ -8,6 +8,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.typesafe.config.Config;
+
 import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.feedback.CommunicationFeedback;
 import edu.jhu.hlt.concrete.feedback.FeedbackException;
@@ -27,6 +29,9 @@ public class MemoryFeedbackStore implements FeedbackStore {
         commFeedback = new HashMap<UUID, CommunicationFeedback>();
         sentFeedback = new HashMap<UUID, SentenceFeedback>();
     }
+
+    @Override
+    public void init(Config config) {}
 
     @Override
     public void addSearchResults(SearchResults results) throws ConcreteException {

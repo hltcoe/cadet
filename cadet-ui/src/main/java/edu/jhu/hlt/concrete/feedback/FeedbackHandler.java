@@ -27,6 +27,10 @@ public class FeedbackHandler implements Feedback.Iface {
         return store;
     }
 
+    public void setStore(FeedbackStore store) {
+        this.store = store;
+    }
+
     @Override
     public void startFeedback(SearchResults results) throws TException {
         logger.info("Enrolling " + results.getUuid().getUuidString() + " into feedback storage");
