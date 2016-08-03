@@ -1,16 +1,20 @@
-package edu.jhu.hlt.concrete.feedback;
+package edu.jhu.hlt.concrete.feedback.store;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.search.SearchFeedback;
 import edu.jhu.hlt.concrete.search.SearchResult;
 import edu.jhu.hlt.concrete.search.SearchResults;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 
-public class SentenceFeedback extends Feedback {
-    private Map<SentenceIdentifier, SearchFeedback> data;
+/**
+ * Feedback on a list of search results for communications
+ *
+ * Stores a reference to the original search results object for memory efficiency.
+ */
+public class CommunicationFeedback extends Feedback {
+    private Map<String, SearchFeedback> data;
 
     /**
      * Initialize the Feedback for this search results object
@@ -18,28 +22,26 @@ public class SentenceFeedback extends Feedback {
      * @param results  The SearchResults object for relevance feedback
      * @throws ConcreteException if required data is missing
      */
-    public SentenceFeedback(SearchResults results) throws ConcreteException {
+    public CommunicationFeedback(SearchResults results) throws ConcreteException {
         super(results);
         validate(results);
 
-        data = new HashMap<SentenceIdentifier, SearchFeedback>();
+        data = new HashMap<String, SearchFeedback>();
         for (SearchResult result : results.getSearchResults()) {
-            data.put(new SentenceIdentifier(result.getCommunicationId(), result.getSentenceId()), SearchFeedback.NONE);
+            data.put(result.getCommunicationId(), SearchFeedback.NONE);
         }
     }
 
     /**
-     * Adds feedback for a particular sentence
+     * Adds feedback for a particular communication
      * 
      * @param communicationId  the communication to add feedback for
-     * @param sentenceId  the sentence to add feedback for
      * @param feedback  the value of the feedback
      * @return was the feedback saved
      */
-    public boolean addFeedback(String communicationId, UUID sentenceId, SearchFeedback feedback) {
-        SentenceIdentifier id = new SentenceIdentifier(communicationId, sentenceId);
-        if (data.containsKey(id)) {
-            data.put(id, feedback);
+    public boolean addFeedback(String communicationId, SearchFeedback feedback) {
+        if (data.containsKey(communicationId)) {
+            data.put(communicationId, feedback);
             return true;
         }
         return false;
@@ -48,10 +50,10 @@ public class SentenceFeedback extends Feedback {
     /**
      * Get the feedback entries for this search results object
      *
-     * @return a map of sentence IDs to feedback values
+     * @return a map of communication IDs to feedback values
      */
-    public Map<SentenceIdentifier, SearchFeedback> getFeedback() {
-        return new HashMap<SentenceIdentifier, SearchFeedback>(data);
+    public Map<String, SearchFeedback> getFeedback() {
+        return new HashMap<String, SearchFeedback>(data);
     }
 
     /**
@@ -61,9 +63,6 @@ public class SentenceFeedback extends Feedback {
         for (SearchResult result : results.getSearchResults()) {
             if (!result.isSetCommunicationId()) {
                 throw new ConcreteException("Feedback requires communicationId in each SearchResult");
-            }
-            if (!result.isSetSentenceId()) {
-                throw new ConcreteException("Feedback requires sentenceId in each SearchResult");
             }
         }
     }

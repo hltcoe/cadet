@@ -11,10 +11,6 @@ import org.slf4j.LoggerFactory;
 import com.typesafe.config.Config;
 
 import edu.jhu.hlt.concrete.UUID;
-import edu.jhu.hlt.concrete.feedback.CommunicationFeedback;
-import edu.jhu.hlt.concrete.feedback.FeedbackException;
-import edu.jhu.hlt.concrete.feedback.SentenceFeedback;
-import edu.jhu.hlt.concrete.feedback.SentenceIdentifier;
 import edu.jhu.hlt.concrete.search.SearchFeedback;
 import edu.jhu.hlt.concrete.search.SearchResults;
 import edu.jhu.hlt.concrete.util.ConcreteException;

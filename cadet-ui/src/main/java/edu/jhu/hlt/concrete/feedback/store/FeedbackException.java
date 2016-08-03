@@ -1,4 +1,4 @@
-package edu.jhu.hlt.concrete.feedback;
+package edu.jhu.hlt.concrete.feedback.store;
 
 public class FeedbackException extends Exception {
     private static final long serialVersionUID = 2170893254453411181L;
