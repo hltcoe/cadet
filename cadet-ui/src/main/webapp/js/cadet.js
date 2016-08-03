@@ -10,6 +10,7 @@
 var CADET = {
     // These variables are initialized by init()
     feedback: undefined,
+    retrieve: undefined,  // alias for retriever
     retriever: undefined,
     search: undefined,
     results: undefined,
@@ -137,6 +138,7 @@ var CADET = {
         var retriever_transport = new Thrift.Transport('RetrieverServlet');
         var retriever_protocol = new Thrift.Protocol(retriever_transport);
         this.retriever = new RetrieverClient(retriever_protocol);
+        this.retrieve = this.retriever;
 
         var search_transport = new Thrift.Transport('SearchServlet');
         var search_protocol = new Thrift.Protocol(search_transport);

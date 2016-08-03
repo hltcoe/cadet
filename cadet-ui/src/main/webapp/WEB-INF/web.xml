@@ -10,6 +10,12 @@
 		<listener-class>edu.jhu.hlt.cadet.BootLoader</listener-class>
 	</listener>
 
+        <servlet>
+                 <display-name>AdminServlet</display-name>
+                 <servlet-name>AdminServlet</servlet-name>
+                 <servlet-class>edu.jhu.hlt.cadet.AdminServlet</servlet-class>
+        </servlet>
+
 	<servlet>
 		<display-name>SearchServlet</display-name>
 		<servlet-name>SearchServlet</servlet-name>
@@ -51,6 +57,11 @@
 		<servlet-name>ViewSessionsServlet</servlet-name>
 		<servlet-class>edu.jhu.hlt.concrete.results.ViewSessionsServlet</servlet-class>
 	</servlet>
+
+        <servlet-mapping>
+                <servlet-name>AdminServlet</servlet-name>
+                <url-pattern>/AdminServlet</url-pattern>
+        </servlet-mapping>
 
 	<servlet-mapping>
 		<servlet-name>SearchServlet</servlet-name>
