@@ -54,7 +54,7 @@ public class FeedbackHandler implements Feedback.Iface {
 
     @Override
     public void addSentenceFeedback(UUID uuid, String commId, UUID sentId, SearchFeedback feedback) throws ServicesException, TException {
-        logger.info("Adding feedback for commId " + commId + " and sentenceId " + uuid.getUuidString());
+        logger.info("Adding feedback for commId " + commId + " and sentenceId " + sentId.getUuidString());
         try {
             store.addFeedback(uuid, commId, sentId, feedback);
         } catch (FeedbackException ex) {
