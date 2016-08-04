@@ -12,12 +12,14 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 
+import org.apache.thrift.TDeserializer;
 import org.apache.thrift.TException;
 import org.apache.thrift.TSerializer;
 import org.apache.thrift.protocol.TCompactProtocol;
@@ -34,6 +36,8 @@ public class FeedbackRecord implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
+    @Column(updatable = false, nullable = true, length=128)
+    private String uuid;
     @Column(updatable = false, nullable = true, length=32)
     private String userId;
     @Column(updatable = false, nullable = true, length=128)
@@ -45,7 +49,7 @@ public class FeedbackRecord implements Serializable {
     private byte[] searchResultsBlob;
     @ElementCollection
     private Set<String> labels;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Feedback> feedback;
     @Enumerated(EnumType.ORDINAL)
     @Column(updatable = false, nullable = false)
@@ -54,6 +58,10 @@ public class FeedbackRecord implements Serializable {
     public static FeedbackRecord create(SearchResults results) {
         SearchQuery query = results.getSearchQuery();
         FeedbackRecord record = new FeedbackRecord();
+        record.setUuid(results.getUuid().getUuidString());
+        record.setTimestamp(new Date());
+        record.setFeedback(results.getSearchResults());
+        record.setSearchType(query.getType());
         if (query.isSetUserId()) {
             record.setUserId(query.getUserId());
         }
@@ -63,9 +71,6 @@ public class FeedbackRecord implements Serializable {
         if (query.isSetLabels()) {
             record.setLabels(new HashSet<String>(query.getLabels()));
         }
-        record.setTimestamp(new Date());
-        record.setFeedback(results.getSearchResults());
-        record.setSearchType(query.getType());
 
         TSerializer serializer = new TSerializer(new TCompactProtocol.Factory());
         try {
@@ -86,6 +91,14 @@ public class FeedbackRecord implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public String getUserId() {
@@ -118,6 +131,18 @@ public class FeedbackRecord implements Serializable {
 
     public void setSearchResultsBlob(byte[] blob) {
         searchResultsBlob = blob;
+    }
+
+    public SearchResults getSearchResults() {
+        TDeserializer deserializer = new TDeserializer(new TCompactProtocol.Factory());
+        SearchResults results = new SearchResults();
+        try {
+            deserializer.deserialize(results, searchResultsBlob);
+        } catch (TException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return results;
     }
 
     public Set<String> getLabels() {

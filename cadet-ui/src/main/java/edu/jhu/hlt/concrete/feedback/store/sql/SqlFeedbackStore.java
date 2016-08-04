@@ -1,11 +1,15 @@
 package edu.jhu.hlt.concrete.feedback.store.sql;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +25,7 @@ import edu.jhu.hlt.concrete.feedback.store.SentenceFeedback;
 import edu.jhu.hlt.concrete.feedback.store.SentenceIdentifier;
 import edu.jhu.hlt.concrete.search.SearchFeedback;
 import edu.jhu.hlt.concrete.search.SearchResults;
+import edu.jhu.hlt.concrete.search.SearchType;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 
 public class SqlFeedbackStore implements FeedbackStore {
@@ -32,17 +37,33 @@ public class SqlFeedbackStore implements FeedbackStore {
 
     @Override
     public void init(Config config) {
-        config = config.getConfig("servlets.feedback.hibernate");
+        config = config.getConfig("servlets.feedback");
         Configuration dbConfig = new Configuration()
-                .setProperty("hibernate.dialect", config.getString("dialect"))
-                .setProperty("hibernate.connection.driver_class", config.getString("connection.driver_class"))
-                .setProperty("hibernate.connection.url", config.getString("connection.url"))
-                .setProperty("hibernate.connection.username", config.getString("connection.username"))
-                .setProperty("hibernate.connection.password", config.getString("connection.password"))
-                .setProperty("hibernate.hbm2ddl.auto", "create")
+                .setProperty("hibernate.dialect", config.getString("hibernate.dialect"))
+                .setProperty("hibernate.connection.driver_class", config.getString("hibernate.connection.driver_class"))
+                .setProperty("hibernate.connection.url", config.getString("hibernate.connection.url"))
                 .addAnnotatedClass(Feedback.class)
                 .addAnnotatedClass(FeedbackRecord.class);
+        updateConfig(dbConfig, config, "hibernate.connection.username");
+        updateConfig(dbConfig, config, "hibernate.connection.password");
+        updateConfig(dbConfig, config, "hibernate.hbm2ddl.auto", "validate");
         sessionFactory = dbConfig.buildSessionFactory();
+    }
+
+    private void updateConfig(Configuration dbConfig, Config config, String option) {
+        updateConfig(dbConfig, config, option, null);
+    }
+
+    private void updateConfig(Configuration dbConfig, Config config, String option, String fallback) {
+        if (config.hasPath(option)) {
+            dbConfig.setProperty(option, config.getString(option));
+        } else if (fallback != null) {
+            dbConfig.setProperty(option, fallback);
+        }
+    }
+
+    public void close() {
+        sessionFactory.close();
     }
 
     @Override
@@ -83,14 +104,43 @@ public class SqlFeedbackStore implements FeedbackStore {
 
     @Override
     public Map<String, SearchFeedback> getCommunicationFeedback(UUID uuid) {
-        // TODO Auto-generated method stub
-        return null;
+        Map<String, SearchFeedback> map = new HashMap<>();
+
+        FeedbackRecord record = getFeedbackRecord(uuid, SearchType.COMMUNICATIONS);
+        if (record != null) {
+            for (Feedback feedback : record.getFeedback()) {
+                map.put(feedback.getCommId(), feedback.getValue());
+            }
+        }
+
+        return map;
     }
 
     @Override
     public Map<SentenceIdentifier, SearchFeedback> getSentenceFeedback(UUID uuid) {
-        // TODO Auto-generated method stub
-        return null;
+        Map<SentenceIdentifier, SearchFeedback> map = new HashMap<>();
+
+        FeedbackRecord record = getFeedbackRecord(uuid, SearchType.SENTENCES);
+        if (record != null) {
+            for (Feedback fb : record.getFeedback()) {
+                SentenceIdentifier id = new SentenceIdentifier(fb.getCommId(), new UUID(fb.getSentId()));
+                map.put(id, fb.getValue());
+            }
+        }
+
+        return map;
+    }
+
+    private FeedbackRecord getFeedbackRecord(UUID uuid, SearchType searchType) {
+        Session session = sessionFactory.openSession();
+        Transaction trans = session.beginTransaction();
+        Query query = session.createQuery("from FeedbackRecord where uuid = :uuid and searchType = :type");
+        query.setParameter("uuid", uuid.getUuidString());
+        query.setParameter("type", searchType);
+        FeedbackRecord record = (FeedbackRecord) query.uniqueResult();
+        trans.commit();
+        session.close();
+        return record;
     }
 
     @Override
@@ -107,14 +157,58 @@ public class SqlFeedbackStore implements FeedbackStore {
 
     @Override
     public Set<CommunicationFeedback> getAllCommunicationFeedback() {
-        // TODO Auto-generated method stub
-        return null;
+        Session session = sessionFactory.openSession();
+        Transaction trans = session.beginTransaction();
+        List<FeedbackRecord> records = getAllRecords(session, SearchType.COMMUNICATIONS);
+        Set<CommunicationFeedback> data = new HashSet<CommunicationFeedback>();
+        for (FeedbackRecord record : records) {
+            try {
+                CommunicationFeedback cf = new CommunicationFeedback(record.getSearchResults());
+                for (Feedback fb : record.getFeedback()) {
+                    cf.addFeedback(fb.getCommId(), fb.getValue());
+                }
+                data.add(cf);
+            } catch (ConcreteException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        trans.commit();
+        session.close();
+
+        return data;
     }
 
     @Override
     public Set<SentenceFeedback> getAllSentenceFeedback() {
-        // TODO Auto-generated method stub
-        return null;
+        Session session = sessionFactory.openSession();
+        Transaction trans = session.beginTransaction();
+        List<FeedbackRecord> records = getAllRecords(session, SearchType.SENTENCES);
+        Set<SentenceFeedback> data = new HashSet<SentenceFeedback>();
+        for (FeedbackRecord record : records) {
+            try {
+                SentenceFeedback cf = new SentenceFeedback(record.getSearchResults());
+                for (Feedback fb : record.getFeedback()) {
+                    cf.addFeedback(fb.getCommId(), new UUID(fb.getSentId()), fb.getValue());
+                }
+                data.add(cf);
+            } catch (ConcreteException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        trans.commit();
+        session.close();
+
+        return data;
+    }
+
+    private List<FeedbackRecord> getAllRecords(Session session, SearchType type) {
+        Query query = session.createQuery("from FeedbackRecord where searchType = :value");
+        query.setParameter("value", type);
+        return query.list();
     }
 
 }
