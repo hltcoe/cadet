@@ -24,6 +24,7 @@ import org.apache.thrift.TException;
 import org.apache.thrift.TSerializer;
 import org.apache.thrift.protocol.TCompactProtocol;
 
+import edu.jhu.hlt.concrete.feedback.store.FeedbackException;
 import edu.jhu.hlt.concrete.search.SearchQuery;
 import edu.jhu.hlt.concrete.search.SearchResult;
 import edu.jhu.hlt.concrete.search.SearchResults;
@@ -72,12 +73,13 @@ public class FeedbackRecord implements Serializable {
             record.setLabels(new HashSet<String>(query.getLabels()));
         }
 
+        // TSerializer is not thread safe so construct each time
         TSerializer serializer = new TSerializer(new TCompactProtocol.Factory());
         try {
             record.setSearchResultsBlob(serializer.serialize(results));
         } catch (TException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            // can't imagine this happening so rethrow as unchecked
+            throw new RuntimeException("Failed to serialize search results", e);
         }
 
         return record;
@@ -133,14 +135,15 @@ public class FeedbackRecord implements Serializable {
         searchResultsBlob = blob;
     }
 
-    public SearchResults getSearchResults() {
+    public SearchResults getSearchResults() throws FeedbackException {
+        // TDeserializer is not thread safe so construct each time
         TDeserializer deserializer = new TDeserializer(new TCompactProtocol.Factory());
         SearchResults results = new SearchResults();
         try {
             deserializer.deserialize(results, searchResultsBlob);
         } catch (TException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            // this likely means an old feedback object is being deserialized
+            throw new FeedbackException("Unable to deserialize search results", e);
         }
         return results;
     }

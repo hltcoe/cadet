@@ -168,9 +168,9 @@ public class SqlFeedbackStore implements FeedbackStore {
                     cf.addFeedback(fb.getCommId(), fb.getValue());
                 }
                 data.add(cf);
-            } catch (ConcreteException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            } catch (ConcreteException | FeedbackException e) {
+                // likely deserializing old data - log and pass back empty set
+                logger.error("Likely deserializing incompatible thrift object for feedback", e);
             }
         }
 
@@ -193,9 +193,9 @@ public class SqlFeedbackStore implements FeedbackStore {
                     cf.addFeedback(fb.getCommId(), new UUID(fb.getSentId()), fb.getValue());
                 }
                 data.add(cf);
-            } catch (ConcreteException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            } catch (ConcreteException | FeedbackException e) {
+                // likely deserializing old data - log and pass back empty set
+                logger.error("Likely deserializing incompatible thrift object for feedback", e);
             }
         }
 
