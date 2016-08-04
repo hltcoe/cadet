@@ -1,11 +1,10 @@
 package edu.jhu.hlt.concrete.search;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Iterator;
 
 import org.apache.thrift.TException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.jhu.hlt.concrete.services.ServiceInfo;
 import edu.jhu.hlt.concrete.services.ServicesException;
@@ -22,6 +21,7 @@ public class SearchHandler implements Search.Iface {
         searchProvider = provider;
     }
 
+    @Override
     public SearchResults search(SearchQuery searchQuery) throws ServicesException, TException {
 
         logSearchQuery(searchQuery);
@@ -31,12 +31,12 @@ public class SearchHandler implements Search.Iface {
         SearchResults results = searchProvider.search(searchQuery);
 
         logSearchResults(results);
-        
+
         return results;
     }
 
     private void validate(SearchQuery query) throws ServicesException {
-        if (query.getRawQuery() == "" || query.getRawQuery() == null) {
+        if (query.getRawQuery() == null || query.getRawQuery().isEmpty()) {
             throw new ServicesException("Search query is empty");
         }
     }
