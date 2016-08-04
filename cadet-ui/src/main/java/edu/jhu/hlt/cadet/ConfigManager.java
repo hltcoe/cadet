@@ -13,6 +13,7 @@ import edu.jhu.hlt.concrete.retriever.RetrieverHandler;
 import edu.jhu.hlt.concrete.retriever.RetrieverProvider;
 import edu.jhu.hlt.concrete.search.SearchHandler;
 import edu.jhu.hlt.concrete.search.SearchProvider;
+import edu.jhu.hlt.concrete.send.SenderHandler;
 import edu.jhu.hlt.concrete.send.SenderProvider;
 
 import java.io.File;
@@ -60,6 +61,7 @@ public class ConfigManager {
     private RetrieverHandler retrieverHandler;
     private ResultsHandler resultsHandler;
     private FeedbackHandler feedbackHandler;
+    private SenderHandler senderHandler;
     private SortReceiverServer sortServer;
     private boolean isLearningOn = false;
 
@@ -128,8 +130,10 @@ public class ConfigManager {
             }
         }
         resultsHandler = new ResultsHandler();
+        senderHandler = new SenderHandler();
         String sendName = config.getString(CadetConfig.SEND_PROVIDER);
         SenderProvider sender = (SenderProvider) constructProvider(sendName);
+        senderHandler.init(sender);
         resultsHandler.setSenderProvider(sender);
         String clientName = config.getString(CadetConfig.LEARN_PROVIDER);
         ActiveLearningClient client = (ActiveLearningClient)constructProvider(clientName);
@@ -235,6 +239,16 @@ public class ConfigManager {
             throw new RuntimeException("ConfigManager used before initialized");
         }
         return feedbackHandler;
+    }
+
+    /**
+     * Get the sender handler
+     */
+    public SenderHandler getSenderHandler() {
+        if (!initialized) {
+            throw new RuntimeException("ConfigManager used before initialized");
+        }
+        return senderHandler;
     }
 
     /**

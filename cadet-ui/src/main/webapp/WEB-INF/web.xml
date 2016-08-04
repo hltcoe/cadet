@@ -34,6 +34,12 @@
 		<servlet-class>edu.jhu.hlt.concrete.feedback.FeedbackServlet</servlet-class>
 	</servlet>
 
+        <servlet>
+		<display-name>SenderServlet</display-name>
+		<servlet-name>SenderServlet</servlet-name>
+		<servlet-class>edu.jhu.hlt.concrete.send.SenderServlet</servlet-class>
+        </servlet>
+
 	<servlet>
 		<display-name>ViewFeedback</display-name>
 		<servlet-name>ViewFeedbackServlet</servlet-name>
@@ -91,6 +97,11 @@
 	<servlet-mapping>
 		<servlet-name>ResultsServerServlet</servlet-name>
 		<url-pattern>/ResultsServer</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>SenderServlet</servlet-name>
+		<url-pattern>/SenderServlet</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
