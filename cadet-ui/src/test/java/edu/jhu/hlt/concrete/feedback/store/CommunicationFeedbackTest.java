@@ -1,4 +1,4 @@
-package edu.jhu.hlt.concrete.feedback;
+package edu.jhu.hlt.concrete.feedback.store;
 
 import static org.junit.Assert.*;
 
@@ -11,7 +11,6 @@ import edu.jhu.hlt.concrete.search.SearchFeedback;
 import edu.jhu.hlt.concrete.search.SearchQuery;
 import edu.jhu.hlt.concrete.search.SearchResult;
 import edu.jhu.hlt.concrete.search.SearchResults;
-import edu.jhu.hlt.concrete.feedback.CommunicationFeedback;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 
 public class CommunicationFeedbackTest {

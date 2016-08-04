@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import org.apache.thrift.TException;
 
 import edu.jhu.hlt.concrete.UUID;
+import edu.jhu.hlt.concrete.feedback.store.FeedbackException;
+import edu.jhu.hlt.concrete.feedback.store.FeedbackStore;
 import edu.jhu.hlt.concrete.search.Feedback;
 import edu.jhu.hlt.concrete.search.SearchFeedback;
 import edu.jhu.hlt.concrete.search.SearchResults;
@@ -24,6 +26,10 @@ public class FeedbackHandler implements Feedback.Iface {
 
     public FeedbackStore getStore() {
         return store;
+    }
+
+    public void setStore(FeedbackStore store) {
+        this.store = store;
     }
 
     @Override
@@ -48,7 +54,7 @@ public class FeedbackHandler implements Feedback.Iface {
 
     @Override
     public void addSentenceFeedback(UUID uuid, String commId, UUID sentId, SearchFeedback feedback) throws ServicesException, TException {
-        logger.info("Adding feedback for commId " + commId + " and sentenceId " + uuid.getUuidString());
+        logger.info("Adding feedback for commId " + commId + " and sentenceId " + sentId.getUuidString());
         try {
             store.addFeedback(uuid, commId, sentId, feedback);
         } catch (FeedbackException ex) {

@@ -1,4 +1,4 @@
-package edu.jhu.hlt.concrete.feedback;
+package edu.jhu.hlt.concrete.feedback.store;
 
 import static org.junit.Assert.*;
 
@@ -8,7 +8,6 @@ import java.util.List;
 import org.junit.Test;
 
 import edu.jhu.hlt.concrete.UUID;
-import edu.jhu.hlt.concrete.feedback.SentenceIdentifier;
 
 public class SentenceIdentifierTest {
 

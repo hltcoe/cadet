@@ -10,6 +10,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import edu.jhu.hlt.cadet.ConfigManager;
+import edu.jhu.hlt.concrete.feedback.store.CommunicationFeedback;
+import edu.jhu.hlt.concrete.feedback.store.FeedbackStore;
+import edu.jhu.hlt.concrete.feedback.store.SentenceFeedback;
+import edu.jhu.hlt.concrete.feedback.store.SentenceIdentifier;
 import edu.jhu.hlt.concrete.search.SearchFeedback;
 import edu.jhu.hlt.concrete.search.SearchResult;
 import edu.jhu.hlt.concrete.search.SearchResults;

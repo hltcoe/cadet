@@ -1,4 +1,4 @@
-package edu.jhu.hlt.concrete.feedback;
+package edu.jhu.hlt.concrete.feedback.store;
 
 import edu.jhu.hlt.concrete.search.SearchResults;
 import edu.jhu.hlt.concrete.util.ConcreteException;
