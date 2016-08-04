@@ -145,14 +145,70 @@ public class SqlFeedbackStore implements FeedbackStore {
 
     @Override
     public Set<CommunicationFeedback> queryCommunicationFeedback(FeedbackQuery query) {
-        // TODO Auto-generated method stub
-        return null;
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+        Query hql = buildQuery(session, query, SearchType.COMMUNICATIONS);
+        @SuppressWarnings("unchecked")
+        List<FeedbackRecord> records = hql.list();
+        Set<CommunicationFeedback> data = new HashSet<CommunicationFeedback>();
+        for (FeedbackRecord record : records) {
+            CommunicationFeedback cf = createCommunicationFeedback(record);
+            if (cf != null) {
+                data.add(cf);
+            }
+        }
+
+        session.getTransaction().commit();
+        session.close();
+        return data;
     }
 
     @Override
     public Set<SentenceFeedback> querySentenceFeedback(FeedbackQuery query) {
-        // TODO Auto-generated method stub
-        return null;
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+        Query hql = buildQuery(session, query, SearchType.SENTENCES);
+        @SuppressWarnings("unchecked")
+        List<FeedbackRecord> records = hql.list();
+        Set<SentenceFeedback> data = new HashSet<SentenceFeedback>();
+        for (FeedbackRecord record : records) {
+            SentenceFeedback sf = createSentenceFeedback(record);
+            if (sf != null) {
+                data.add(sf);
+            }
+        }
+
+        session.getTransaction().commit();
+        session.close();
+        return data;
+    }
+
+    private Query buildQuery(Session session, FeedbackQuery query, SearchType searchType) {
+        String hql = "from FeedbackRecord where searchType = :type and (:ts_start is null or timestamp > :ts_start)" 
+                        + " and (:ts_stop is null or timestamp < :ts_stop)";
+        if (query.getUserNames() != null) {
+            hql += " and userId in (:users)";
+        }
+        if (query.getQueryNames() != null) {
+            hql += " and queryName in (:names)";
+        }
+        // TODO labels
+
+        Query q = session.createQuery(hql)
+                .setParameter("ts_start", query.getStartDate())
+                .setParameter("ts_stop", query.getEndDate())
+                .setParameter("type", searchType);
+        if (query.getUserNames() != null) {
+            q.setParameterList("users", query.getUserNames());
+        }
+        if (query.getQueryNames() != null) {
+            q.setParameterList("names", query.getQueryNames());
+        }
+        if (query.getLimit() != FeedbackQuery.NO_LIMIT) {
+            q.setMaxResults(query.getLimit());
+        }
+
+        return q;
     }
 
     @Override
@@ -162,15 +218,9 @@ public class SqlFeedbackStore implements FeedbackStore {
         List<FeedbackRecord> records = getAllRecords(session, SearchType.COMMUNICATIONS);
         Set<CommunicationFeedback> data = new HashSet<CommunicationFeedback>();
         for (FeedbackRecord record : records) {
-            try {
-                CommunicationFeedback cf = new CommunicationFeedback(record.getSearchResults());
-                for (Feedback fb : record.getFeedback()) {
-                    cf.addFeedback(fb.getCommId(), fb.getValue());
-                }
+            CommunicationFeedback cf = createCommunicationFeedback(record);
+            if (cf != null) {
                 data.add(cf);
-            } catch (ConcreteException | FeedbackException e) {
-                // likely deserializing old data - log and pass back empty set
-                logger.error("Likely deserializing incompatible thrift object for feedback", e);
             }
         }
 
@@ -187,15 +237,9 @@ public class SqlFeedbackStore implements FeedbackStore {
         List<FeedbackRecord> records = getAllRecords(session, SearchType.SENTENCES);
         Set<SentenceFeedback> data = new HashSet<SentenceFeedback>();
         for (FeedbackRecord record : records) {
-            try {
-                SentenceFeedback cf = new SentenceFeedback(record.getSearchResults());
-                for (Feedback fb : record.getFeedback()) {
-                    cf.addFeedback(fb.getCommId(), new UUID(fb.getSentId()), fb.getValue());
-                }
-                data.add(cf);
-            } catch (ConcreteException | FeedbackException e) {
-                // likely deserializing old data - log and pass back empty set
-                logger.error("Likely deserializing incompatible thrift object for feedback", e);
+            SentenceFeedback sf = createSentenceFeedback(record);
+            if (sf != null) {
+                data.add(sf);
             }
         }
 
@@ -205,10 +249,38 @@ public class SqlFeedbackStore implements FeedbackStore {
         return data;
     }
 
+    @SuppressWarnings("unchecked")
     private List<FeedbackRecord> getAllRecords(Session session, SearchType type) {
         Query query = session.createQuery("from FeedbackRecord where searchType = :value");
         query.setParameter("value", type);
         return query.list();
     }
 
+    private SentenceFeedback createSentenceFeedback(FeedbackRecord record) {
+        SentenceFeedback sf = null;
+        try {
+            sf = new SentenceFeedback(record.getSearchResults());
+            for (Feedback fb : record.getFeedback()) {
+                sf.addFeedback(fb.getCommId(), new UUID(fb.getSentId()), fb.getValue());
+            }
+        } catch (ConcreteException | FeedbackException e) {
+            // likely deserializing old data
+            logger.error("Likely deserializing incompatible thrift object for feedback", e);
+        }
+        return sf;
+    }
+
+    private CommunicationFeedback createCommunicationFeedback(FeedbackRecord record) {
+        CommunicationFeedback cf = null;
+        try {
+            cf = new CommunicationFeedback(record.getSearchResults());
+            for (Feedback fb : record.getFeedback()) {
+                cf.addFeedback(fb.getCommId(), fb.getValue());
+            }
+        } catch (ConcreteException | FeedbackException e) {
+            // likely deserializing old data
+            logger.error("Likely deserializing incompatible thrift object for feedback", e);
+        }
+        return cf;
+    }
 }

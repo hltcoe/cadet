@@ -20,6 +20,7 @@ import com.typesafe.config.ConfigFactory;
 import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.feedback.store.CommunicationFeedback;
 import edu.jhu.hlt.concrete.feedback.store.FeedbackException;
+import edu.jhu.hlt.concrete.feedback.store.FeedbackQuery;
 import edu.jhu.hlt.concrete.feedback.store.FeedbackStore;
 import edu.jhu.hlt.concrete.feedback.store.SentenceFeedback;
 import edu.jhu.hlt.concrete.feedback.store.SentenceIdentifier;
@@ -115,7 +116,45 @@ public class SqlFeedbackStoreTest {
         assertEquals(SearchFeedback.NONE, map.get(new SentenceIdentifier(list.get(3).getCommunicationId(), list.get(3).getSentenceId())));
     }
 
+    @Test
+    public void testQueryCommunicationFeedback() throws ConcreteException {
+        loadLotsOfData(SearchType.COMMUNICATIONS);
 
+        // test limit
+        FeedbackQuery q1 = new FeedbackQuery();
+        q1.setLimit(3);
+        assertEquals(3, store.queryCommunicationFeedback(q1).size());
+
+        // test single user
+        FeedbackQuery q2 = new FeedbackQuery();
+        q2.setUserName("ed");
+        assertEquals(2, store.queryCommunicationFeedback(q2).size());
+
+        // test multiple users
+        FeedbackQuery q3 = new FeedbackQuery();
+        q3.setUserNames(new String[]{"bob", "ed"});
+        assertEquals(5, store.queryCommunicationFeedback(q3).size());
+
+        // test single query name
+        FeedbackQuery q4 = new FeedbackQuery();
+        q4.setQueryName("south");
+        assertEquals(1, store.queryCommunicationFeedback(q4).size());
+    }
+
+    @Test
+    public void testQuerySentenceFeedback() throws ConcreteException {
+        loadLotsOfData(SearchType.SENTENCES);
+
+        // test no limit
+        FeedbackQuery q1 = new FeedbackQuery();
+        assertEquals(6, store.querySentenceFeedback(q1).size());
+
+        // test query name and user
+        FeedbackQuery q2 = new FeedbackQuery();
+        q2.setQueryNames(new String[]{"east", "south"});
+        q2.setUserNames(new String[]{"ed", "greg"});
+        assertEquals(2, store.querySentenceFeedback(q2).size());
+    }
 
     private String getFilePath(String filename) {
         ClassLoader classLoader = SqlFeedbackStoreTest.class.getClassLoader();
@@ -148,4 +187,18 @@ public class SqlFeedbackStoreTest {
         return results;
     }
 
+    private void loadLotsOfData(SearchType type) throws ConcreteException {
+        SearchResults r1 = createSearchResults("c1", "bob", "east", type, 3);
+        store.addSearchResults(r1);
+        SearchResults r2 = createSearchResults("c2", "bob", "east", type, 3);
+        store.addSearchResults(r2);
+        SearchResults r3 = createSearchResults("c3", "bob", "west", type, 3);
+        store.addSearchResults(r3);
+        SearchResults r4 = createSearchResults("c4", "ed", "south", type, 3);
+        store.addSearchResults(r4);
+        SearchResults r5 = createSearchResults("c5", "ed", "north", type, 3);
+        store.addSearchResults(r5);
+        SearchResults r6 = createSearchResults("c6", "greg", "east", type, 3);
+        store.addSearchResults(r6);
+    }
 }
