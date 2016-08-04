@@ -107,7 +107,26 @@ Currently available providers for the *Search* Concrete Service:
    remote search service and communicates via Thrift definitions given
    in concrete-services project
 
+Using **FileRetrieverProvider**:
+--------------------------------
+
+In order to use **FileRetrieverProvider**, you will need to include an
+additional configuration setting in your configuration file specifying
+the path to the Communication files.
+
+Communication files are assumed to be named using the format
+ `<comm id>.concrete`.
+
+```json
+files {
+    data {
+        dir = "/path/to/communication_files"
+    }
+}
+```
+
 Using **ScionRetrieverProvider**:
+---------------------------------
 
 In order to use **ScionRetrieverProvider** you need to include an additional
 configuration setting in your configuration file as shown below.
