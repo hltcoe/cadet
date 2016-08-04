@@ -24,6 +24,11 @@
         font-weight: bold;
     }
 
+    .container-fluid {
+        margin-left: 1em;
+        margin-right: 1em;
+    }
+
     .communication .entity_mention {
         background-color: Linen;
         cursor: pointer;
@@ -530,13 +535,24 @@
 </head>
 <body>
     <div class="container-fluid">
-        <h4>
-            <a href="results.html">Results</a>
-        </h4>
-        <span id="greeting" class="pull-right label label-primary" style="margin:5px">Login</span>
+        <div class="row">
+            <div class="pull-left">
+                <h4>
+                    <a href="results.html">Results</a>
+                </h4>
+            </div>
+            <div class="pull-right">
+                <span id="greeting" class="label label-primary" style="margin:5px">Login</span>
+            </div>
+        </div>
+
+        <hr />
+
+        <!--
         <div class="row">
             <img src="img/logo.png" alt="Human Language Technology Center of Excellence">
         </div>
+        -->
         <div class="row">
             <input name="query" id="user_search" type="text" style="width:50%" placeholder="Search...">
             <input id="query_name" type="text" style="width:50%" placeholder="Query Name">
