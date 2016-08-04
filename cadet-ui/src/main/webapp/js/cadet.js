@@ -13,6 +13,7 @@ var CADET = {
     retrieve: undefined,  // alias for retriever
     retriever: undefined,
     search: undefined,
+    send: undefined,
     results: undefined,
 
     // This variable is used to set the searchQuery.userId field
@@ -143,6 +144,10 @@ var CADET = {
         var search_transport = new Thrift.Transport('SearchServlet');
         var search_protocol = new Thrift.Protocol(search_transport);
         this.search = new SearchClient(search_protocol);
+
+        var send_transport = new Thrift.Transport('SenderServlet');
+        var send_protocol = new Thrift.Protocol(send_transport);
+        this.send = new SenderClient(send_protocol);
 
         var results_transport = new Thrift.Transport('ResultsServer');
         var results_protocol = new Thrift.Protocol(results_transport);
