@@ -154,6 +154,16 @@ public class SqlFeedbackStoreTest {
         q2.setQueryNames(new String[]{"east", "south"});
         q2.setUserNames(new String[]{"ed", "greg"});
         assertEquals(2, store.querySentenceFeedback(q2).size());
+
+        // test single label
+        FeedbackQuery q3 = new FeedbackQuery();
+        q3.setLabels(new String[]{"red"});
+        assertEquals(2, store.querySentenceFeedback(q3).size());
+
+        // test single label
+        FeedbackQuery q4 = new FeedbackQuery();
+        q4.setLabels(new String[]{"blue", "pink", "orange"});
+        assertEquals(2, store.querySentenceFeedback(q4).size());
     }
 
     private String getFilePath(String filename) {
@@ -189,16 +199,23 @@ public class SqlFeedbackStoreTest {
 
     private void loadLotsOfData(SearchType type) throws ConcreteException {
         SearchResults r1 = createSearchResults("c1", "bob", "east", type, 3);
+        r1.getSearchQuery().addToLabels("red");
         store.addSearchResults(r1);
         SearchResults r2 = createSearchResults("c2", "bob", "east", type, 3);
+        r2.getSearchQuery().addToLabels("blue");
         store.addSearchResults(r2);
         SearchResults r3 = createSearchResults("c3", "bob", "west", type, 3);
+        r3.getSearchQuery().addToLabels("green");
         store.addSearchResults(r3);
         SearchResults r4 = createSearchResults("c4", "ed", "south", type, 3);
+        r4.getSearchQuery().addToLabels("yellow");
         store.addSearchResults(r4);
         SearchResults r5 = createSearchResults("c5", "ed", "north", type, 3);
+        r5.getSearchQuery().addToLabels("purple");
         store.addSearchResults(r5);
         SearchResults r6 = createSearchResults("c6", "greg", "east", type, 3);
+        r6.getSearchQuery().addToLabels("orange");
+        r6.getSearchQuery().addToLabels("red");
         store.addSearchResults(r6);
     }
 }

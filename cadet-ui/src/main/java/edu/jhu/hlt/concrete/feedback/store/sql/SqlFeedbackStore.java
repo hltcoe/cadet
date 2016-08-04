@@ -134,7 +134,7 @@ public class SqlFeedbackStore implements FeedbackStore {
     private FeedbackRecord getFeedbackRecord(UUID uuid, SearchType searchType) {
         Session session = sessionFactory.openSession();
         Transaction trans = session.beginTransaction();
-        Query query = session.createQuery("from FeedbackRecord where uuid = :uuid and searchType = :type");
+        Query query = session.createQuery("FROM FeedbackRecord WHERE uuid = :uuid AND searchType = :type");
         query.setParameter("uuid", uuid.getUuidString());
         query.setParameter("type", searchType);
         FeedbackRecord record = (FeedbackRecord) query.uniqueResult();
@@ -183,16 +183,22 @@ public class SqlFeedbackStore implements FeedbackStore {
         return data;
     }
 
+    // labels require a join since they are a collection
     private Query buildQuery(Session session, FeedbackQuery query, SearchType searchType) {
-        String hql = "from FeedbackRecord where searchType = :type and (:ts_start is null or timestamp > :ts_start)" 
-                        + " and (:ts_stop is null or timestamp < :ts_stop)";
+        String hql = "SELECT r FROM FeedbackRecord r";
+        if (query.getLabels() != null) {
+            hql += " JOIN r.labels l WHERE l IN (:labels) AND";
+        } else {
+            hql += " WHERE";
+        }
+        hql += " r.searchType = :type AND (:ts_start IS null OR r.timestamp > :ts_start)"
+                        + " AND (:ts_stop IS null OR r.timestamp < :ts_stop)";
         if (query.getUserNames() != null) {
-            hql += " and userId in (:users)";
+            hql += " AND r.userId IN (:users)";
         }
         if (query.getQueryNames() != null) {
-            hql += " and queryName in (:names)";
+            hql += " AND r.queryName IN (:names)";
         }
-        // TODO labels
 
         Query q = session.createQuery(hql)
                 .setParameter("ts_start", query.getStartDate())
@@ -203,6 +209,9 @@ public class SqlFeedbackStore implements FeedbackStore {
         }
         if (query.getQueryNames() != null) {
             q.setParameterList("names", query.getQueryNames());
+        }
+        if (query.getLabels() != null) {
+            q.setParameterList("labels", query.getLabels());
         }
         if (query.getLimit() != FeedbackQuery.NO_LIMIT) {
             q.setMaxResults(query.getLimit());
@@ -251,7 +260,7 @@ public class SqlFeedbackStore implements FeedbackStore {
 
     @SuppressWarnings("unchecked")
     private List<FeedbackRecord> getAllRecords(Session session, SearchType type) {
-        Query query = session.createQuery("from FeedbackRecord where searchType = :value");
+        Query query = session.createQuery("FROM FeedbackRecord WHERE searchType = :value");
         query.setParameter("value", type);
         return query.list();
     }
