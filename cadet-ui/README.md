@@ -77,33 +77,33 @@ servlets {
     retrieve {
         host = "localhost"
         port = 44111
-        provider = "edu.jhu.hlt.concrete.retriever.RemoteRetrieverProvider"
+        provider = "edu.jhu.hlt.cadet.retriever.RemoteRetrieverProvider"
     }
     search {
         host = "localhost"
         port = 8088
-        provider = "edu.jhu.hlt.concrete.search.RemoteSearchProvider"
+        provider = "edu.jhu.hlt.cadet.search.RemoteSearchProvider"
     }
 }
 ```
 
 Currently available providers for the *Retriever* Concrete Service:
 
-- **edu.jhu.hlt.concrete.retriever.MockRetrieverProvider** - Returns
+- **edu.jhu.hlt.cadet.retriever.MockRetrieverProvider** - Returns
    Communications containing randomly generated "nonsense" sentences
-- **edu.jhu.hlt.concrete.retriever.RemoteRetrieverProvider** - Connects
+- **edu.jhu.hlt.cadet.retriever.RemoteRetrieverProvider** - Connects
    to remote retrieve service with Thrift
-- **edu.jhu.hlt.concrete.retriever.ScionRetrieverProvider** - Connects
+- **edu.jhu.hlt.cadet.retriever.ScionRetrieverProvider** - Connects
    directly to Accumulo to pull communications. Must have direct 
    communication to accumulo to use this provider
-- **edu.jhu.hlt.concrete.retriever.FileRetrieverProvider** - 
+- **edu.jhu.hlt.cadet.retriever.FileRetrieverProvider** - 
 Returns communications from a directory. See the class for more details.
 
 Currently available providers for the *Search* Concrete Service:
 
-- **edu.jhu.hlt.concrete.search.MockSearchProvider** - Returns
+- **edu.jhu.hlt.cadet.search.MockSearchProvider** - Returns
    Communication IDs for "nonsense" sentences
-- **edu.jhu.hlt.concrete.search.RemoteSearchProvider** - Connects to
+- **edu.jhu.hlt.cadet.search.RemoteSearchProvider** - Connects to
    remote search service and communicates via Thrift definitions given
    in concrete-services project
 
@@ -302,7 +302,7 @@ In your configuration file, you can specify the following settings under the ser
     send {
         host = localhost
         port = 8888
-        provider = "edu.jhu.hlt.concrete.send.MockSenderProvider"
+        provider = "edu.jhu.hlt.cadet.send.MockSenderProvider"
     }
     learn {
         status = on
@@ -333,7 +333,7 @@ Currently available providers for the *learn* Service:
 
 Providers for the *send* Service:
 
-- **edu.jhu.hlt.concrete.send.MockSenderProvider** - Logs requests to store annotations
-- **edu.jhu.hlt.concrete.send.RemoteSenderProvider** - Sends the annotations to a remote server
-- **edu.jhu.hlt.concrete.retriever.FileSenderProvider** - 
+- **edu.jhu.hlt.cadet.send.MockSenderProvider** - Logs requests to store annotations
+- **edu.jhu.hlt.cadet.send.RemoteSenderProvider** - Sends the annotations to a remote server
+- **edu.jhu.hlt.cadet.retriever.FileSenderProvider** - 
 Saves communications to a directory. See the class for more details.
