@@ -10,10 +10,8 @@ import edu.jhu.hlt.concrete.learn.AnnotationTask;
 /**
  * Client that talks to an active learner.
  *
- * Config needs:
- *  * servlets.sort.port
- *  * servlets.learn.host
- *  * servlets.learn.port
+ * See CadetConfig for the configuration parameters that AL needs.
+ * The parameters are namespaced by LEARN_.
  */
 public interface ActiveLearningClient extends Provider {
 

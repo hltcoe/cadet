@@ -40,7 +40,8 @@ public class RemoteActiveLearningClient implements ActiveLearningClient {
             try {
                 sortReceiverInfo.setHost(InetAddress.getLocalHost().getHostName());
             } catch (UnknownHostException e) {
-                throw new RuntimeException("Cannot get hostname for sort server. Please specify servlets.sort.host in configuration.");
+                throw new RuntimeException("Cannot get hostname for sort server. Please specify "
+                                + CadetConfig.SORT_HOST + " in configuration.");
             }
         }
         sortReceiverInfo.setPort(config.getInt(CadetConfig.SORT_PORT));
