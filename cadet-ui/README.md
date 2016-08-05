@@ -1,6 +1,3 @@
-## Master Build Status
-[![build status](https://gitlab.hltcoe.jhu.edu/Retrieval/SearchServlet/badges/master/build.svg)](https://gitlab.hltcoe.jhu.edu/Retrieval/SearchServlet/commits/master)
-
 SearchServlet
 =============
 
