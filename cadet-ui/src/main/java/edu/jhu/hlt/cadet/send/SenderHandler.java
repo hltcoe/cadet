@@ -1,11 +1,5 @@
 package edu.jhu.hlt.cadet.send;
 
-import org.apache.log4j.Logger;
-
-import java.util.Iterator;
-
-import org.apache.log4j.BasicConfigurator;
-
 import org.apache.thrift.TException;
 
 import edu.jhu.hlt.concrete.access.Sender;
@@ -14,13 +8,8 @@ import edu.jhu.hlt.concrete.services.ServiceInfo;
 import edu.jhu.hlt.concrete.services.ServicesException;
 
 public class SenderHandler implements Sender.Iface {
-    private static Logger logger = Logger.getLogger(SenderHandler.class);
 
     private SenderProvider senderProvider;
-
-    public SenderHandler() {
-        BasicConfigurator.configure();
-    }
 
     /**
      * Initialize the handler - must be called before any other methods
