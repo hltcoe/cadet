@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Admin Interface</title>
+    <meta charset='UTF-8'>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/jquery.dataTables.min.css" rel="stylesheet">
+    <link href="css/buttons.dataTables.min.css" rel="stylesheet">
+
+    <script src="js/jquery-1.11.1.js"></script>
+    <script src="js/jquery.dataTables.min.js"></script>
+    <script src="js/dataTables.buttons.min.js"></script>
+    <script src="js/buttons.colVis.min.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script src="js/thrift.js"></script>
+    <script src="js/concrete.js"></script>
+    <script src="js/concrete-widgets.js"></script>
+    <script src="js/concrete-services.js"></script>
+    <script src="js/cadet.js"></script>
+
+    <style>
+    .container-fluid {
+        margin-left: 1em;
+        margin-right: 1em;
+    }
+    </style>
+
+    <script>
+    /* globals CADET */
+
+    // Global variables
+    var CONFIG_INFO_TABLE;
+
+    $(document).ready(function() {
+        CADET.init();
+
+        CONFIG_INFO_TABLE = $('#config_info_table').DataTable({
+            columns: [
+                {
+                    title: 'Status',
+                    data: 'status',
+                    render: function(data, type, aliveStatus) {
+                        if (aliveStatus) {
+                            return '<span class="glyphicon glyphicon-ok" />';
+                        }
+                        else {
+                            return '<span class="glyphicon glyphicon-remove" />';
+                        }
+                    },
+                    width: '1%'
+                },
+                {
+                    title: 'Service',
+                    data: 'service'
+
+                },
+                {
+                    title: 'Provider',
+                    data: 'provider'
+                },
+                {
+                    title: 'Provider Info',
+                    data: 'providerInfo'
+                },
+                {
+                    title: 'ServiceInfo',
+                    data: 'serviceInfo'
+                },
+            ],
+            dom: 'rti'
+        });
+
+        $.getJSON('AdminServlet', function(config) {
+            var services = ['feedback', 'results', 'retrieve', 'search', 'send'];
+            for (var i = 0; i < services.length; i++) {
+                var serviceAlive;
+                try {
+                    CADET[services[i]].alive();
+                    serviceAlive = true;
+                }
+                catch (error) {
+                    serviceAlive = false;
+                }
+
+                var provider;
+                var providerInfo;
+                if (config.servlets[services[i]].hasOwnProperty('provider')) {
+                    provider = config.servlets[services[i]].provider;
+                    if (provider.includes('Remote') &&
+                        config.servlets[services[i]].hasOwnProperty('host') &&
+                        config.servlets[services[i]].hasOwnProperty('port'))
+                    {
+                        providerInfo = config.servlets[services[i]].host + ':' +
+                                       config.servlets[services[i]].port;
+                    }
+                    else {
+                        providerInfo = '';
+                    }
+                }
+                else {
+                    provider = 'N/A';
+                    providerInfo = 'N/A';
+                }
+
+                var serviceInfoDetails;
+                try {
+                    var serviceInfo = CADET[services[i]].about();
+                    serviceInfoDetails = serviceInfo.name + ' v' + serviceInfo.version;
+                    if (serviceInfo.description) {
+                        serviceInfoDetails += ': ' + serviceInfo.description;
+                    }
+                }
+                catch (error) {
+                    serviceInfoDetails = 'ERROR: ' + error.message;
+                }
+
+                CONFIG_INFO_TABLE.row.add({
+                    'status': serviceAlive,
+                    'service': services[i],
+                    'provider': provider,
+                    'providerInfo': providerInfo,
+                    'serviceInfo': serviceInfoDetails
+                });
+            }
+            CONFIG_INFO_TABLE.draw();
+        });
+    });
+    </script>
+</head>
+<body>
+    <div class="container-fluid">
+        <h4>
+            <a href="index.html">Search</a> |
+            <a href="results.html">Results</a>
+        </h4>
+
+        <hr />
+
+        <div id="config_info">
+            <table id="config_info_table" class="display"></table>
+        </div>
+    </div><!-- /.container-fluid -->
+</body>
