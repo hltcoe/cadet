@@ -1,5 +1,6 @@
 package edu.jhu.hlt.concrete.feedback.store.sql;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -30,10 +31,15 @@ import edu.jhu.hlt.concrete.util.ConcreteException;
 
 public class SqlFeedbackStore implements FeedbackStore {
     private static Logger logger = LoggerFactory.getLogger(SqlFeedbackStore.class);
+    private static final int CACHE_SIZE = 50;
 
+    private Map<UUID, FeedbackRecord> cache;
+    // session factory is thread safe
     private SessionFactory sessionFactory;
-    // TODO replace with LRU cache
-    private Map<UUID, FeedbackRecord> cache = new HashMap<UUID, FeedbackRecord>();
+
+    public SqlFeedbackStore() {
+        cache = Collections.synchronizedMap(new LRUCache<UUID, FeedbackRecord>(CACHE_SIZE));
+    }
 
     @Override
     public void init(Config config) {
@@ -91,7 +97,10 @@ public class SqlFeedbackStore implements FeedbackStore {
         if (sentenceId != null) {
             sentIdString = sentenceId.getUuidString();
         }
-        FeedbackRecord record = cache.get(uuid);
+        FeedbackRecord record = getFromCacheOrDatabase(uuid);
+        if (record == null) {
+            throw new FeedbackException("Trying to add feedback to unknown search result: " + uuid.getUuidString());
+        }
         Feedback item = record.getFeedbackItem(communicationId, sentIdString);
         item.setValue(feedback);
         Session session = sessionFactory.openSession();
@@ -102,12 +111,27 @@ public class SqlFeedbackStore implements FeedbackStore {
         logger.debug("Feedback updated in db");
     }
 
+    private FeedbackRecord getFromCacheOrDatabase(UUID uuid) {
+        FeedbackRecord record = cache.get(uuid);
+        if (record == null) {
+            record = getFeedbackRecord(uuid);
+            if (record != null) {
+                cache.put(uuid, record);
+            }
+        }
+        return record;
+    }
+
     @Override
     public Map<String, SearchFeedback> getCommunicationFeedback(UUID uuid) {
         Map<String, SearchFeedback> map = new HashMap<>();
 
-        FeedbackRecord record = getFeedbackRecord(uuid, SearchType.COMMUNICATIONS);
+        FeedbackRecord record = getFeedbackRecord(uuid);
         if (record != null) {
+            if (record.getSearchType() != SearchType.COMMUNICATIONS) {
+                // asked for wrong feedback type so send back empty map
+                return map;
+            }
             for (Feedback feedback : record.getFeedback()) {
                 map.put(feedback.getCommId(), feedback.getValue());
             }
@@ -120,8 +144,12 @@ public class SqlFeedbackStore implements FeedbackStore {
     public Map<SentenceIdentifier, SearchFeedback> getSentenceFeedback(UUID uuid) {
         Map<SentenceIdentifier, SearchFeedback> map = new HashMap<>();
 
-        FeedbackRecord record = getFeedbackRecord(uuid, SearchType.SENTENCES);
+        FeedbackRecord record = getFeedbackRecord(uuid);
         if (record != null) {
+            if (record.getSearchType() != SearchType.SENTENCES) {
+                // asked for wrong feedback type so send back empty map
+                return map;
+            }
             for (Feedback fb : record.getFeedback()) {
                 SentenceIdentifier id = new SentenceIdentifier(fb.getCommId(), new UUID(fb.getSentId()));
                 map.put(id, fb.getValue());
@@ -131,12 +159,11 @@ public class SqlFeedbackStore implements FeedbackStore {
         return map;
     }
 
-    private FeedbackRecord getFeedbackRecord(UUID uuid, SearchType searchType) {
+    private FeedbackRecord getFeedbackRecord(UUID uuid) {
         Session session = sessionFactory.openSession();
         Transaction trans = session.beginTransaction();
-        Query query = session.createQuery("FROM FeedbackRecord WHERE uuid = :uuid AND searchType = :type");
+        Query query = session.createQuery("FROM FeedbackRecord WHERE uuid = :uuid");
         query.setParameter("uuid", uuid.getUuidString());
-        query.setParameter("type", searchType);
         FeedbackRecord record = (FeedbackRecord) query.uniqueResult();
         trans.commit();
         session.close();
@@ -292,4 +319,5 @@ public class SqlFeedbackStore implements FeedbackStore {
         }
         return cf;
     }
+
 }

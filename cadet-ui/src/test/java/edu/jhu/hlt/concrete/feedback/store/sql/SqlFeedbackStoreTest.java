@@ -6,6 +6,8 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -117,6 +119,60 @@ public class SqlFeedbackStoreTest {
     }
 
     @Test
+    public void testAddingFeedbackToUnknownResult() {
+        try {
+            store.addFeedback(new UUID("unknown"), "testing", SearchFeedback.POSITIVE);
+            fail("Did not get exception when adding feedback to unknown result");
+        } catch (FeedbackException e) {}
+    }
+
+    // hacky attempt at verifying the store works with threads
+    @Test(timeout=1000)
+    public void testAddFeedbackThreaded() throws InterruptedException {
+        List<Thread> threads = new ArrayList<Thread>();
+        List<Client> clients = new ArrayList<Client>();
+
+        Object syncObject = new Object();
+        for (int i=0; i<10; i++) {
+            Client client = new Client("client" + i, syncObject, store);
+            Thread thread = new Thread(client);
+            thread.start();
+            threads.add(thread);
+            clients.add(client);
+        }
+
+        // make sure threads are ready
+        for (Client client : clients) {
+            while (!client.isReady()) {
+                Thread.sleep(1);
+            }
+        }
+
+        // tell the threads to start pushing data to the store
+        synchronized(syncObject) {
+            syncObject.notifyAll();
+        }
+
+        for (Thread thread : threads) {
+            thread.join();
+        }
+
+        for (Client client : clients) {
+            if (client.isFail()) {
+                fail("There was a failure in one of the clients");
+            }
+        }
+
+        Set<CommunicationFeedback> fb = store.getAllCommunicationFeedback();
+        assertEquals(10, fb.size());
+        for (CommunicationFeedback cf : fb) {
+            assertEquals(1, Collections.frequency(cf.getFeedback().values(), SearchFeedback.POSITIVE));
+            assertEquals(2, Collections.frequency(cf.getFeedback().values(), SearchFeedback.NONE));
+            assertEquals(1, Collections.frequency(cf.getFeedback().values(), SearchFeedback.NEGATIVE));
+        }
+    }
+
+    @Test
     public void testQueryCommunicationFeedback() throws ConcreteException {
         loadLotsOfData(SearchType.COMMUNICATIONS);
 
@@ -178,7 +234,7 @@ public class SqlFeedbackStoreTest {
         return null;
     }
 
-    private SearchResults createSearchResults(String id, String user, String name, SearchType type, int numResults) {
+    public static SearchResults createSearchResults(String id, String user, String name, SearchType type, int numResults) {
         SearchQuery q = new SearchQuery();
         q.setUserId(user);
         q.setName(name);
@@ -218,4 +274,56 @@ public class SqlFeedbackStoreTest {
         r6.getSearchQuery().addToLabels("red");
         store.addSearchResults(r6);
     }
+
+    private class Client implements Runnable {
+        private Object sync;
+        private FeedbackStore store;
+        private SearchResults results;
+        private boolean fail = false;
+        private boolean ready = false;
+
+        public Client(String id, Object sync, FeedbackStore store) {
+            this.sync = sync;
+            this.store = store;
+            results = createSearchResults(id, "larry", "my_query", SearchType.COMMUNICATIONS, 4);
+        }
+
+        public boolean isFail() {
+            return fail;
+        }
+
+        public boolean isReady() {
+            return ready;
+        }
+
+        @Override
+        public void run() {
+            synchronized(sync) {
+                try {
+                    ready = true;
+                    sync.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            try {
+                store.addSearchResults(results);
+            } catch (ConcreteException e) {
+                fail = true;
+                e.printStackTrace();
+                return;
+            }
+
+            try {
+                store.addFeedback(results.getUuid(), results.getSearchResults().get(0).getCommunicationId(), SearchFeedback.POSITIVE);
+                store.addFeedback(results.getUuid(), results.getSearchResults().get(1).getCommunicationId(), SearchFeedback.NEGATIVE);
+            } catch (FeedbackException e) {
+                fail = true;
+                e.printStackTrace();
+                return;
+            }
+        }
+    }
+
 }
