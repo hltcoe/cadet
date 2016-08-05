@@ -43,7 +43,7 @@ public class SqlFeedbackStore implements FeedbackStore {
 
     @Override
     public void init(Config config) {
-        config = config.getConfig("servlets.feedback");
+        config = config.getConfig("feedback");
         Configuration dbConfig = new Configuration()
                 .setProperty("hibernate.dialect", config.getString("hibernate.dialect"))
                 .setProperty("hibernate.connection.driver_class", config.getString("hibernate.connection.driver_class"))

@@ -25,9 +25,9 @@ public class FullMockActiveLearningClientTest {
     @Test
     public void test() {
         Config config = ConfigFactory.empty();
-        config = config.withValue("servlets.sort.host", ConfigValueFactory.fromAnyRef("localhost"));
-        config = config.withValue("servlets.sort.port", ConfigValueFactory.fromAnyRef(9898));
-        config = config.withValue("servlets.sort.period", ConfigValueFactory.fromAnyRef(5));
+        config = config.withValue("sort.host", ConfigValueFactory.fromAnyRef("localhost"));
+        config = config.withValue("sort.port", ConfigValueFactory.fromAnyRef(9898));
+        config = config.withValue("sort.period", ConfigValueFactory.fromAnyRef(5));
         ActiveLearningClient client = new FullMockActiveLearningClient();
         client.init(config);
 

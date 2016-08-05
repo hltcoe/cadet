@@ -73,17 +73,15 @@ Here is a sample configuration file using **RemoteRetrieverProvider**
 and **RemoteSearchProvider**:
 
 ```json
-servlets {
-    retrieve {
-        host = "localhost"
-        port = 44111
-        provider = "edu.jhu.hlt.cadet.retriever.RemoteRetrieverProvider"
-    }
-    search {
-        host = "localhost"
-        port = 8088
-        provider = "edu.jhu.hlt.cadet.search.RemoteSearchProvider"
-    }
+retrieve {
+    host = "localhost"
+    port = 44111
+    provider = "edu.jhu.hlt.cadet.retriever.RemoteRetrieverProvider"
+}
+search {
+    host = "localhost"
+    port = 8088
+    provider = "edu.jhu.hlt.cadet.search.RemoteSearchProvider"
 }
 ```
 
@@ -279,14 +277,11 @@ Configuration
 In your configuration file, you can specify the directory like so:
 
 ```json
-servlets {
-    feedback {
-        dump_dir = "/tmp/"
-    }
+feedback {
+    dump_dir = "/tmp/"
 }
 ```
 
-The feedback section should be added to the larger servlets configuration object with its parameters for search and retrieve.
 The default directory is /tmp/.
 
 Results Server
@@ -296,31 +291,31 @@ It sends annotations to be saved in Accumulo. It hosts a server for accepting so
 
 Configuration
 -------------------------
-In your configuration file, you can specify the following settings under the servlets section:
+In your configuration file, you can specify the following settings:
 
 ```json
-    send {
-        host = localhost
-        port = 8888
-        provider = "edu.jhu.hlt.cadet.send.MockSenderProvider"
-    }
-    learn {
-        status = on
-        host = localhost
-        port = 9999
-        provider = "edu.jhu.hlt.cadet.learn.SimpleMockActiveLearningClient"
-    }
-    sort {
-        port = 9090
-    }
-    results {
-        plugins = []
-    }
+send {
+    host = localhost
+    port = 8888
+    provider = "edu.jhu.hlt.cadet.send.MockSenderProvider"
+}
+learn {
+    status = on
+    host = localhost
+    port = 9999
+    provider = "edu.jhu.hlt.cadet.learn.SimpleMockActiveLearningClient"
+}
+sort {
+    port = 9090
+}
+results {
+    plugins = []
+}
 ```
 
-`send` handles saving annotations. `learn` is the active learner. `sort` is the service hosted by the results server. Active learning can be turned on or off through the servlets.learn.status option.
-Plugins can be registered for the results server with the option: servlets.results.plugins. 
-The plugins are specified as a comma seperated list of class names.
+`send` handles saving annotations. `learn` is the active learner. `sort` is the service hosted by the results server. Active learning can be turned on or off through the learn.status option.
+Plugins can be registered for the results server with the option: results.plugins. 
+The plugins are specified as a comma separated list of class names.
 
 Currently available providers for the *learn* Service:
 

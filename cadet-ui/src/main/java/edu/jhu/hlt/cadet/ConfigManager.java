@@ -116,7 +116,7 @@ public class ConfigManager {
         RetrieverProvider rp = (RetrieverProvider)constructProvider(rpName);
         retrieverHandler.init(rp);
 
-        String fbStoreName = config.getString("servlets.feedback.store");
+        String fbStoreName = config.getString("feedback.store");
         FeedbackStore fbStore = (FeedbackStore)constructProvider(fbStoreName);
         feedbackHandler = new FeedbackHandler(fbStore);
 
@@ -124,8 +124,8 @@ public class ConfigManager {
     }
 
     private void createResultsServer() {
-        if (config.hasPath("servlets.learn.status")) {
-            if (config.getString("servlets.learn.status").equalsIgnoreCase("on")) {
+        if (config.hasPath("learn.status")) {
+            if (config.getString("learn.status").equalsIgnoreCase("on")) {
                 isLearningOn = true;
             }
         }
@@ -141,8 +141,8 @@ public class ConfigManager {
         resultsHandler.setResultsStore(new MemoryResultsStore());
         resultsHandler.setSessionStore(new MemorySessionStore());
 
-        if (config.hasPath("servlets.results.plugins")) {
-            List<String> pluginNames = config.getStringList("servlets.results.plugins");
+        if (config.hasPath("results.plugins")) {
+            List<String> pluginNames = config.getStringList("results.plugins");
             for (String pluginName : pluginNames) {
                 resultsHandler.addPlugin((ResultsPlugin)constructProvider(pluginName));
             }
