@@ -10,6 +10,7 @@ import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigValueFactory;
 
+import edu.jhu.hlt.cadet.CadetConfig;
 import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.learn.AnnotationTask;
 import edu.jhu.hlt.concrete.services.AnnotationTaskType;
@@ -25,9 +26,9 @@ public class FullMockActiveLearningClientTest {
     @Test
     public void test() {
         Config config = ConfigFactory.empty();
-        config = config.withValue("sort.host", ConfigValueFactory.fromAnyRef("localhost"));
-        config = config.withValue("sort.port", ConfigValueFactory.fromAnyRef(9898));
-        config = config.withValue("sort.period", ConfigValueFactory.fromAnyRef(5));
+        config = config.withValue(CadetConfig.SORT_HOST, ConfigValueFactory.fromAnyRef("localhost"));
+        config = config.withValue(CadetConfig.SORT_PORT, ConfigValueFactory.fromAnyRef(9898));
+        config = config.withValue(CadetConfig.SORT_PERIOD, ConfigValueFactory.fromAnyRef(5));
         ActiveLearningClient client = new FullMockActiveLearningClient();
         client.init(config);
 
