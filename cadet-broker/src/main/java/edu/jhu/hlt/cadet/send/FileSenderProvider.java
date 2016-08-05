@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import com.typesafe.config.Config;
 
 import edu.jhu.hlt.cadet.CadetConfig;
-import edu.jhu.hlt.cadet.retriever.FileRetrieverProvider;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.serialization.CompactCommunicationSerializer;
 import edu.jhu.hlt.concrete.services.ServiceInfo;
@@ -28,7 +27,7 @@ import edu.jhu.hlt.concrete.util.ConcreteException;
  * This overwrites the communication files so must have write access.
  */
 public class FileSenderProvider implements SenderProvider {
-    private static Logger logger = LoggerFactory.getLogger(FileRetrieverProvider.class);
+    private static Logger logger = LoggerFactory.getLogger(FileSenderProvider.class);
     public static final String EXTENSION = "concrete";
 
     private String directory;
