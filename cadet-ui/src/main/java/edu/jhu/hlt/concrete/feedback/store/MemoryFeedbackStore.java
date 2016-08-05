@@ -1,5 +1,6 @@
 package edu.jhu.hlt.concrete.feedback.store;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -22,8 +23,8 @@ public class MemoryFeedbackStore implements FeedbackStore {
     private Map<UUID, SentenceFeedback> sentFeedback;
 
     public MemoryFeedbackStore() {
-        commFeedback = new HashMap<UUID, CommunicationFeedback>();
-        sentFeedback = new HashMap<UUID, SentenceFeedback>();
+        commFeedback = Collections.synchronizedMap(new HashMap<UUID, CommunicationFeedback>());
+        sentFeedback = Collections.synchronizedMap(new HashMap<UUID, SentenceFeedback>());
     }
 
     @Override
