@@ -37,7 +37,7 @@
         <servlet>
 		<display-name>SenderServlet</display-name>
 		<servlet-name>SenderServlet</servlet-name>
-		<servlet-class>edu.jhu.hlt.concrete.send.SenderServlet</servlet-class>
+		<servlet-class>edu.jhu.hlt.cadet.send.SenderServlet</servlet-class>
         </servlet>
 
 	<servlet>
