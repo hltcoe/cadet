@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.typesafe.config.Config;
 
+import edu.jhu.hlt.cadet.CadetConfig;
 import edu.jhu.hlt.cadet.retriever.FileRetrieverProvider;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.serialization.CompactCommunicationSerializer;
@@ -39,10 +40,10 @@ public class FileSenderProvider implements SenderProvider {
 
     @Override
     public void init(Config config) {
-        if (!config.hasPath("files.data.dir")) {
-            throw new RuntimeException("Directory is not set in config: files.data.dir");
+        if (!config.hasPath(CadetConfig.FILES_DATA_DIR)) {
+            throw new RuntimeException("Directory is not set in config: " + CadetConfig.FILES_DATA_DIR);
         }
-        directory = config.getString("files.data.dir");
+        directory = config.getString(CadetConfig.FILES_DATA_DIR);
         if (directory.charAt(directory.length() - 1) != File.separatorChar) {
             directory += File.separator;
         }

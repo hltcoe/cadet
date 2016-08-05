@@ -12,6 +12,8 @@ public class CadetConfig {
     /**
      * Active Learning
      */
+    // is active learning on? "on" or "off"
+    public static final String LEARN_STATUS = "learn.status";
     public static final String LEARN_HOST = "learn.host";
     public static final String LEARN_PORT = "learn.port";
     public static final String LEARN_PROVIDER = "learn.provider";
@@ -48,4 +50,10 @@ public class CadetConfig {
      */
     public static final String RESULTS_STORE = "results.store";
     public static final String RESULTS_SESSION = "results.session";
+    public static final String RESULTS_PLUGINS = "results.plugins";
+
+    /**
+     * File based system (rather than accumulo based)
+     */
+    public static final String FILES_DATA_DIR = "files.data.dir";
 }
