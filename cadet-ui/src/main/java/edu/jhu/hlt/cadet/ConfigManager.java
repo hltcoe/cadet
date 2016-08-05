@@ -3,18 +3,18 @@ package edu.jhu.hlt.cadet;
 import edu.jhu.hlt.cadet.learn.ActiveLearningClient;
 import edu.jhu.hlt.cadet.learn.SortReceiverHandler;
 import edu.jhu.hlt.cadet.learn.SortReceiverServer;
-import edu.jhu.hlt.concrete.feedback.FeedbackHandler;
-import edu.jhu.hlt.concrete.feedback.MemoryFeedbackStore;
-import edu.jhu.hlt.concrete.results.MemorySessionStore;
-import edu.jhu.hlt.concrete.results.MemoryResultsStore;
-import edu.jhu.hlt.concrete.results.ResultsHandler;
-import edu.jhu.hlt.concrete.results.ResultsPlugin;
-import edu.jhu.hlt.concrete.retriever.RetrieverHandler;
-import edu.jhu.hlt.concrete.retriever.RetrieverProvider;
-import edu.jhu.hlt.concrete.search.SearchHandler;
-import edu.jhu.hlt.concrete.search.SearchProvider;
-import edu.jhu.hlt.concrete.send.SenderHandler;
-import edu.jhu.hlt.concrete.send.SenderProvider;
+import edu.jhu.hlt.cadet.feedback.FeedbackHandler;
+import edu.jhu.hlt.cadet.feedback.store.FeedbackStore;
+import edu.jhu.hlt.cadet.results.MemorySessionStore;
+import edu.jhu.hlt.cadet.results.MemoryResultsStore;
+import edu.jhu.hlt.cadet.results.ResultsHandler;
+import edu.jhu.hlt.cadet.results.ResultsPlugin;
+import edu.jhu.hlt.cadet.retriever.RetrieverHandler;
+import edu.jhu.hlt.cadet.retriever.RetrieverProvider;
+import edu.jhu.hlt.cadet.search.SearchHandler;
+import edu.jhu.hlt.cadet.search.SearchProvider;
+import edu.jhu.hlt.cadet.send.SenderHandler;
+import edu.jhu.hlt.cadet.send.SenderProvider;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -115,10 +115,12 @@ public class ConfigManager {
 
         retrieverHandler = new RetrieverHandler();
         String rpName = config.getString(CadetConfig.RETRIEVE_PROVIDER);
-        RetrieverProvider rp = (RetrieverProvider) constructProvider(rpName);
+        RetrieverProvider rp = (RetrieverProvider)constructProvider(rpName);
         retrieverHandler.init(rp);
 
-        feedbackHandler = new FeedbackHandler(new MemoryFeedbackStore());
+        String fbStoreName = config.getString("servlets.feedback.store");
+        FeedbackStore fbStore = (FeedbackStore)constructProvider(fbStoreName);
+        feedbackHandler = new FeedbackHandler(fbStore);
 
         createResultsServer();
     }
