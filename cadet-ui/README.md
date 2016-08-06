@@ -150,9 +150,18 @@ Providers for the *Send* Service:
 cadet {
     feedback {
         dump_dir = "/tmp/"
+        store = "edu.jhu.hlt.cadet.feedback.store.MemoryFeedbackStore"
+
     }
 }
 ```
+
+Providers for the feedback store:
+
+- **edu.jhu.hlt.cadet.feedback.store.MemoryFeedbackStore** - 
+   Keeps the feedback in memory. Does not persist if the app is restarted on Tomcat.
+- **edu.jhu.hlt.cadet.feedback.store.sql.SqlFeedbackStore** - 
+   Stores the feedback in a sql database. Defaults to mysql. Not quite ready for use.
 
 ### Results Server
 
@@ -215,7 +224,7 @@ In order to use **ScionRetrieverProvider** or **ScionSendProvider** you need to 
 configuration setting in your configuration file as shown below. Note that it is under the `scion` namespace rather than `cadet`.
 Tomcat and accumulo need to be on the same network rather than relying on port forwarding.
 
-```json
+```
 scion {
     accumulo {
         instanceName = randomName
