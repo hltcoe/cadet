@@ -44,9 +44,9 @@ public class RetrieveTool implements AutoCloseable {
     public RetrieveTool() {
         Config config = ConfigFactory.load();
         LOGGER.debug("Running with conf: {}", config.toString());
-        host = config.getString("retrieve.host");
-        port = config.getInt("retrieve.port");
-        auths = config.getString("accumulo.auths");
+        host = config.getString(CadetConfig.RETRIEVE_HOST);
+        port = config.getInt(CadetConfig.RETRIEVE_PORT);
+        auths = config.getString("cadet.accumulo.auths");
         transport = new TFramedTransport(new TSocket(host, port), Integer.MAX_VALUE);
         protocol = new TCompactProtocol(transport);
         client = new Retriever.Client(protocol);

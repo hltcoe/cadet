@@ -44,10 +44,10 @@ public class LearnTool implements AutoCloseable {
 
     public LearnTool() throws TTransportException {
         Config config = ConfigFactory.load();
-        String host = config.getString("learn.host");
-        int port = config.getInt("learn.port");
-        if (config.hasPath("sort.port")) {
-            serverPort = config.getInt("sort.port");
+        String host = config.getString(CadetConfig.LEARN_HOST);
+        int port = config.getInt(CadetConfig.LEARN_PORT);
+        if (config.hasPath(CadetConfig.SORT_PORT)) {
+            serverPort = config.getInt(CadetConfig.SORT_PORT);
         }
 
         transport = new TFramedTransport(new TSocket(host, port), Integer.MAX_VALUE);

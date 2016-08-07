@@ -36,9 +36,9 @@ public class SearchTool implements AutoCloseable {
 
     public SearchTool() {
         Config config = ConfigFactory.load();
-        host = config.getString("search.host");
-        port = config.getInt("search.port");
-        auths = config.getString("accumulo.auths");
+        host = config.getString(CadetConfig.SEARCH_HOST);
+        port = config.getInt(CadetConfig.SEARCH_PORT);
+        auths = config.getString("cadet.accumulo.auths");
 
         transport = new TFramedTransport(new TSocket(host, port), Integer.MAX_VALUE);
         protocol = new TCompactProtocol(transport);

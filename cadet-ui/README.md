@@ -151,7 +151,6 @@ cadet {
     feedback {
         dump_dir = "/tmp/"
         store = "edu.jhu.hlt.cadet.feedback.store.MemoryFeedbackStore"
-
     }
 }
 ```

@@ -19,6 +19,8 @@ You can start with the default conf file by running this command:
 cp src/main/resources/reference.conf application.conf
 ```
 
+or you can use any conf file used with cadet-ui.
+
 **Alive**
 
 The alive script can check any service.
@@ -76,6 +78,7 @@ It also stands up a server to receive new sorts from the active learner.
 ```
 
 It has options for language and the amount of time it runs waiting for new sorts.
+Currently, the learner tool only supports a single column without header of communication IDs.
 
 **File-based Retrieve Server**
 
