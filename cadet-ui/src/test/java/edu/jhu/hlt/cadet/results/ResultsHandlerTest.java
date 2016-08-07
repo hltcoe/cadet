@@ -116,6 +116,9 @@ public class ResultsHandlerTest {
         public void init(Config config) {}
 
         @Override
+        public void close() {}
+
+        @Override
         public boolean process(SearchResults results) {
             return false;
         }

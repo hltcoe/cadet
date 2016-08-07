@@ -26,6 +26,9 @@ public class MockSearchProvider implements SearchProvider {
     public void init(Config config) {}
 
     @Override
+    public void close() {}
+
+    @Override
     public SearchResults search(SearchQuery searchQuery) throws ServicesException, TException {
         return createMockData(searchQuery);
     }

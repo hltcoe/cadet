@@ -30,6 +30,7 @@ public class BootLoader implements ServletContextListener {
         if (ConfigManager.getInstance().isLearningOn()) {
             shutdownSortServer();
         }
+        ConfigManager.getInstance().close();
     }
 
     private void initConfigManager(ServletContext context) {

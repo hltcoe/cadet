@@ -44,6 +44,13 @@ public class RemoteRetrieverProvider implements RetrieverProvider {
     }
 
     @Override
+    public void close() {
+        if (transport.isOpen()) {
+            transport.close();
+        }
+    }
+
+    @Override
     public RetrieveResults retrieve(RetrieveRequest request) throws ServicesException, TException {
         transport.open();
         RetrieveResults results = client.retrieve(request);

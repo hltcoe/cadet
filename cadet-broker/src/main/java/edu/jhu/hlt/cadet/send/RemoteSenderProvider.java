@@ -40,6 +40,13 @@ public class RemoteSenderProvider implements SenderProvider {
     }
 
     @Override
+    public void close() {
+        if (transport.isOpen()) {
+            transport.close();
+        }
+    }
+
+    @Override
     public void send(Communication communication) throws TException {
         logger.info("Storing Comm Id: " + communication.getId());
         transport.open();

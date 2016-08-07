@@ -45,7 +45,7 @@ public class SqlFeedbackStoreTest {
 
     @After
     public void tearDown() throws Exception {
-        ((SqlFeedbackStore)store).close();
+        store.close();
     }
 
     @Test

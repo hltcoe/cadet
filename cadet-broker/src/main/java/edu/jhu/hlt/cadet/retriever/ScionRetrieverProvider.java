@@ -55,6 +55,9 @@ public class ScionRetrieverProvider implements RetrieverProvider {
     }
 
     @Override
+    public void close() {}
+
+    @Override
     public RetrieveResults retrieve(RetrieveRequest request) throws TException, ServicesException {
 
         if (request.getCommunicationIdsSize() == 0) {

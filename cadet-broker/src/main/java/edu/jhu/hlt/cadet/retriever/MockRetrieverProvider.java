@@ -30,6 +30,9 @@ public class MockRetrieverProvider implements RetrieverProvider {
     public void init(Config config) {}
 
     @Override
+    public void close() {}
+
+    @Override
     public RetrieveResults retrieve(RetrieveRequest request) throws ServicesException, TException {
         RetrieveResults results = new RetrieveResults();
         RandomConcreteFactory factory = new RandomConcreteFactory();

@@ -44,6 +44,13 @@ public class RemoteSearchProvider implements SearchProvider {
     }
 
     @Override
+    public void close() {
+        if (transport.isOpen()) {
+            transport.close();
+        }
+    }
+
+    @Override
     public SearchResults search(SearchQuery searchQuery) throws ServicesException, TException {
         SearchResults results = null;
 

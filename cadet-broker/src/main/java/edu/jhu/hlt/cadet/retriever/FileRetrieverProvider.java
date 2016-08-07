@@ -55,6 +55,9 @@ public class FileRetrieverProvider implements RetrieverProvider {
     }
 
     @Override
+    public void close() {}
+
+    @Override
     public RetrieveResults retrieve(RetrieveRequest request) throws ServicesException, TException {
         RetrieveResults results = new RetrieveResults();
 

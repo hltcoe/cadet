@@ -31,6 +31,9 @@ public class MemoryFeedbackStore implements FeedbackStore {
     public void init(Config config) {}
 
     @Override
+    public void close() {}
+
+    @Override
     public void addSearchResults(SearchResults results) throws ConcreteException {
         validate(results);
         if (isSentenceFeedback(results)) {

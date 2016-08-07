@@ -18,7 +18,9 @@ import edu.jhu.hlt.cadet.send.SenderProvider;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
@@ -57,6 +59,7 @@ public class ConfigManager {
 
     private boolean initialized = false;
     private Config config;
+    private Set<Provider> providers = new HashSet<>();
     private SearchHandler searchHandler;
     private RetrieverHandler retrieverHandler;
     private ResultsHandler resultsHandler;
@@ -79,6 +82,18 @@ public class ConfigManager {
             loadConfig(configFile);
             createDependencies();
             initialized = true;
+        }
+    }
+
+    /**
+     * Shutdown the manager
+     *
+     * Frees any resources allocated during initialization
+     */
+    public void close() {
+        logger.info("Shutting down the ConfigManager and freeing its resources");
+        for (Provider provider : providers) {
+            provider.close();
         }
     }
 
@@ -173,6 +188,7 @@ public class ConfigManager {
         try {
             Provider provider = (Provider)Class.forName(clazz).getConstructors()[0].newInstance();
             provider.init(config);
+            providers.add(provider);
             return provider;
         } catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException | InstantiationException ex) {
             throw new RuntimeException("Cannot construct " + clazz, ex);

@@ -57,6 +57,9 @@ public class FileSenderProvider implements SenderProvider {
     }
 
     @Override
+    public void close() {}
+
+    @Override
     public void send(Communication comm) throws TException {
         logger.info("Storing Comm Id: " + comm.getId());
 

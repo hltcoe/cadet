@@ -12,4 +12,9 @@ public interface Provider {
      * @param config  Config object for this provider
      */
     void init(Config config);
+
+    /**
+     * Must be called after use to give the provider the chance to shutdown
+     */
+    void close();
 }

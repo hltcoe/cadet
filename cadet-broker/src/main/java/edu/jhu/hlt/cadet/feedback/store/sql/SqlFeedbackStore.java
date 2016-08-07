@@ -56,6 +56,11 @@ public class SqlFeedbackStore implements FeedbackStore {
         sessionFactory = dbConfig.buildSessionFactory();
     }
 
+    @Override
+    public void close() {
+        sessionFactory.close();
+    }
+
     private void updateConfig(Configuration dbConfig, Config config, String option) {
         updateConfig(dbConfig, config, option, null);
     }
@@ -66,10 +71,6 @@ public class SqlFeedbackStore implements FeedbackStore {
         } else if (fallback != null) {
             dbConfig.setProperty(option, fallback);
         }
-    }
-
-    public void close() {
-        sessionFactory.close();
     }
 
     @Override

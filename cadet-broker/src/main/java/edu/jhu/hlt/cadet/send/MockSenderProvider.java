@@ -19,6 +19,9 @@ public class MockSenderProvider implements SenderProvider {
     public void init(Config config) {}
 
     @Override
+    public void close() {}
+
+    @Override
     public void send(Communication communication) throws TException {
         logger.info("Storing Comm Id: " + communication.getId());
     }
