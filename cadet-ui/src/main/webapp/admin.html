@@ -32,6 +32,39 @@
     // Global variables
     var CONFIG_INFO_TABLE;
 
+
+    function showSearchCapabilities() {
+        var capabilities;
+        try {
+            capabilities = CADET.search.getCapabilities();
+        }
+        catch (error) {
+            // TODO: Don't ignore error
+            return;
+        }
+        for (var i = 0; i < capabilities.length; i++) {
+            $('#capability_list').append(
+                $('<li>').text(
+                    CADET.getSearchTypeString(capabilities[i].type) + ': ' +
+                    capabilities[i].lang));
+        }
+    }
+
+    function showSearchCorpora() {
+        var corpora;
+        try {
+            corpora = CADET.search.getCorpora();
+        }
+        catch (error) {
+            // TODO: Don't ignore error
+            return;
+        }
+        for (var i = 0; i < corpora.length; i++) {
+            $('#corpora_list').append(
+                $('<li>').text(corpora[i]));
+        }
+    }
+
     $(document).ready(function() {
         CADET.init();
 
@@ -125,6 +158,9 @@
             }
             CONFIG_INFO_TABLE.draw();
         });
+
+        showSearchCapabilities();
+        showSearchCorpora();
     });
     </script>
 </head>
@@ -137,8 +173,25 @@
 
         <hr />
 
+        <h2>Service Info</h2>
+
         <div id="config_info">
             <table id="config_info_table" class="display"></table>
         </div>
+
+        <hr />
+
+        <h2>Search Info</h2>
+
+        <h4>Capabilities</h4>
+        <div>
+            <ul id="capability_list"></ul>
+        </div>
+
+        <h4>Corpora:</h4>
+        <div>
+            <ul id="corpora_list"></ul>
+        </div>
+
     </div><!-- /.container-fluid -->
 </body>
