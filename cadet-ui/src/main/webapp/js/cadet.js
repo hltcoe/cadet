@@ -4,7 +4,7 @@
 
 /* globals AnnotationTaskType, FeedbackClient, RetrieverClient,
            ResultsServerClient, RetrieveRequest, SearchClient,
-           SearchQuery, SearchType, Thrift
+           SearchQuery, SearchType, SenderClient, Thrift
 */
 
 var CADET = {
@@ -129,6 +129,34 @@ var CADET = {
         }
         // returns a list of communication IDs
         return idList;
+    },
+
+    /** Get human readable string describing SearchType
+     * @param {SearchType} searchType
+     * @returns {String}
+     */
+    getSearchTypeString: function(searchType) {
+        if (searchType === SearchType.COMMUNICATIONS) {
+            return 'COMMUNICATIONS';
+        }
+        else if (searchType === SearchType.SECTIONS) {
+            return 'SECTIONS';
+        }
+        else if (searchType === SearchType.SENTENCES) {
+            return 'SENTENCES';
+        }
+        else if (searchType === SearchType.ENTITIES) {
+            return 'ENTITIES';
+        }
+        else if (searchType === SearchType.ENTITY_MENTIONS) {
+            return 'ENTITY_MENTIONS';
+        }
+        else if (searchType === SearchType.SITUATIONS) {
+            return 'SITUATIONS';
+        }
+        else if (searchType === SearchType.SITUATION_MENTIONS) {
+            return 'SITUATION_MENTIONS';
+        }
     },
 
     init: function() {
