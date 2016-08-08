@@ -4329,6 +4329,76 @@ SearchFeedback = {
   'NONE' : 0,
   'POSITIVE' : 1
 };
+SearchCapability = function(args) {
+  this.type = null;
+  this.lang = null;
+  if (args) {
+    if (args.type !== undefined && args.type !== null) {
+      this.type = args.type;
+    } else {
+      throw new Thrift.TProtocolException(Thrift.TProtocolExceptionType.UNKNOWN, 'Required field type is unset!');
+    }
+    if (args.lang !== undefined && args.lang !== null) {
+      this.lang = args.lang;
+    } else {
+      throw new Thrift.TProtocolException(Thrift.TProtocolExceptionType.UNKNOWN, 'Required field lang is unset!');
+    }
+  }
+};
+SearchCapability.prototype = {};
+SearchCapability.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.I32) {
+        this.type = input.readI32().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 2:
+      if (ftype == Thrift.Type.STRING) {
+        this.lang = input.readString().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+SearchCapability.prototype.write = function(output) {
+  output.writeStructBegin('SearchCapability');
+  if (this.type !== null && this.type !== undefined) {
+    output.writeFieldBegin('type', Thrift.Type.I32, 1);
+    output.writeI32(this.type);
+    output.writeFieldEnd();
+  }
+  if (this.lang !== null && this.lang !== undefined) {
+    output.writeFieldBegin('lang', Thrift.Type.STRING, 2);
+    output.writeString(this.lang);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
 SearchQuery = function(args) {
   this.terms = null;
   this.questions = null;
@@ -4340,6 +4410,8 @@ SearchQuery = function(args) {
   this.name = null;
   this.labels = null;
   this.type = null;
+  this.lang = null;
+  this.corpus = null;
   if (args) {
     if (args.terms !== undefined && args.terms !== null) {
       this.terms = Thrift.copyList(args.terms, [null]);
@@ -4372,6 +4444,12 @@ SearchQuery = function(args) {
       this.type = args.type;
     } else {
       throw new Thrift.TProtocolException(Thrift.TProtocolExceptionType.UNKNOWN, 'Required field type is unset!');
+    }
+    if (args.lang !== undefined && args.lang !== null) {
+      this.lang = args.lang;
+    }
+    if (args.corpus !== undefined && args.corpus !== null) {
+      this.corpus = args.corpus;
     }
   }
 };
@@ -4499,6 +4577,20 @@ SearchQuery.prototype.read = function(input) {
         input.skip(ftype);
       }
       break;
+      case 11:
+      if (ftype == Thrift.Type.STRING) {
+        this.lang = input.readString().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 12:
+      if (ftype == Thrift.Type.STRING) {
+        this.corpus = input.readString().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
       default:
         input.skip(ftype);
     }
@@ -4585,6 +4677,16 @@ SearchQuery.prototype.write = function(output) {
   if (this.type !== null && this.type !== undefined) {
     output.writeFieldBegin('type', Thrift.Type.I32, 10);
     output.writeI32(this.type);
+    output.writeFieldEnd();
+  }
+  if (this.lang !== null && this.lang !== undefined) {
+    output.writeFieldBegin('lang', Thrift.Type.STRING, 11);
+    output.writeString(this.lang);
+    output.writeFieldEnd();
+  }
+  if (this.corpus !== null && this.corpus !== undefined) {
+    output.writeFieldBegin('corpus', Thrift.Type.STRING, 12);
+    output.writeString(this.corpus);
     output.writeFieldEnd();
   }
   output.writeFieldStop();
@@ -4697,6 +4799,7 @@ SearchResults = function(args) {
   this.searchQuery = null;
   this.searchResults = null;
   this.metadata = null;
+  this.lang = null;
   if (args) {
     if (args.uuid !== undefined && args.uuid !== null) {
       this.uuid = new UUID(args.uuid);
@@ -4713,6 +4816,9 @@ SearchResults = function(args) {
     }
     if (args.metadata !== undefined && args.metadata !== null) {
       this.metadata = new AnnotationMetadata(args.metadata);
+    }
+    if (args.lang !== undefined && args.lang !== null) {
+      this.lang = args.lang;
     }
   }
 };
@@ -4775,6 +4881,13 @@ SearchResults.prototype.read = function(input) {
         input.skip(ftype);
       }
       break;
+      case 5:
+      if (ftype == Thrift.Type.STRING) {
+        this.lang = input.readString().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
       default:
         input.skip(ftype);
     }
@@ -4813,6 +4926,11 @@ SearchResults.prototype.write = function(output) {
   if (this.metadata !== null && this.metadata !== undefined) {
     output.writeFieldBegin('metadata', Thrift.Type.STRUCT, 4);
     this.metadata.write(output);
+    output.writeFieldEnd();
+  }
+  if (this.lang !== null && this.lang !== undefined) {
+    output.writeFieldBegin('lang', Thrift.Type.STRING, 5);
+    output.writeString(this.lang);
     output.writeFieldEnd();
   }
   output.writeFieldStop();
@@ -4955,6 +5073,249 @@ Search_search_result.prototype.write = function(output) {
   return;
 };
 
+Search_getCapabilities_args = function(args) {
+};
+Search_getCapabilities_args.prototype = {};
+Search_getCapabilities_args.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    input.skip(ftype);
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+Search_getCapabilities_args.prototype.write = function(output) {
+  output.writeStructBegin('Search_getCapabilities_args');
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+Search_getCapabilities_result = function(args) {
+  this.success = null;
+  this.ex = null;
+  if (args instanceof ServicesException) {
+    this.ex = args;
+    return;
+  }
+  if (args) {
+    if (args.success !== undefined && args.success !== null) {
+      this.success = Thrift.copyList(args.success, [SearchCapability]);
+    }
+    if (args.ex !== undefined && args.ex !== null) {
+      this.ex = args.ex;
+    }
+  }
+};
+Search_getCapabilities_result.prototype = {};
+Search_getCapabilities_result.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 0:
+      if (ftype == Thrift.Type.LIST) {
+        var _size32 = 0;
+        var _rtmp336;
+        this.success = [];
+        var _etype35 = 0;
+        _rtmp336 = input.readListBegin();
+        _etype35 = _rtmp336.etype;
+        _size32 = _rtmp336.size;
+        for (var _i37 = 0; _i37 < _size32; ++_i37)
+        {
+          var elem38 = null;
+          elem38 = new SearchCapability();
+          elem38.read(input);
+          this.success.push(elem38);
+        }
+        input.readListEnd();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 1:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.ex = new ServicesException();
+        this.ex.read(input);
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+Search_getCapabilities_result.prototype.write = function(output) {
+  output.writeStructBegin('Search_getCapabilities_result');
+  if (this.success !== null && this.success !== undefined) {
+    output.writeFieldBegin('success', Thrift.Type.LIST, 0);
+    output.writeListBegin(Thrift.Type.STRUCT, this.success.length);
+    for (var iter39 in this.success)
+    {
+      if (this.success.hasOwnProperty(iter39))
+      {
+        iter39 = this.success[iter39];
+        iter39.write(output);
+      }
+    }
+    output.writeListEnd();
+    output.writeFieldEnd();
+  }
+  if (this.ex !== null && this.ex !== undefined) {
+    output.writeFieldBegin('ex', Thrift.Type.STRUCT, 1);
+    this.ex.write(output);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+Search_getCorpora_args = function(args) {
+};
+Search_getCorpora_args.prototype = {};
+Search_getCorpora_args.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    input.skip(ftype);
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+Search_getCorpora_args.prototype.write = function(output) {
+  output.writeStructBegin('Search_getCorpora_args');
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+Search_getCorpora_result = function(args) {
+  this.success = null;
+  this.ex = null;
+  if (args instanceof ServicesException) {
+    this.ex = args;
+    return;
+  }
+  if (args) {
+    if (args.success !== undefined && args.success !== null) {
+      this.success = Thrift.copyList(args.success, [null]);
+    }
+    if (args.ex !== undefined && args.ex !== null) {
+      this.ex = args.ex;
+    }
+  }
+};
+Search_getCorpora_result.prototype = {};
+Search_getCorpora_result.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 0:
+      if (ftype == Thrift.Type.LIST) {
+        var _size40 = 0;
+        var _rtmp344;
+        this.success = [];
+        var _etype43 = 0;
+        _rtmp344 = input.readListBegin();
+        _etype43 = _rtmp344.etype;
+        _size40 = _rtmp344.size;
+        for (var _i45 = 0; _i45 < _size40; ++_i45)
+        {
+          var elem46 = null;
+          elem46 = input.readString().value;
+          this.success.push(elem46);
+        }
+        input.readListEnd();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 1:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.ex = new ServicesException();
+        this.ex.read(input);
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+Search_getCorpora_result.prototype.write = function(output) {
+  output.writeStructBegin('Search_getCorpora_result');
+  if (this.success !== null && this.success !== undefined) {
+    output.writeFieldBegin('success', Thrift.Type.LIST, 0);
+    output.writeListBegin(Thrift.Type.STRING, this.success.length);
+    for (var iter47 in this.success)
+    {
+      if (this.success.hasOwnProperty(iter47))
+      {
+        iter47 = this.success[iter47];
+        output.writeString(iter47);
+      }
+    }
+    output.writeListEnd();
+    output.writeFieldEnd();
+  }
+  if (this.ex !== null && this.ex !== undefined) {
+    output.writeFieldBegin('ex', Thrift.Type.STRUCT, 1);
+    this.ex.write(output);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
 SearchClient = function(input, output) {
     this.input = input;
     this.output = (!output) ? input : output;
@@ -5003,6 +5364,830 @@ SearchClient.prototype.recv_search = function() {
     return result.success;
   }
   throw 'search failed: unknown result';
+};
+SearchClient.prototype.getCapabilities = function(callback) {
+  if (callback === undefined) {
+    this.send_getCapabilities();
+    return this.recv_getCapabilities();
+  } else {
+    var postData = this.send_getCapabilities(true);
+    return this.output.getTransport()
+      .jqRequest(this, postData, arguments, this.recv_getCapabilities);
+  }
+};
+
+SearchClient.prototype.send_getCapabilities = function(callback) {
+  this.output.writeMessageBegin('getCapabilities', Thrift.MessageType.CALL, this.seqid);
+  var args = new Search_getCapabilities_args();
+  args.write(this.output);
+  this.output.writeMessageEnd();
+  return this.output.getTransport().flush(callback);
+};
+
+SearchClient.prototype.recv_getCapabilities = function() {
+  var ret = this.input.readMessageBegin();
+  var fname = ret.fname;
+  var mtype = ret.mtype;
+  var rseqid = ret.rseqid;
+  if (mtype == Thrift.MessageType.EXCEPTION) {
+    var x = new Thrift.TApplicationException();
+    x.read(this.input);
+    this.input.readMessageEnd();
+    throw x;
+  }
+  var result = new Search_getCapabilities_result();
+  result.read(this.input);
+  this.input.readMessageEnd();
+
+  if (null !== result.ex) {
+    throw result.ex;
+  }
+  if (null !== result.success) {
+    return result.success;
+  }
+  throw 'getCapabilities failed: unknown result';
+};
+SearchClient.prototype.getCorpora = function(callback) {
+  if (callback === undefined) {
+    this.send_getCorpora();
+    return this.recv_getCorpora();
+  } else {
+    var postData = this.send_getCorpora(true);
+    return this.output.getTransport()
+      .jqRequest(this, postData, arguments, this.recv_getCorpora);
+  }
+};
+
+SearchClient.prototype.send_getCorpora = function(callback) {
+  this.output.writeMessageBegin('getCorpora', Thrift.MessageType.CALL, this.seqid);
+  var args = new Search_getCorpora_args();
+  args.write(this.output);
+  this.output.writeMessageEnd();
+  return this.output.getTransport().flush(callback);
+};
+
+SearchClient.prototype.recv_getCorpora = function() {
+  var ret = this.input.readMessageBegin();
+  var fname = ret.fname;
+  var mtype = ret.mtype;
+  var rseqid = ret.rseqid;
+  if (mtype == Thrift.MessageType.EXCEPTION) {
+    var x = new Thrift.TApplicationException();
+    x.read(this.input);
+    this.input.readMessageEnd();
+    throw x;
+  }
+  var result = new Search_getCorpora_result();
+  result.read(this.input);
+  this.input.readMessageEnd();
+
+  if (null !== result.ex) {
+    throw result.ex;
+  }
+  if (null !== result.success) {
+    return result.success;
+  }
+  throw 'getCorpora failed: unknown result';
+};
+;//
+// Autogenerated by Thrift Compiler (0.9.3)
+//
+// DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
+//
+
+
+//HELPER FUNCTIONS AND STRUCTURES
+
+SearchProxy_search_args = function(args) {
+  this.query = null;
+  this.provider = null;
+  if (args) {
+    if (args.query !== undefined && args.query !== null) {
+      this.query = new SearchQuery(args.query);
+    }
+    if (args.provider !== undefined && args.provider !== null) {
+      this.provider = args.provider;
+    }
+  }
+};
+SearchProxy_search_args.prototype = {};
+SearchProxy_search_args.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.query = new SearchQuery();
+        this.query.read(input);
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 2:
+      if (ftype == Thrift.Type.STRING) {
+        this.provider = input.readString().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+SearchProxy_search_args.prototype.write = function(output) {
+  output.writeStructBegin('SearchProxy_search_args');
+  if (this.query !== null && this.query !== undefined) {
+    output.writeFieldBegin('query', Thrift.Type.STRUCT, 1);
+    this.query.write(output);
+    output.writeFieldEnd();
+  }
+  if (this.provider !== null && this.provider !== undefined) {
+    output.writeFieldBegin('provider', Thrift.Type.STRING, 2);
+    output.writeString(this.provider);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+SearchProxy_search_result = function(args) {
+  this.success = null;
+  this.ex = null;
+  if (args instanceof ServicesException) {
+    this.ex = args;
+    return;
+  }
+  if (args) {
+    if (args.success !== undefined && args.success !== null) {
+      this.success = new SearchResults(args.success);
+    }
+    if (args.ex !== undefined && args.ex !== null) {
+      this.ex = args.ex;
+    }
+  }
+};
+SearchProxy_search_result.prototype = {};
+SearchProxy_search_result.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 0:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.success = new SearchResults();
+        this.success.read(input);
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 1:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.ex = new ServicesException();
+        this.ex.read(input);
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+SearchProxy_search_result.prototype.write = function(output) {
+  output.writeStructBegin('SearchProxy_search_result');
+  if (this.success !== null && this.success !== undefined) {
+    output.writeFieldBegin('success', Thrift.Type.STRUCT, 0);
+    this.success.write(output);
+    output.writeFieldEnd();
+  }
+  if (this.ex !== null && this.ex !== undefined) {
+    output.writeFieldBegin('ex', Thrift.Type.STRUCT, 1);
+    this.ex.write(output);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+SearchProxy_getProviders_args = function(args) {
+};
+SearchProxy_getProviders_args.prototype = {};
+SearchProxy_getProviders_args.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    input.skip(ftype);
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+SearchProxy_getProviders_args.prototype.write = function(output) {
+  output.writeStructBegin('SearchProxy_getProviders_args');
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+SearchProxy_getProviders_result = function(args) {
+  this.success = null;
+  this.ex = null;
+  if (args instanceof ServicesException) {
+    this.ex = args;
+    return;
+  }
+  if (args) {
+    if (args.success !== undefined && args.success !== null) {
+      this.success = Thrift.copyList(args.success, [null]);
+    }
+    if (args.ex !== undefined && args.ex !== null) {
+      this.ex = args.ex;
+    }
+  }
+};
+SearchProxy_getProviders_result.prototype = {};
+SearchProxy_getProviders_result.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 0:
+      if (ftype == Thrift.Type.LIST) {
+        var _size48 = 0;
+        var _rtmp352;
+        this.success = [];
+        var _etype51 = 0;
+        _rtmp352 = input.readListBegin();
+        _etype51 = _rtmp352.etype;
+        _size48 = _rtmp352.size;
+        for (var _i53 = 0; _i53 < _size48; ++_i53)
+        {
+          var elem54 = null;
+          elem54 = input.readString().value;
+          this.success.push(elem54);
+        }
+        input.readListEnd();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 1:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.ex = new ServicesException();
+        this.ex.read(input);
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+SearchProxy_getProviders_result.prototype.write = function(output) {
+  output.writeStructBegin('SearchProxy_getProviders_result');
+  if (this.success !== null && this.success !== undefined) {
+    output.writeFieldBegin('success', Thrift.Type.LIST, 0);
+    output.writeListBegin(Thrift.Type.STRING, this.success.length);
+    for (var iter55 in this.success)
+    {
+      if (this.success.hasOwnProperty(iter55))
+      {
+        iter55 = this.success[iter55];
+        output.writeString(iter55);
+      }
+    }
+    output.writeListEnd();
+    output.writeFieldEnd();
+  }
+  if (this.ex !== null && this.ex !== undefined) {
+    output.writeFieldBegin('ex', Thrift.Type.STRUCT, 1);
+    this.ex.write(output);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+SearchProxy_getCapabilities_args = function(args) {
+  this.provider = null;
+  if (args) {
+    if (args.provider !== undefined && args.provider !== null) {
+      this.provider = args.provider;
+    }
+  }
+};
+SearchProxy_getCapabilities_args.prototype = {};
+SearchProxy_getCapabilities_args.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.STRING) {
+        this.provider = input.readString().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 0:
+        input.skip(ftype);
+        break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+SearchProxy_getCapabilities_args.prototype.write = function(output) {
+  output.writeStructBegin('SearchProxy_getCapabilities_args');
+  if (this.provider !== null && this.provider !== undefined) {
+    output.writeFieldBegin('provider', Thrift.Type.STRING, 1);
+    output.writeString(this.provider);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+SearchProxy_getCapabilities_result = function(args) {
+  this.success = null;
+  this.ex = null;
+  if (args instanceof ServicesException) {
+    this.ex = args;
+    return;
+  }
+  if (args) {
+    if (args.success !== undefined && args.success !== null) {
+      this.success = Thrift.copyList(args.success, [SearchCapability]);
+    }
+    if (args.ex !== undefined && args.ex !== null) {
+      this.ex = args.ex;
+    }
+  }
+};
+SearchProxy_getCapabilities_result.prototype = {};
+SearchProxy_getCapabilities_result.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 0:
+      if (ftype == Thrift.Type.LIST) {
+        var _size56 = 0;
+        var _rtmp360;
+        this.success = [];
+        var _etype59 = 0;
+        _rtmp360 = input.readListBegin();
+        _etype59 = _rtmp360.etype;
+        _size56 = _rtmp360.size;
+        for (var _i61 = 0; _i61 < _size56; ++_i61)
+        {
+          var elem62 = null;
+          elem62 = new SearchCapability();
+          elem62.read(input);
+          this.success.push(elem62);
+        }
+        input.readListEnd();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 1:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.ex = new ServicesException();
+        this.ex.read(input);
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+SearchProxy_getCapabilities_result.prototype.write = function(output) {
+  output.writeStructBegin('SearchProxy_getCapabilities_result');
+  if (this.success !== null && this.success !== undefined) {
+    output.writeFieldBegin('success', Thrift.Type.LIST, 0);
+    output.writeListBegin(Thrift.Type.STRUCT, this.success.length);
+    for (var iter63 in this.success)
+    {
+      if (this.success.hasOwnProperty(iter63))
+      {
+        iter63 = this.success[iter63];
+        iter63.write(output);
+      }
+    }
+    output.writeListEnd();
+    output.writeFieldEnd();
+  }
+  if (this.ex !== null && this.ex !== undefined) {
+    output.writeFieldBegin('ex', Thrift.Type.STRUCT, 1);
+    this.ex.write(output);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+SearchProxy_getCorpora_args = function(args) {
+  this.provider = null;
+  if (args) {
+    if (args.provider !== undefined && args.provider !== null) {
+      this.provider = args.provider;
+    }
+  }
+};
+SearchProxy_getCorpora_args.prototype = {};
+SearchProxy_getCorpora_args.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+      if (ftype == Thrift.Type.STRING) {
+        this.provider = input.readString().value;
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 0:
+        input.skip(ftype);
+        break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+SearchProxy_getCorpora_args.prototype.write = function(output) {
+  output.writeStructBegin('SearchProxy_getCorpora_args');
+  if (this.provider !== null && this.provider !== undefined) {
+    output.writeFieldBegin('provider', Thrift.Type.STRING, 1);
+    output.writeString(this.provider);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+SearchProxy_getCorpora_result = function(args) {
+  this.success = null;
+  this.ex = null;
+  if (args instanceof ServicesException) {
+    this.ex = args;
+    return;
+  }
+  if (args) {
+    if (args.success !== undefined && args.success !== null) {
+      this.success = Thrift.copyList(args.success, [null]);
+    }
+    if (args.ex !== undefined && args.ex !== null) {
+      this.ex = args.ex;
+    }
+  }
+};
+SearchProxy_getCorpora_result.prototype = {};
+SearchProxy_getCorpora_result.prototype.read = function(input) {
+  input.readStructBegin();
+  while (true)
+  {
+    var ret = input.readFieldBegin();
+    var fname = ret.fname;
+    var ftype = ret.ftype;
+    var fid = ret.fid;
+    if (ftype == Thrift.Type.STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 0:
+      if (ftype == Thrift.Type.LIST) {
+        var _size64 = 0;
+        var _rtmp368;
+        this.success = [];
+        var _etype67 = 0;
+        _rtmp368 = input.readListBegin();
+        _etype67 = _rtmp368.etype;
+        _size64 = _rtmp368.size;
+        for (var _i69 = 0; _i69 < _size64; ++_i69)
+        {
+          var elem70 = null;
+          elem70 = input.readString().value;
+          this.success.push(elem70);
+        }
+        input.readListEnd();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 1:
+      if (ftype == Thrift.Type.STRUCT) {
+        this.ex = new ServicesException();
+        this.ex.read(input);
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      default:
+        input.skip(ftype);
+    }
+    input.readFieldEnd();
+  }
+  input.readStructEnd();
+  return;
+};
+
+SearchProxy_getCorpora_result.prototype.write = function(output) {
+  output.writeStructBegin('SearchProxy_getCorpora_result');
+  if (this.success !== null && this.success !== undefined) {
+    output.writeFieldBegin('success', Thrift.Type.LIST, 0);
+    output.writeListBegin(Thrift.Type.STRING, this.success.length);
+    for (var iter71 in this.success)
+    {
+      if (this.success.hasOwnProperty(iter71))
+      {
+        iter71 = this.success[iter71];
+        output.writeString(iter71);
+      }
+    }
+    output.writeListEnd();
+    output.writeFieldEnd();
+  }
+  if (this.ex !== null && this.ex !== undefined) {
+    output.writeFieldBegin('ex', Thrift.Type.STRUCT, 1);
+    this.ex.write(output);
+    output.writeFieldEnd();
+  }
+  output.writeFieldStop();
+  output.writeStructEnd();
+  return;
+};
+
+SearchProxyClient = function(input, output) {
+    this.input = input;
+    this.output = (!output) ? input : output;
+    this.seqid = 0;
+};
+Thrift.inherits(SearchProxyClient, ServiceClient);
+SearchProxyClient.prototype.search = function(query, provider, callback) {
+  if (callback === undefined) {
+    this.send_search(query, provider);
+    return this.recv_search();
+  } else {
+    var postData = this.send_search(query, provider, true);
+    return this.output.getTransport()
+      .jqRequest(this, postData, arguments, this.recv_search);
+  }
+};
+
+SearchProxyClient.prototype.send_search = function(query, provider, callback) {
+  this.output.writeMessageBegin('search', Thrift.MessageType.CALL, this.seqid);
+  var args = new SearchProxy_search_args();
+  args.query = query;
+  args.provider = provider;
+  args.write(this.output);
+  this.output.writeMessageEnd();
+  return this.output.getTransport().flush(callback);
+};
+
+SearchProxyClient.prototype.recv_search = function() {
+  var ret = this.input.readMessageBegin();
+  var fname = ret.fname;
+  var mtype = ret.mtype;
+  var rseqid = ret.rseqid;
+  if (mtype == Thrift.MessageType.EXCEPTION) {
+    var x = new Thrift.TApplicationException();
+    x.read(this.input);
+    this.input.readMessageEnd();
+    throw x;
+  }
+  var result = new SearchProxy_search_result();
+  result.read(this.input);
+  this.input.readMessageEnd();
+
+  if (null !== result.ex) {
+    throw result.ex;
+  }
+  if (null !== result.success) {
+    return result.success;
+  }
+  throw 'search failed: unknown result';
+};
+SearchProxyClient.prototype.getProviders = function(callback) {
+  if (callback === undefined) {
+    this.send_getProviders();
+    return this.recv_getProviders();
+  } else {
+    var postData = this.send_getProviders(true);
+    return this.output.getTransport()
+      .jqRequest(this, postData, arguments, this.recv_getProviders);
+  }
+};
+
+SearchProxyClient.prototype.send_getProviders = function(callback) {
+  this.output.writeMessageBegin('getProviders', Thrift.MessageType.CALL, this.seqid);
+  var args = new SearchProxy_getProviders_args();
+  args.write(this.output);
+  this.output.writeMessageEnd();
+  return this.output.getTransport().flush(callback);
+};
+
+SearchProxyClient.prototype.recv_getProviders = function() {
+  var ret = this.input.readMessageBegin();
+  var fname = ret.fname;
+  var mtype = ret.mtype;
+  var rseqid = ret.rseqid;
+  if (mtype == Thrift.MessageType.EXCEPTION) {
+    var x = new Thrift.TApplicationException();
+    x.read(this.input);
+    this.input.readMessageEnd();
+    throw x;
+  }
+  var result = new SearchProxy_getProviders_result();
+  result.read(this.input);
+  this.input.readMessageEnd();
+
+  if (null !== result.ex) {
+    throw result.ex;
+  }
+  if (null !== result.success) {
+    return result.success;
+  }
+  throw 'getProviders failed: unknown result';
+};
+SearchProxyClient.prototype.getCapabilities = function(provider, callback) {
+  if (callback === undefined) {
+    this.send_getCapabilities(provider);
+    return this.recv_getCapabilities();
+  } else {
+    var postData = this.send_getCapabilities(provider, true);
+    return this.output.getTransport()
+      .jqRequest(this, postData, arguments, this.recv_getCapabilities);
+  }
+};
+
+SearchProxyClient.prototype.send_getCapabilities = function(provider, callback) {
+  this.output.writeMessageBegin('getCapabilities', Thrift.MessageType.CALL, this.seqid);
+  var args = new SearchProxy_getCapabilities_args();
+  args.provider = provider;
+  args.write(this.output);
+  this.output.writeMessageEnd();
+  return this.output.getTransport().flush(callback);
+};
+
+SearchProxyClient.prototype.recv_getCapabilities = function() {
+  var ret = this.input.readMessageBegin();
+  var fname = ret.fname;
+  var mtype = ret.mtype;
+  var rseqid = ret.rseqid;
+  if (mtype == Thrift.MessageType.EXCEPTION) {
+    var x = new Thrift.TApplicationException();
+    x.read(this.input);
+    this.input.readMessageEnd();
+    throw x;
+  }
+  var result = new SearchProxy_getCapabilities_result();
+  result.read(this.input);
+  this.input.readMessageEnd();
+
+  if (null !== result.ex) {
+    throw result.ex;
+  }
+  if (null !== result.success) {
+    return result.success;
+  }
+  throw 'getCapabilities failed: unknown result';
+};
+SearchProxyClient.prototype.getCorpora = function(provider, callback) {
+  if (callback === undefined) {
+    this.send_getCorpora(provider);
+    return this.recv_getCorpora();
+  } else {
+    var postData = this.send_getCorpora(provider, true);
+    return this.output.getTransport()
+      .jqRequest(this, postData, arguments, this.recv_getCorpora);
+  }
+};
+
+SearchProxyClient.prototype.send_getCorpora = function(provider, callback) {
+  this.output.writeMessageBegin('getCorpora', Thrift.MessageType.CALL, this.seqid);
+  var args = new SearchProxy_getCorpora_args();
+  args.provider = provider;
+  args.write(this.output);
+  this.output.writeMessageEnd();
+  return this.output.getTransport().flush(callback);
+};
+
+SearchProxyClient.prototype.recv_getCorpora = function() {
+  var ret = this.input.readMessageBegin();
+  var fname = ret.fname;
+  var mtype = ret.mtype;
+  var rseqid = ret.rseqid;
+  if (mtype == Thrift.MessageType.EXCEPTION) {
+    var x = new Thrift.TApplicationException();
+    x.read(this.input);
+    this.input.readMessageEnd();
+    throw x;
+  }
+  var result = new SearchProxy_getCorpora_result();
+  result.read(this.input);
+  this.input.readMessageEnd();
+
+  if (null !== result.ex) {
+    throw result.ex;
+  }
+  if (null !== result.success) {
+    return result.success;
+  }
+  throw 'getCorpora failed: unknown result';
 };
 ;//
 // Autogenerated by Thrift Compiler (0.9.3)
