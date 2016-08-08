@@ -85,14 +85,14 @@
 
                 var provider;
                 var providerInfo;
-                if (config.servlets[services[i]].hasOwnProperty('provider')) {
-                    provider = config.servlets[services[i]].provider;
+                if (config.cadet[services[i]].hasOwnProperty('provider')) {
+                    provider = config.cadet[services[i]].provider;
                     if (provider.includes('Remote') &&
-                        config.servlets[services[i]].hasOwnProperty('host') &&
-                        config.servlets[services[i]].hasOwnProperty('port'))
+                        config.cadet[services[i]].hasOwnProperty('host') &&
+                        config.cadet[services[i]].hasOwnProperty('port'))
                     {
-                        providerInfo = config.servlets[services[i]].host + ':' +
-                                       config.servlets[services[i]].port;
+                        providerInfo = config.cadet[services[i]].host + ':' +
+                                       config.cadet[services[i]].port;
                     }
                     else {
                         providerInfo = '';
