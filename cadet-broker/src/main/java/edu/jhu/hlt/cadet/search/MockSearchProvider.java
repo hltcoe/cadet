@@ -1,6 +1,8 @@
 package edu.jhu.hlt.cadet.search;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.thrift.TException;
@@ -9,6 +11,7 @@ import com.typesafe.config.Config;
 
 import edu.jhu.hlt.concrete.AnnotationMetadata;
 import edu.jhu.hlt.concrete.UUID;
+import edu.jhu.hlt.concrete.search.SearchCapability;
 import edu.jhu.hlt.concrete.search.SearchQuery;
 import edu.jhu.hlt.concrete.search.SearchResult;
 import edu.jhu.hlt.concrete.search.SearchResults;
@@ -81,5 +84,29 @@ public class MockSearchProvider implements SearchProvider {
     @Override
     public ServiceInfo about() throws TException {
         return new ServiceInfo(this.getClass().getSimpleName(), "1.0.0");
+    }
+
+    @Override
+    public List<SearchCapability> getCapabilities() throws ServicesException {
+	List<SearchCapability> capabilities = new ArrayList<SearchCapability>();
+
+	SearchCapability communicationsCapability = new SearchCapability();
+	communicationsCapability.setLang("eng");
+	communicationsCapability.setType(SearchType.COMMUNICATIONS);
+	capabilities.add(communicationsCapability);
+
+	SearchCapability sentencesCapability = new SearchCapability();
+	sentencesCapability.setLang("eng");
+	sentencesCapability.setType(SearchType.SENTENCES);
+	capabilities.add(sentencesCapability);
+
+	return capabilities;
+    }
+
+    @Override
+    public List<String> getCorpora() throws ServicesException {
+	List<String> corpora = new ArrayList<String>();
+	corpora.add("MockCorpora");
+	return corpora;
     }
 }

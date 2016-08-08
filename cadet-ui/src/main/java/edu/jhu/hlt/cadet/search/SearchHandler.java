@@ -1,12 +1,14 @@
 package edu.jhu.hlt.cadet.search;
 
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.jhu.hlt.concrete.search.Search;
+import edu.jhu.hlt.concrete.search.SearchCapability;
 import edu.jhu.hlt.concrete.search.SearchQuery;
 import edu.jhu.hlt.concrete.search.SearchResult;
 import edu.jhu.hlt.concrete.search.SearchResults;
@@ -91,6 +93,16 @@ public class SearchHandler implements Search.Iface {
     @Override
     public boolean alive() throws TException {
         return searchProvider.alive();
+    }
+
+    @Override
+    public List<SearchCapability> getCapabilities() throws ServicesException, TException {
+	return searchProvider.getCapabilities();
+    }
+
+    @Override
+    public List<String> getCorpora() throws ServicesException, TException {
+	return searchProvider.getCorpora();
     }
 
 }
