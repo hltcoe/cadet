@@ -13,6 +13,7 @@ var CADET = {
     retrieve: undefined,  // alias for retriever
     retriever: undefined,
     search: undefined,
+    search_proxy: undefined,
     send: undefined,
     results: undefined,
 
@@ -172,6 +173,10 @@ var CADET = {
         var search_transport = new Thrift.Transport('SearchServlet');
         var search_protocol = new Thrift.Protocol(search_transport);
         this.search = new SearchClient(search_protocol);
+
+        var search_proxy_transport = new Thrift.Transport('SearchProxyServlet');
+        var search_proxy_protocol = new Thrift.Protocol(search_proxy_transport);
+        this.search_proxy = new SearchProxyClient(search_proxy_protocol);
 
         var send_transport = new Thrift.Transport('SenderServlet');
         var send_protocol = new Thrift.Protocol(send_transport);

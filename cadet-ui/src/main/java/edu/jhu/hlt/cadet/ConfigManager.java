@@ -13,6 +13,7 @@ import edu.jhu.hlt.cadet.retriever.RetrieverHandler;
 import edu.jhu.hlt.cadet.retriever.RetrieverProvider;
 import edu.jhu.hlt.cadet.search.SearchHandler;
 import edu.jhu.hlt.cadet.search.SearchProvider;
+import edu.jhu.hlt.cadet.search.SearchProxyHandler;
 import edu.jhu.hlt.cadet.send.SenderHandler;
 import edu.jhu.hlt.cadet.send.SenderProvider;
 
@@ -61,6 +62,7 @@ public class ConfigManager {
     private Config config;
     private Set<Provider> providers = new HashSet<>();
     private SearchHandler searchHandler;
+    private SearchProxyHandler searchProxyHandler;
     private RetrieverHandler retrieverHandler;
     private ResultsHandler resultsHandler;
     private FeedbackHandler feedbackHandler;
@@ -127,6 +129,9 @@ public class ConfigManager {
         String spName = config.getString(CadetConfig.SEARCH_PROVIDER);
         SearchProvider sp = (SearchProvider)constructProvider(spName);
         searchHandler.init(sp);
+
+        searchProxyHandler = new SearchProxyHandler();
+        searchProxyHandler.init(sp);
 
         retrieverHandler = new RetrieverHandler();
         String rpName = config.getString(CadetConfig.RETRIEVE_PROVIDER);
@@ -227,6 +232,16 @@ public class ConfigManager {
             throw new RuntimeException("ConfigManager used before initialized");
         }
         return searchHandler;
+    }
+
+    /**
+     * Get the search proxy handler
+     */
+    public SearchProxyHandler getSearchProxyHandler() {
+        if (!initialized) {
+            throw new RuntimeException("ConfigManager used before initialized");
+        }
+        return searchProxyHandler;
     }
 
     /**

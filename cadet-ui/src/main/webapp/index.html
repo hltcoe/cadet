@@ -322,7 +322,8 @@
 
         var searchResults;
         try {
-            searchResults = CADET.search.search(searchQuery);
+//            searchResults = CADET.search.search(searchQuery);
+            searchResults = CADET.search_proxy.search(searchQuery, "default");
         }
         catch (error) {
             displayAndThrowError(error);
