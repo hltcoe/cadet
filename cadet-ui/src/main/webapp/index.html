@@ -323,7 +323,9 @@
         var searchResults;
         try {
 //            searchResults = CADET.search.search(searchQuery);
-            searchResults = CADET.search_proxy.search(searchQuery, "default");
+            // TODO: Don't default to first search provider, provide UI mechanism for selecting provider
+            var providers = CADET.search_proxy.getProviders();
+            searchResults = CADET.search_proxy.search(searchQuery, providers[0]);
         }
         catch (error) {
             displayAndThrowError(error);

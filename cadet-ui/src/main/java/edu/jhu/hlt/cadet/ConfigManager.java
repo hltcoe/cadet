@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
+import com.typesafe.config.ConfigObject;
 
 /**
  * Manages the configuration and dependencies for the CADET search application
@@ -130,9 +131,6 @@ public class ConfigManager {
         SearchProvider sp = (SearchProvider)constructProvider(spName);
         searchHandler.init(sp);
 
-        searchProxyHandler = new SearchProxyHandler();
-        searchProxyHandler.init(sp);
-
         retrieverHandler = new RetrieverHandler();
         String rpName = config.getString(CadetConfig.RETRIEVE_PROVIDER);
         RetrieverProvider rp = (RetrieverProvider)constructProvider(rpName);
@@ -143,6 +141,7 @@ public class ConfigManager {
         feedbackHandler = new FeedbackHandler(fbStore);
 
         createResultsServer();
+        createSearchProxyHandler();
     }
 
     private void createResultsServer() {
@@ -184,15 +183,39 @@ public class ConfigManager {
         }
     }
 
+    private void createSearchProxyHandler() {
+        if (config.hasPath("cadet.search.providers")) {
+            searchProxyHandler = new SearchProxyHandler();
+
+            ConfigObject providersConfig = config.getObject("cadet.search.providers");
+            for (String providerName : providersConfig.keySet()) {
+                logger.info("providerName: " + providerName);
+
+                // We create a Config object rooted at the name of the SearchProvider
+                // (e.g. "cadet.search.providers.foo")
+                ConfigObject providerConfigObject = (ConfigObject)providersConfig.get(providerName);
+                Config providerConfig = providerConfigObject.toConfig();
+
+                String spName = providerConfig.getString("provider");
+                SearchProvider sp = (SearchProvider)constructProvider(spName, providerConfig);
+                searchProxyHandler.addProvider(providerName, sp);
+            }
+        }
+    }
+
     /**
      * Construct objects according to the pattern of empty constructor and then init(config)
      * @param clazz  full qualified class name
      * @return Provider object
      */
     private Provider constructProvider(String clazz) {
+        return constructProvider(clazz, config);
+    }
+
+    private Provider constructProvider(String clazz, Config customConfig) {
         try {
             Provider provider = (Provider)Class.forName(clazz).getConstructors()[0].newInstance();
-            provider.init(config);
+            provider.init(customConfig);
             providers.add(provider);
             return provider;
         } catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException | InstantiationException ex) {
