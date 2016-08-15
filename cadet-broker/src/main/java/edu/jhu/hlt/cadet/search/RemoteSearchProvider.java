@@ -35,8 +35,20 @@ public class RemoteSearchProvider implements SearchProvider {
 
     @Override
     public void init(Config config) {
-        host = config.getString(CadetConfig.SEARCH_HOST);
-        port = config.getInt(CadetConfig.SEARCH_PORT);
+        if (config.hasPath(CadetConfig.SEARCH_HOST) && config.hasPath(CadetConfig.SEARCH_PORT)) {
+            init(config.getString(CadetConfig.SEARCH_HOST),
+                    config.getInt(CadetConfig.SEARCH_PORT));
+        }
+        else {
+            logger.info("FOOBAR: Using custom SearchProvider settings");
+            init(config.getString(CadetConfig.SEARCH_HOST_CUSTOM),
+                    config.getInt(CadetConfig.SEARCH_PORT_CUSTOM));
+        }
+    }
+
+    public void init(String h, int p) {
+        host = h;
+        port = p;
 
         logger.info("SearchHandler HOST: " + host);
         logger.info("SearcheHandler PORT: " + port);

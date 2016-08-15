@@ -24,6 +24,9 @@ public class CadetConfig {
     public static final String SEARCH_HOST = "cadet.search.host";
     public static final String SEARCH_PORT = "cadet.search.port";
     public static final String SEARCH_PROVIDER = "cadet.search.provider";
+    public static final String SEARCH_HOST_CUSTOM = "host";
+    public static final String SEARCH_PORT_CUSTOM = "port";
+    public static final String SEARCH_PROVIDER_CUSTOM = "provider";
 
     /**
      * Retrieve
