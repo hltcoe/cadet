@@ -40,7 +40,7 @@ public class RemoteSearchProvider implements SearchProvider {
                     config.getInt(CadetConfig.SEARCH_PORT));
         }
         else {
-            logger.info("FOOBAR: Using custom SearchProvider settings");
+            logger.info("Using custom SearchProvider settings");
             init(config.getString(CadetConfig.SEARCH_HOST_CUSTOM),
                     config.getInt(CadetConfig.SEARCH_PORT_CUSTOM));
         }
