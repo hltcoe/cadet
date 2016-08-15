@@ -4,7 +4,7 @@
 
 /* globals AnnotationTaskType, FeedbackClient, RetrieverClient,
            ResultsServerClient, RetrieveRequest, SearchClient,
-           SearchQuery, SearchType, SenderClient, Thrift
+           SearchProxy, SearchQuery, SearchType, SenderClient, Thrift
 */
 
 var CADET = {
