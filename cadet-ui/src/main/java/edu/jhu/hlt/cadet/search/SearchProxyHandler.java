@@ -14,9 +14,6 @@ import edu.jhu.hlt.concrete.search.SearchResults;
 import edu.jhu.hlt.concrete.services.ServiceInfo;
 import edu.jhu.hlt.concrete.services.ServicesException;
 
-// TODO: SearchProxyHandler is currently a stub that uses a single SearchProvider,
-//       and needs to be updated different search providers to be selected.
-
 public class SearchProxyHandler implements SearchProxy.Iface {
     Map<String, SearchProvider> providerMap = new HashMap<String, SearchProvider>();
 
