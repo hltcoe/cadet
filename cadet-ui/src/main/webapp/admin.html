@@ -151,7 +151,7 @@
             var capabilities = [];
             var capabilities_description = '';
             try {
-                capabilities = CADET.search.getCapabilities();
+                capabilities = CADET.search_proxy.getCapabilities(providers[j]);
             }
             catch (error) {
                 // TODO: Don't ignore error
