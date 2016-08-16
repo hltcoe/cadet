@@ -23,6 +23,9 @@ var CADET = {
     registeredSearchResults: {},
     resultsWithFeedbackStarted: {},
 
+    defaultSearchProviders: {},
+    searchProvidersForSearchType: {},
+
     /** Takes a SearchResults and RetrieveResults object.  For each
      *  SearchResult (singular) object in SearchResults, add reference
      *  variables:
@@ -51,6 +54,48 @@ var CADET = {
                 if (comm) {
                     // searchResult.sentence will be null if searchResult.sentenceId is not a valid Sentence UUID
                     searchResult.sentence = comm.getSentenceWithUUID(searchResult.sentenceId);
+                }
+            }
+        }
+    },
+
+    configureSearchProviders: function() {
+        function updateSearchProviderFromLocalStorage(searchTypeString, providers) {
+            if (localStorage.getItem('CADET.defaultSearchProviders.' + searchTypeString)) {
+                if (providers.includes(localStorage.getItem('CADET.defaultSearchProviders.' + searchTypeString))) {
+                    CADET.defaultSearchProviders[searchTypeString] = localStorage.getItem('CADET.defaultSearchProviders.' + searchTypeString);
+                }
+                else {
+                    localStorage.removeItem('CADET.defaultSearchProviders.' + searchTypeString);
+                }
+            }
+        }
+
+        var providers = CADET.search_proxy.getProviders();
+        var searchTypes = ['COMMUNICATIONS', 'ENTITY_MENTIONS', 'SENTENCES'];
+
+        for (var s = 0; s < searchTypes.length; s++) {
+            this.searchProvidersForSearchType[searchTypes[s]] = [];
+            updateSearchProviderFromLocalStorage(searchTypes[s], providers);
+        }
+
+        for (var i = 0; i < providers.length; i++) {
+            var capabilities = [];
+            try {
+                capabilities = CADET.search_proxy.getCapabilities(providers[i]);
+            }
+            catch (error) {
+                // TODO: Don't ignore error
+            }
+            for (var j = 0; j < capabilities.length; j++) {
+                for (var si = 0; si < searchTypes.length; si++) {
+                    if (capabilities[j].type === SearchType[searchTypes[si]]) {
+                        this.searchProvidersForSearchType[searchTypes[si]].push(providers[i]);
+
+                        if (!this.defaultSearchProviders[searchTypes[si]]) {
+                            this.defaultSearchProviders[searchTypes[si]] = providers[i];
+                        }
+                    }
                 }
             }
         }
@@ -185,6 +230,8 @@ var CADET = {
         var results_transport = new Thrift.Transport('ResultsServer');
         var results_protocol = new Thrift.Protocol(results_transport);
         this.results = new ResultsServerClient(results_protocol);
+
+        this.configureSearchProviders();
     },
 
     /** Call the ResultsServer server's registerSearchResult()
@@ -215,6 +262,15 @@ var CADET = {
         // retrieve the communications
         var results = this.retriever.retrieve(request);
         return results;
+    },
+
+    /** Set default search provider for specified SearchType
+     * @param {String} searchTypeString - e.g. 'COMMUNICATIONS', 'ENTITY_MENTIONS'
+     * @param {String} providerName
+     */
+    setDefaultSearchProvider: function(searchTypeString, providerName) {
+        this.defaultSearchProviders[searchTypeString] = providerName;
+        localStorage.setItem('CADET.defaultSearchProviders.' + searchTypeString, providerName);
     },
 
     /** Call the Feedback server's startFeedback() function IFF it has not

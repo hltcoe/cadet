@@ -182,6 +182,27 @@
             });
         }
         SEARCH_PROVIDER_TABLE.draw();
+
+        var searchTypes = ['COMMUNICATIONS', 'ENTITY_MENTIONS', 'SENTENCES'];
+        for (var i = 0; i < searchTypes.length; i++) {
+            var select = $('<select>').on('change', {searchTypeString: searchTypes[i]}, function(event) {
+                                          CADET.setDefaultSearchProvider(event.data.searchTypeString, $(this).val());
+                                      });
+            var providers = CADET.searchProvidersForSearchType[searchTypes[i]];
+            for (var pi = 0; pi < providers.length; pi++) {
+                var option = $('<option>').text(providers[pi])
+                                          .val(providers[pi]);
+                if (providers[pi] == CADET.defaultSearchProviders[searchTypes[i]]) {
+                    option.attr('selected', 'selected');
+                }
+                select.append(option);
+            }
+            $('#default_search_providers').append(
+                $('<li>')
+                    .append(
+                        $('<span>').text(searchTypes[i] + ': '))
+                    .append(select));
+        }
     });
     </script>
 </head>
@@ -206,6 +227,13 @@
 
         <div>
             <table id="search_provider_table" class="display"></table>
+        </div>
+
+
+        <hr />
+
+        <h2>Default Search Providers</h2>
+        <div id="default_search_providers">
         </div>
 
     </div><!-- /.container-fluid -->

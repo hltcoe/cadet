@@ -322,10 +322,15 @@
 
         var searchResults;
         try {
-//            searchResults = CADET.search.search(searchQuery);
-            // TODO: Don't default to first search provider, provide UI mechanism for selecting provider
-            var providers = CADET.search_proxy.getProviders();
-            searchResults = CADET.search_proxy.search(searchQuery, providers[0]);
+            if (searchQuery.type === SearchType.COMMUNICATIONS) {
+                searchResults = CADET.search_proxy.search(searchQuery, CADET.defaultSearchProviders.COMMUNICATIONS);
+            }
+            else if (searchQuery.type === SearchType.ENTITY_MENTIONS) {
+                searchResults = CADET.search_proxy.search(searchQuery, CADET.defaultSearchProviders.ENTITY_MENTIONS);
+            }
+            else if (searchQuery.type === SearchType.SENTENCES) {
+                searchResults = CADET.search_proxy.search(searchQuery, CADET.defaultSearchProviders.SENTENCES);
+            }
         }
         catch (error) {
             displayAndThrowError(error);
