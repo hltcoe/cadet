@@ -33,8 +33,6 @@ public class RetrieveTool implements AutoCloseable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RetrieveTool.class);
 
-    private String host;
-    private int port;
     private String auths;
 
     private TTransport transport;
@@ -42,14 +40,21 @@ public class RetrieveTool implements AutoCloseable {
     private Retriever.Client client;
 
     public RetrieveTool() {
-        Config config = ConfigFactory.load();
-        LOGGER.debug("Running with conf: {}", config.toString());
-        host = config.getString(CadetConfig.RETRIEVE_HOST);
-        port = config.getInt(CadetConfig.RETRIEVE_PORT);
-        auths = config.getString("cadet.accumulo.auths");
-        transport = new TFramedTransport(new TSocket(host, port), Integer.MAX_VALUE);
-        protocol = new TCompactProtocol(transport);
-        client = new Retriever.Client(protocol);
+        this(ConfigFactory.load());
+    }
+
+    public RetrieveTool(Config cfg) {
+        this(cfg.getString(CadetConfig.RETRIEVE_HOST),
+            cfg.getInt(CadetConfig.RETRIEVE_PORT),
+            cfg.getString("cadet.accumulo.auths"));
+    }
+
+    public RetrieveTool(String host, int port, String auths) {
+        LOGGER.debug("Running with host: {}, port: {}, auths: {}", host, port, auths);
+        this.auths = auths;
+        this.transport = new TFramedTransport(new TSocket(host, port), Integer.MAX_VALUE);
+        this.protocol = new TCompactProtocol(transport);
+        this.client = new Retriever.Client(protocol);
     }
 
     public RetrieveResults retrieve(Iterable<String> ids) throws ServicesException, TException {
