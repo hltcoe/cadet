@@ -46,7 +46,7 @@ Configuration Files
 The CADET broker configuration is specified using a `.conf` file.
 The configuration file uses a [JSON-like syntax](https://github.com/typesafehub/config#using-hocon-the-json-superset).
 
-The default configuration file is `src/main/java/resources/application.conf`.
+The default configuration file is `src/main/resources/application.conf`.
 It is kept in this git repo and is included in the war that is deployed to Tomcat.
 
 To customize the configuration at runtime when using Tomcat, specify the location of a different `.conf` file by creating an XML
