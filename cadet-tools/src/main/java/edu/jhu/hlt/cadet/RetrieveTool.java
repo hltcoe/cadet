@@ -64,7 +64,7 @@ public class RetrieveTool implements AutoCloseable {
         RetrieveRequest rr = new RetrieveRequest().setAuths(this.auths)
                         .setCommunicationIds(new ArrayList<>());
         ids.forEach(rr::addToCommunicationIds);
-        return this.client.retrieve(rr);
+        return this.client.fetch(rr);
     }
 
     @Override

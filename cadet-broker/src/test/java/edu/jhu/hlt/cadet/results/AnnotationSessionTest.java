@@ -11,7 +11,7 @@ import org.junit.Test;
 import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.search.SearchQuery;
 import edu.jhu.hlt.concrete.search.SearchResult;
-import edu.jhu.hlt.concrete.search.SearchResults;
+import edu.jhu.hlt.concrete.search.SearchResultItem;
 import edu.jhu.hlt.concrete.services.AnnotationUnitIdentifier;
 
 public class AnnotationSessionTest {
@@ -21,19 +21,19 @@ public class AnnotationSessionTest {
     @Before
     public void setUp() {
         SearchQuery query = new SearchQuery();
-        SearchResults results = new SearchResults(new UUID("test"), query);
-        results.addToSearchResults(createItem("1"));
-        results.addToSearchResults(createItem("2"));
-        results.addToSearchResults(createItem("3"));
-        results.addToSearchResults(createItem("4"));
-        results.addToSearchResults(createItem("5"));
-        results.addToSearchResults(createItem("6"));
-        results.addToSearchResults(createItem("7"));
+        SearchResult results = new SearchResult(new UUID("test"), query);
+        results.addToSearchResultItems(createItem("1"));
+        results.addToSearchResultItems(createItem("2"));
+        results.addToSearchResultItems(createItem("3"));
+        results.addToSearchResultItems(createItem("4"));
+        results.addToSearchResultItems(createItem("5"));
+        results.addToSearchResultItems(createItem("6"));
+        results.addToSearchResultItems(createItem("7"));
         session = new AnnotationSession(results);
     }
 
-    private SearchResult createItem(String id) {
-        SearchResult r = new SearchResult();
+    private SearchResultItem createItem(String id) {
+      SearchResultItem r = new SearchResultItem();
         r.setCommunicationId(id);
         r.setSentenceId(new UUID(id + "_sentence"));
         return r;

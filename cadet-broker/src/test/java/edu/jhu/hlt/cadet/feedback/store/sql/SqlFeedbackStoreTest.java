@@ -1,6 +1,8 @@
 package edu.jhu.hlt.cadet.feedback.store.sql;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -29,7 +31,7 @@ import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.search.SearchFeedback;
 import edu.jhu.hlt.concrete.search.SearchQuery;
 import edu.jhu.hlt.concrete.search.SearchResult;
-import edu.jhu.hlt.concrete.search.SearchResults;
+import edu.jhu.hlt.concrete.search.SearchResultItem;
 import edu.jhu.hlt.concrete.search.SearchType;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 
@@ -49,8 +51,8 @@ public class SqlFeedbackStoreTest {
     }
 
     @Test
-    public void testSavingSearchResultsWithCommunication() throws ConcreteException {
-        SearchResults results = createSearchResults("test", "ted", "my_query", SearchType.COMMUNICATIONS, 2);
+    public void testSavingSearchResultWithCommunication() throws ConcreteException {
+        SearchResult results = createSearchResult("test", "ted", "my_query", SearchType.COMMUNICATIONS, 2);
 
         store.addSearchResults(results);
 
@@ -58,17 +60,17 @@ public class SqlFeedbackStoreTest {
         assertNotNull(data);
         assertEquals(1, data.size());
         CommunicationFeedback fb = data.iterator().next();
-        SearchResults res = fb.getSearchResults();
+        SearchResult res = fb.getSearchResults();
         assertEquals(res.getUuid(), results.getUuid());
         assertEquals(res.getSearchQuery().getUserId(), "ted");
-        assertEquals(res.getSearchResultsSize(), 2);
-        assertEquals(res.getSearchResultsIterator().next().getScore(), results.getSearchResultsIterator().next().getScore(), 0.001);
+        assertEquals(res.getSearchResultItemsSize(), 2);
+        assertEquals(res.getSearchResultItemsIterator().next().getScore(), results.getSearchResultItemsIterator().next().getScore(), 0.001);
         assertEquals(0, store.getAllSentenceFeedback().size());
     }
 
     @Test
-    public void testSavingSearchResultsWithSentences() throws ConcreteException {
-        SearchResults results = createSearchResults("test", "ted", "my_query", SearchType.SENTENCES, 3);
+    public void testSavingSearchResultWithSentences() throws ConcreteException {
+        SearchResult results = createSearchResult("test", "ted", "my_query", SearchType.SENTENCES, 3);
 
         store.addSearchResults(results);
 
@@ -76,19 +78,19 @@ public class SqlFeedbackStoreTest {
         assertNotNull(data);
         assertEquals(1, data.size());
         SentenceFeedback fb = data.iterator().next();
-        SearchResults res = fb.getSearchResults();
+        SearchResult res = fb.getSearchResults();
         assertEquals(res.getUuid(), results.getUuid());
         assertEquals(res.getSearchQuery().getUserId(), "ted");
-        assertEquals(res.getSearchResultsSize(), 3);
-        assertEquals(res.getSearchResultsIterator().next().getScore(), results.getSearchResultsIterator().next().getScore(), 0.001);
+        assertEquals(res.getSearchResultItemsSize(), 3);
+        assertEquals(res.getSearchResultItemsIterator().next().getScore(), results.getSearchResultItemsIterator().next().getScore(), 0.001);
         assertEquals(0, store.getAllCommunicationFeedback().size());
     }
 
     @Test
     public void testAddingCommunicationFeedback() throws ConcreteException, FeedbackException {
-        SearchResults results = createSearchResults("test", "ted", "my_query", SearchType.COMMUNICATIONS, 4);
+        SearchResult results = createSearchResult("test", "ted", "my_query", SearchType.COMMUNICATIONS, 4);
         store.addSearchResults(results);
-        List<SearchResult> list = results.getSearchResults();
+        List<SearchResultItem> list = results.getSearchResultItems();
         store.addFeedback(results.getUuid(), list.get(0).getCommunicationId(), SearchFeedback.POSITIVE);
         store.addFeedback(results.getUuid(), list.get(1).getCommunicationId(), SearchFeedback.NONE);
         store.addFeedback(results.getUuid(), list.get(2).getCommunicationId(), SearchFeedback.NEGATIVE);
@@ -103,9 +105,9 @@ public class SqlFeedbackStoreTest {
 
     @Test
     public void testAddingSentenceFeedback() throws ConcreteException, FeedbackException {
-        SearchResults results = createSearchResults("test", "ted", "my_query", SearchType.SENTENCES, 4);
+        SearchResult results = createSearchResult("test", "ted", "my_query", SearchType.SENTENCES, 4);
         store.addSearchResults(results);
-        List<SearchResult> list = results.getSearchResults();
+        List<SearchResultItem> list = results.getSearchResultItems();
         store.addFeedback(results.getUuid(), list.get(0).getCommunicationId(), list.get(0).getSentenceId(), SearchFeedback.POSITIVE);
         store.addFeedback(results.getUuid(), list.get(1).getCommunicationId(), list.get(1).getSentenceId(), SearchFeedback.NONE);
         store.addFeedback(results.getUuid(), list.get(2).getCommunicationId(), list.get(2).getSentenceId(), SearchFeedback.NEGATIVE);
@@ -234,42 +236,42 @@ public class SqlFeedbackStoreTest {
         return null;
     }
 
-    public static SearchResults createSearchResults(String id, String user, String name, SearchType type, int numResults) {
+    public static SearchResult createSearchResult(String id, String user, String name, SearchType type, int numResults) {
         SearchQuery q = new SearchQuery();
         q.setUserId(user);
         q.setName(name);
         q.setRawQuery("where?");
         q.setType(type);
-        SearchResults results = new SearchResults(new UUID(id), q);
+        SearchResult results = new SearchResult(new UUID(id), q);
         for (int i=1; i<=numResults; i++) {
-            SearchResult r = new SearchResult();
+            SearchResultItem r = new SearchResultItem();
             r.setCommunicationId("doc" + i);
             r.setScore(Math.random());
             if (type == SearchType.SENTENCES) {
                 r.setSentenceId(new UUID("sent" + i));
             }
-            results.addToSearchResults(r);
+            results.addToSearchResultItems(r);
         }
         return results;
     }
 
     private void loadLotsOfData(SearchType type) throws ConcreteException {
-        SearchResults r1 = createSearchResults("c1", "bob", "east", type, 3);
+        SearchResult r1 = createSearchResult("c1", "bob", "east", type, 3);
         r1.getSearchQuery().addToLabels("red");
         store.addSearchResults(r1);
-        SearchResults r2 = createSearchResults("c2", "bob", "east", type, 3);
+        SearchResult r2 = createSearchResult("c2", "bob", "east", type, 3);
         r2.getSearchQuery().addToLabels("blue");
         store.addSearchResults(r2);
-        SearchResults r3 = createSearchResults("c3", "bob", "west", type, 3);
+        SearchResult r3 = createSearchResult("c3", "bob", "west", type, 3);
         r3.getSearchQuery().addToLabels("green");
         store.addSearchResults(r3);
-        SearchResults r4 = createSearchResults("c4", "ed", "south", type, 3);
+        SearchResult r4 = createSearchResult("c4", "ed", "south", type, 3);
         r4.getSearchQuery().addToLabels("yellow");
         store.addSearchResults(r4);
-        SearchResults r5 = createSearchResults("c5", "ed", "north", type, 3);
+        SearchResult r5 = createSearchResult("c5", "ed", "north", type, 3);
         r5.getSearchQuery().addToLabels("purple");
         store.addSearchResults(r5);
-        SearchResults r6 = createSearchResults("c6", "greg", "east", type, 3);
+        SearchResult r6 = createSearchResult("c6", "greg", "east", type, 3);
         r6.getSearchQuery().addToLabels("orange");
         r6.getSearchQuery().addToLabels("red");
         store.addSearchResults(r6);
@@ -278,14 +280,14 @@ public class SqlFeedbackStoreTest {
     private class Client implements Runnable {
         private Object sync;
         private FeedbackStore store;
-        private SearchResults results;
+        private SearchResult results;
         private boolean fail = false;
         private boolean ready = false;
 
         public Client(String id, Object sync, FeedbackStore store) {
             this.sync = sync;
             this.store = store;
-            results = createSearchResults(id, "larry", "my_query", SearchType.COMMUNICATIONS, 4);
+            results = createSearchResult(id, "larry", "my_query", SearchType.COMMUNICATIONS, 4);
         }
 
         public boolean isFail() {
@@ -316,8 +318,8 @@ public class SqlFeedbackStoreTest {
             }
 
             try {
-                store.addFeedback(results.getUuid(), results.getSearchResults().get(0).getCommunicationId(), SearchFeedback.POSITIVE);
-                store.addFeedback(results.getUuid(), results.getSearchResults().get(1).getCommunicationId(), SearchFeedback.NEGATIVE);
+                store.addFeedback(results.getUuid(), results.getSearchResultItems().get(0).getCommunicationId(), SearchFeedback.POSITIVE);
+                store.addFeedback(results.getUuid(), results.getSearchResultItems().get(1).getCommunicationId(), SearchFeedback.NEGATIVE);
             } catch (FeedbackException e) {
                 fail = true;
                 e.printStackTrace();

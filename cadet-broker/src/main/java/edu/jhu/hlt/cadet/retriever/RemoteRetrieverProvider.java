@@ -11,9 +11,9 @@ import org.apache.thrift.transport.TSocket;
 import com.typesafe.config.Config;
 
 import edu.jhu.hlt.cadet.CadetConfig;
-import edu.jhu.hlt.concrete.access.RetrieveRequest;
-import edu.jhu.hlt.concrete.access.RetrieveResults;
-import edu.jhu.hlt.concrete.access.Retriever;
+import edu.jhu.hlt.concrete.access.FetchRequest;
+import edu.jhu.hlt.concrete.access.FetchResult;
+import edu.jhu.hlt.concrete.access.FetchCommunicationService;
 import edu.jhu.hlt.concrete.services.ServiceInfo;
 import edu.jhu.hlt.concrete.services.ServicesException;
 
@@ -28,7 +28,7 @@ public class RemoteRetrieverProvider implements RetrieverProvider {
 
     private TFramedTransport transport;
     private TCompactProtocol protocol;
-    private Retriever.Client client;
+    private FetchCommunicationService.Client client;
 
     @Override
     public void init(Config config) {
@@ -40,7 +40,7 @@ public class RemoteRetrieverProvider implements RetrieverProvider {
 
         transport = new TFramedTransport(new TSocket(host, port), Integer.MAX_VALUE);
         protocol = new TCompactProtocol(transport);
-        client = new Retriever.Client(protocol);
+        client = new FetchCommunicationService.Client(protocol);
     }
 
     @Override
@@ -51,9 +51,9 @@ public class RemoteRetrieverProvider implements RetrieverProvider {
     }
 
     @Override
-    public RetrieveResults retrieve(RetrieveRequest request) throws ServicesException, TException {
+    public FetchResult fetch(FetchRequest request) throws ServicesException, TException {
         transport.open();
-        RetrieveResults results = client.retrieve(request);
+        FetchResult results = client.fetch(request);
         transport.close();
 
         return results;

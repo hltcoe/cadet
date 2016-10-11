@@ -1,7 +1,8 @@
 package edu.jhu.hlt.cadet.retriever;
 
-import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -14,10 +15,9 @@ import org.junit.Test;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
-import edu.jhu.hlt.cadet.retriever.ScionRetrieverProvider;
 import edu.jhu.hlt.cadet.search.MockSearchProvider;
-import edu.jhu.hlt.concrete.access.RetrieveRequest;
-import edu.jhu.hlt.concrete.access.RetrieveResults;
+import edu.jhu.hlt.concrete.access.FetchRequest;
+import edu.jhu.hlt.concrete.access.FetchResult;
 import edu.jhu.hlt.concrete.search.SearchQuery;
 import edu.jhu.hlt.concrete.search.SearchResult;
 
@@ -47,9 +47,8 @@ public class ScionRetrieveTest {
                 commIdList.add(commId);
             }
 
-            RetrieveRequest request = new RetrieveRequest(commIdList);
-
-            RetrieveResults results = retriever.retrieve(request);
+            FetchRequest request = new FetchRequest(commIdList);
+            FetchResult results = retriever.fetch(request);
 
             assertThat(commIdList.size(), is(results.getCommunications().size()));
         } catch (TException e) {

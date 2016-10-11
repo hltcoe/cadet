@@ -5,10 +5,10 @@ import com.typesafe.config.Config;
 /**
  * Any dependencies that ConfigManager builds must implement this interface
  */
-public interface Provider {
+public interface Provider extends AutoCloseable {
     /**
      * Must be called before use
-     * 
+     *
      * @param config  Config object for this provider
      */
     void init(Config config);
@@ -16,5 +16,6 @@ public interface Provider {
     /**
      * Must be called after use to give the provider the chance to shutdown
      */
-    void close();
+    @Override
+    void close() throws Exception;
 }

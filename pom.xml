@@ -24,7 +24,6 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jdk.version>1.8</jdk.version>
     <slf4j.version>1.7.21</slf4j.version>
-    <concrete.version>4.10.5</concrete.version>
     <concrete-services.version>4.10.7.0-SNAPSHOT</concrete-services.version>
   </properties>
 
@@ -39,11 +38,6 @@
       <groupId>edu.jhu.hlt</groupId>
       <artifactId>concrete-services-java</artifactId>
       <version>${concrete-services.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>edu.jhu.hlt</groupId>
-      <artifactId>concrete-util</artifactId>
-      <version>${concrete.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -70,6 +64,11 @@
         <groupId>edu.jhu.hlt.cadet</groupId>
         <artifactId>cadet-broker</artifactId>
         <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>edu.jhu.hlt</groupId>
+        <artifactId>tift</artifactId>
+        <version>4.10.5</version>
       </dependency>
       <dependency>
         <groupId>com.typesafe</groupId>

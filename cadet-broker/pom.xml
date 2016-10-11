@@ -17,12 +17,12 @@
 
   <dependencies>
     <dependency>
-      <groupId>edu.jhu.hlt</groupId>
-      <artifactId>scion-services</artifactId>
-    </dependency>
-    <dependency>
       <groupId>com.typesafe</groupId>
       <artifactId>config</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>edu.jhu.hlt</groupId>
+      <artifactId>tift</artifactId>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>

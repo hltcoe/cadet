@@ -25,7 +25,7 @@ import edu.jhu.hlt.cadet.learn.SortReceiverCallback;
 import edu.jhu.hlt.cadet.learn.SortReceiverHandler;
 import edu.jhu.hlt.cadet.learn.SortReceiverServer;
 import edu.jhu.hlt.concrete.UUID;
-import edu.jhu.hlt.concrete.learn.ActiveLearnerServer;
+import edu.jhu.hlt.concrete.learn.ActiveLearnerServerService;
 import edu.jhu.hlt.concrete.learn.AnnotationTask;
 import edu.jhu.hlt.concrete.services.AnnotationTaskType;
 import edu.jhu.hlt.concrete.services.AnnotationUnitIdentifier;
@@ -35,7 +35,7 @@ import edu.jhu.hlt.concrete.services.AsyncContactInfo;
 public class LearnTool implements AutoCloseable {
     private TTransport transport;
     private TCompactProtocol protocol;
-    private ActiveLearnerServer.Client client;
+    private ActiveLearnerServerService.Client client;
     private UUID sessionId;
     private SortReceiverServer server;
     private Thread serverThread;
@@ -52,7 +52,7 @@ public class LearnTool implements AutoCloseable {
 
         transport = new TFramedTransport(new TSocket(host, port), Integer.MAX_VALUE);
         protocol = new TCompactProtocol(transport);
-        client = new ActiveLearnerServer.Client(protocol);
+        client = new ActiveLearnerServerService.Client(protocol);
 
         try {
             serverHost = InetAddress.getLocalHost().getHostName();
@@ -108,7 +108,7 @@ public class LearnTool implements AutoCloseable {
         SortReceiverHandler handler = new SortReceiverHandler(new EmptyCallback());
         server = new SortReceiverServer(handler, serverPort);
         serverThread = new Thread(server);
-        serverThread.start();        
+        serverThread.start();
     }
 
     private void stopServer() {

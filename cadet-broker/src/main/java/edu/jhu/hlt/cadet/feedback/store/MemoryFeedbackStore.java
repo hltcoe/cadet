@@ -13,7 +13,7 @@ import com.typesafe.config.Config;
 
 import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.search.SearchFeedback;
-import edu.jhu.hlt.concrete.search.SearchResults;
+import edu.jhu.hlt.concrete.search.SearchResult;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 
 public class MemoryFeedbackStore implements FeedbackStore {
@@ -34,7 +34,7 @@ public class MemoryFeedbackStore implements FeedbackStore {
     public void close() {}
 
     @Override
-    public void addSearchResults(SearchResults results) throws ConcreteException {
+    public void addSearchResults(SearchResult results) throws ConcreteException {
         validate(results);
         if (isSentenceFeedback(results)) {
             logger.debug("Registering search results for sentence feedback");
@@ -45,12 +45,12 @@ public class MemoryFeedbackStore implements FeedbackStore {
         }
     }
 
-    private boolean isSentenceFeedback(SearchResults results) {
-        return results.getSearchResults().get(0).getSentenceId() != null;
+    private boolean isSentenceFeedback(SearchResult results) {
+        return results.getSearchResultItems().get(0).getSentenceId() != null;
     }
 
-    private void validate(SearchResults results) throws ConcreteException {
-        if (!results.isSetSearchResults() || results.getSearchResultsSize() == 0) {
+    private void validate(SearchResult results) throws ConcreteException {
+        if (!results.isSetSearchResultItems() || results.getSearchResultItemsSize() == 0) {
             throw new ConcreteException("SearchResults must contain search results");
         }
     }
