@@ -19,9 +19,9 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 
 import edu.jhu.hlt.concrete.Communication;
-import edu.jhu.hlt.concrete.access.RetrieveRequest;
-import edu.jhu.hlt.concrete.access.RetrieveResults;
-import edu.jhu.hlt.concrete.access.Retriever;
+import edu.jhu.hlt.concrete.access.FetchRequest;
+import edu.jhu.hlt.concrete.access.FetchResult;
+import edu.jhu.hlt.concrete.access.FetchCommunicationService;
 import edu.jhu.hlt.concrete.serialization.CompactCommunicationSerializer;
 import edu.jhu.hlt.concrete.services.ServiceInfo;
 import edu.jhu.hlt.concrete.services.ServicesException;
@@ -32,7 +32,7 @@ public class FileServer {
 
     private final int port;
     private final String dataDir;
-    private Retriever.Processor<Retriever.Iface> processor;
+    private FetchCommunicationService.Processor<FetchCommunicationService.Iface> processor;
 
     public FileServer(int port, String dataDir) {
         this.port = port;
@@ -40,8 +40,9 @@ public class FileServer {
     }
 
     public void start() {
-        processor = new Retriever.Processor<Retriever.Iface>(new Handler(dataDir));
+        processor = new FetchCommunicationService.Processor<FetchCommunicationService.Iface>(new Handler(dataDir));
         Runnable task = new Runnable() {
+            @Override
             public void run() {
                 try {
                     launch(processor);
@@ -53,7 +54,7 @@ public class FileServer {
         new Thread(task).start();
     }
 
-    public void launch(Retriever.Processor<Retriever.Iface> processor) throws TTransportException {
+    public void launch(FetchCommunicationService.Processor<FetchCommunicationService.Iface> processor) throws TTransportException {
         TNonblockingServerTransport transport = new TNonblockingServerSocket(port);
         TNonblockingServer.Args serverArgs = new TNonblockingServer.Args(transport);
         serverArgs = serverArgs.processorFactory(new TProcessorFactory(processor));
@@ -65,7 +66,7 @@ public class FileServer {
         server.serve();
     }
 
-    private class Handler implements Retriever.Iface {
+    private class Handler implements FetchCommunicationService.Iface {
         private final String dataDir;
         private final CompactCommunicationSerializer serializer;
 
@@ -89,8 +90,8 @@ public class FileServer {
         }
 
         @Override
-        public RetrieveResults retrieve(RetrieveRequest request) throws ServicesException, TException {
-            RetrieveResults results = new RetrieveResults();
+        public FetchResult fetch(FetchRequest request) throws ServicesException, TException {
+            FetchResult results = new FetchResult();
 
             for (String id : request.getCommunicationIds()) {
                 String path = dataDir + id + "." + EXTENSION;

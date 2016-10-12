@@ -16,7 +16,7 @@ import edu.jhu.hlt.cadet.feedback.store.SentenceFeedback;
 import edu.jhu.hlt.cadet.feedback.store.SentenceIdentifier;
 import edu.jhu.hlt.concrete.search.SearchFeedback;
 import edu.jhu.hlt.concrete.search.SearchResult;
-import edu.jhu.hlt.concrete.search.SearchResults;
+import edu.jhu.hlt.concrete.search.SearchResultItem;
 
 /**
  * View the feedback currently in the store
@@ -28,16 +28,16 @@ public class ViewFeedbackServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/plain;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        
+
         FeedbackHandler handler = ConfigManager.getInstance().getFeedbackHandler();
         FeedbackStore store = handler.getStore();
         Set<SentenceFeedback> feedbackSet = store.getAllSentenceFeedback();
         for (SentenceFeedback f : feedbackSet) {
             out.println(f.getSearchResults().getUuid().getUuidString());
             out.println("----------------------------------------------------");
-            SearchResults results = f.getSearchResults();
+            SearchResult results = f.getSearchResults();
             Map<SentenceIdentifier, SearchFeedback> feedback = f.getFeedback();
-            for (SearchResult r : results.getSearchResults()) {
+            for (SearchResultItem r : results.getSearchResultItems()) {
                 out.print(r.getCommunicationId());
                 out.print("\t");
                 out.print(r.getSentenceId().getUuidString());
@@ -57,9 +57,9 @@ public class ViewFeedbackServlet extends HttpServlet {
         for (CommunicationFeedback f : commFeedbackSet) {
             out.println(f.getSearchResults().getUuid().getUuidString());
             out.println("----------------------------------------------------");
-            SearchResults results = f.getSearchResults();
+            SearchResult results = f.getSearchResults();
             Map<String, SearchFeedback> feedback = f.getFeedback();
-            for (SearchResult r : results.getSearchResults()) {
+            for (SearchResultItem r : results.getSearchResultItems()) {
                 out.print(r.getCommunicationId());
                 out.print("\t");
                 SearchFeedback sf = feedback.get(r.getCommunicationId());

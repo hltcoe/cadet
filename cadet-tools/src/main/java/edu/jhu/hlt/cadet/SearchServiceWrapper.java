@@ -14,11 +14,11 @@ import org.apache.thrift.transport.TNonblockingServerTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.jhu.hlt.concrete.search.Search;
-import edu.jhu.hlt.concrete.search.Search.Iface;
+import edu.jhu.hlt.concrete.search.SearchService;
+import edu.jhu.hlt.concrete.search.SearchService.Iface;
 
 /**
- * Class that takes in an implementation of {@link Search.Iface} and
+ * Class that takes in an implementation of {@link SearchService.Iface} and
  * conveniently wraps it in the appropriate transport and protocol (in this
  * case, {@link TCompactProtocol} and {@link TFramedTransport}).
  * <br><br>
@@ -37,13 +37,13 @@ public class SearchServiceWrapper implements AutoCloseable, Runnable {
    * @param port
    * @throws TException
    */
-  public SearchServiceWrapper(Search.Iface impl, int port) throws TException {
+  public SearchServiceWrapper(SearchService.Iface impl, int port) throws TException {
     this.serverXport = new TNonblockingServerSocket(port);
     final TNonblockingServer.Args args = new TNonblockingServer.Args(this.serverXport);
     args.protocolFactory(new TCompactProtocol.Factory());
     final TFramedTransport.Factory transFactory = new TFramedTransport.Factory(Integer.MAX_VALUE);
     args.transportFactory(transFactory);
-    Search.Processor<Iface> proc = new Search.Processor<>(impl);
+    SearchService.Processor<Iface> proc = new SearchService.Processor<>(impl);
     args.processorFactory(new TProcessorFactory(proc));
     args.maxReadBufferBytes = Long.MAX_VALUE;
 

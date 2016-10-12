@@ -7,14 +7,14 @@ import java.util.Iterator;
 
 import org.apache.thrift.TException;
 
-import edu.jhu.hlt.concrete.access.Retriever;
+import edu.jhu.hlt.concrete.access.FetchCommunicationService;
 import edu.jhu.hlt.concrete.services.ServiceInfo;
 import edu.jhu.hlt.concrete.services.ServicesException;
-import edu.jhu.hlt.concrete.access.RetrieveResults;
-import edu.jhu.hlt.concrete.access.RetrieveRequest;
+import edu.jhu.hlt.concrete.access.FetchResult;
+import edu.jhu.hlt.concrete.access.FetchRequest;
 import edu.jhu.hlt.concrete.Communication;
 
-public class RetrieverHandler implements Retriever.Iface {
+public class RetrieverHandler implements FetchCommunicationService.Iface {
     private static Logger logger = LoggerFactory.getLogger(RetrieverHandler.class);
 
     private RetrieverProvider retrieverProvider;
@@ -23,25 +23,26 @@ public class RetrieverHandler implements Retriever.Iface {
 
     /**
      * Initialize the handler - must be called before any other methods
-     * 
+     *
      * @param provider
      */
     public void init(RetrieverProvider provider) {
         retrieverProvider = provider;
     }
 
-    public RetrieveResults retrieve(RetrieveRequest request) throws ServicesException, TException {
+    @Override
+    public FetchResult fetch(FetchRequest request) throws ServicesException, TException {
 
-        logRetrieveRequest(request);
+        logFetchRequest(request);
 
-        RetrieveResults results = retrieverProvider.retrieve(request);
+        FetchResult results = retrieverProvider.fetch(request);
 
-        logRetrieveResults(results);
+        logFetchResult(results);
 
         return results;
     }
 
-    protected static void logRetrieveRequest(RetrieveRequest request) {
+    protected static void logFetchRequest(FetchRequest request) {
         logger.info("Retrieve: requesting " + request.getCommunicationIdsSize() + " communications");
 
         Iterator<String> commIterator = request.getCommunicationIdsIterator();
@@ -50,9 +51,9 @@ public class RetrieverHandler implements Retriever.Iface {
         }
     }
 
-    protected static void logRetrieveResults(RetrieveResults results) {
+    protected static void logFetchResult(FetchResult results) {
         logger.info("Retrieve: returning " + results.getCommunicationsSize() + " communications");
-        
+
         Iterator<Communication> communicationIterator = results.getCommunicationsIterator();
         while (communicationIterator.hasNext()) {
             logger.debug("CommId: " + communicationIterator.next().getId());
@@ -68,5 +69,4 @@ public class RetrieverHandler implements Retriever.Iface {
     public boolean alive() throws TException {
         return retrieverProvider.alive();
     }
-
 }

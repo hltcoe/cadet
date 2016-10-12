@@ -17,5 +17,5 @@ public interface Provider extends AutoCloseable {
      * Must be called after use to give the provider the chance to shutdown
      */
     @Override
-    void close() throws Exception;
+    void close();
 }

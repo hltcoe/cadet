@@ -5,7 +5,7 @@ import java.nio.file.Paths;
 import java.util.Iterator;
 
 import edu.jhu.hlt.concrete.search.SearchResult;
-import edu.jhu.hlt.concrete.search.SearchResults;
+import edu.jhu.hlt.concrete.search.SearchResultItem;
 import edu.jhu.hlt.concrete.serialization.BoundedThriftSerializer;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 
@@ -17,13 +17,13 @@ public class FeedbackTool {
             System.exit(-1);
         }
 
-        BoundedThriftSerializer<SearchResults> deserializer = new BoundedThriftSerializer<>(SearchResults.class);
-        Iterator<SearchResults> it = deserializer.fromTarGz(Paths.get(args[0]));
+        BoundedThriftSerializer<SearchResult> deserializer = new BoundedThriftSerializer<>(SearchResult.class);
+        Iterator<SearchResult> it = deserializer.fromTarGz(Paths.get(args[0]));
         while (it.hasNext()) {
-            SearchResults sr = it.next();
+            SearchResult sr = it.next();
             System.out.println(sr.getUuid().getUuidString());
             System.out.println("--------------------------------------------");
-            for (SearchResult r : sr.getSearchResults()) {
+            for (SearchResultItem r : sr.getSearchResultItems()) {
                 System.out.print(r.getCommunicationId());
                 System.out.print("\t");
                 System.out.print(r.getSentenceId().getUuidString());
