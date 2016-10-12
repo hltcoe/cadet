@@ -36,7 +36,7 @@
     <dependency>
       <groupId>edu.jhu.hlt</groupId>
       <artifactId>scion-services</artifactId>
-      <version>0.47.0-SNAPSHOT</version>
+      <version>0.47.0</version>
     </dependency>
 
     <dependency>
