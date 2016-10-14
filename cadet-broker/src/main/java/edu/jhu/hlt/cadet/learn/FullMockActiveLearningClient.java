@@ -15,7 +15,7 @@ import com.typesafe.config.Config;
 
 import edu.jhu.hlt.cadet.CadetConfig;
 import edu.jhu.hlt.concrete.UUID;
-import edu.jhu.hlt.concrete.learn.ActiveLearnerClient;
+import edu.jhu.hlt.concrete.learn.ActiveLearnerClientService;
 import edu.jhu.hlt.concrete.learn.Annotation;
 import edu.jhu.hlt.concrete.learn.AnnotationTask;
 import edu.jhu.hlt.concrete.services.AnnotationUnitIdentifier;
@@ -92,7 +92,7 @@ public class FullMockActiveLearningClient implements ActiveLearningClient {
 
         private TFramedTransport transport;
         private TCompactProtocol protocol;
-        private ActiveLearnerClient.Client client;
+        private ActiveLearnerClientService.Client client;
 
         private int periodInSec;
 
@@ -104,7 +104,7 @@ public class FullMockActiveLearningClient implements ActiveLearningClient {
 
             transport = new TFramedTransport(new TSocket(sortReceiverHost, sortReceiverPort), Integer.MAX_VALUE);
             protocol = new TCompactProtocol(transport);
-            client = new ActiveLearnerClient.Client(protocol);
+            client = new ActiveLearnerClientService.Client(protocol);
 
             periodInSec = 60;
             if (config.hasPath(CadetConfig.SORT_PERIOD)) {

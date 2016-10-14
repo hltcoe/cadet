@@ -25,14 +25,14 @@ public interface ActiveLearningClient extends Provider {
 
     /**
      * Stop an active learning session
-     * 
+     *
      * @param sessionId  session identifier
      */
     public void stop(UUID sessionId);
 
     /**
      * Send annotations to the active learner
-     * 
+     *
      * @param sessionId  session identifier
      * @param annotations  list of annotations
      */
@@ -41,5 +41,6 @@ public interface ActiveLearningClient extends Provider {
     /**
      * Shutdown and clean up any resources
      */
+    @Override
     public void close();
 }

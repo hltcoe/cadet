@@ -36,7 +36,7 @@ import edu.jhu.hlt.cadet.feedback.store.SentenceFeedback;
 import edu.jhu.hlt.cadet.feedback.store.SentenceIdentifier;
 import edu.jhu.hlt.concrete.search.SearchFeedback;
 import edu.jhu.hlt.concrete.search.SearchResult;
-import edu.jhu.hlt.concrete.search.SearchResults;
+import edu.jhu.hlt.concrete.search.SearchResultItem;
 
 public class DumpFeedbackServlet extends HttpServlet {
     private static final long serialVersionUID = -3747969490436354514L;
@@ -60,11 +60,11 @@ public class DumpFeedbackServlet extends HttpServlet {
         FeedbackHandler handler = ConfigManager.getInstance().getFeedbackHandler();
         FeedbackStore store = handler.getStore();
         Set<SentenceFeedback> feedbackSet = store.getAllSentenceFeedback();
-        List<SearchResults> data = new ArrayList<SearchResults>();
+        List<SearchResult> data = new ArrayList<SearchResult>();
         for (SentenceFeedback f : feedbackSet) {
-            SearchResults results = f.getSearchResults();
+            SearchResult results = f.getSearchResults();
             Map<SentenceIdentifier, SearchFeedback> feedback = f.getFeedback();
-            for (SearchResult r : results.getSearchResults()) {
+            for (SearchResultItem r : results.getSearchResultItems()) {
                 SearchFeedback sf = feedback.get(new SentenceIdentifier(r.getCommunicationId(), r.getSentenceId()));
                 if (sf != null) {
                     r.setScore(sf.getValue());
@@ -94,13 +94,13 @@ public class DumpFeedbackServlet extends HttpServlet {
         out.close();
     }
 
-    private void toTarGz(Collection<SearchResults> results, String outFilename) throws IOException {        
+    private void toTarGz(Collection<SearchResult> results, String outFilename) throws IOException {
         try (OutputStream os = Files.newOutputStream(Paths.get(outFilename));
              BufferedOutputStream bos = new BufferedOutputStream(os);
              GzipCompressorOutputStream gzos = new GzipCompressorOutputStream(bos);
              TarArchiveOutputStream tos = new TarArchiveOutputStream(gzos);) {
 
-            for (SearchResults sr : results) {
+            for (SearchResult sr : results) {
                 TarArchiveEntry entry = new TarArchiveEntry(sr.getUuid().getUuidString() + ".concrete");
                 byte[] cbytes = this.toBytes(sr);
                 entry.setSize(cbytes.length);
@@ -114,7 +114,7 @@ public class DumpFeedbackServlet extends HttpServlet {
         }
     }
 
-    private byte[] toBytes(SearchResults results) throws IOException {
+    private byte[] toBytes(SearchResult results) throws IOException {
         try {
             return new TSerializer(new TCompactProtocol.Factory()).serialize(results);
         } catch (TException e) {

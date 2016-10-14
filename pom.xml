@@ -24,12 +24,12 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jdk.version>1.8</jdk.version>
     <slf4j.version>1.7.21</slf4j.version>
-    <concrete.version>4.10.0</concrete.version>
-    <concrete-services.version>4.10.5</concrete-services.version>
+    <concrete-services.version>4.10.7.0</concrete-services.version>
   </properties>
 
   <modules>
     <module>cadet-broker</module>
+    <module>scion-fetch</module>
     <module>cadet-tools</module>
     <module>cadet-ui</module>
   </modules>
@@ -37,23 +37,8 @@
   <dependencies>
     <dependency>
       <groupId>edu.jhu.hlt</groupId>
-      <artifactId>concrete-services-core</artifactId>
+      <artifactId>concrete-services-java</artifactId>
       <version>${concrete-services.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>edu.jhu.hlt</groupId>
-      <artifactId>concrete-util</artifactId>
-      <version>${concrete.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.logging.log4j</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.fasterxml.jackson.core</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -82,6 +67,11 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
+        <groupId>edu.jhu.hlt</groupId>
+        <artifactId>tift</artifactId>
+        <version>4.10.5</version>
+      </dependency>
+      <dependency>
         <groupId>com.typesafe</groupId>
         <artifactId>config</artifactId>
         <version>1.3.0</version>
@@ -92,20 +82,34 @@
         <version>1.48</version>
       </dependency>
       <dependency>
-        <groupId>ch.qos.logback</groupId>
-        <artifactId>logback-classic</artifactId>
-        <version>1.1.6</version>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-api</artifactId>
+        <version>2.6.2</version>
       </dependency>
       <dependency>
-        <groupId>edu.jhu.hlt</groupId>
-        <artifactId>scion-services</artifactId>
-        <version>0.44.0</version>
-        <exclusions>
-          <exclusion>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-        </exclusions>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-core</artifactId>
+        <version>2.6.2</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-slf4j-impl</artifactId>
+        <version>2.6.2</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+        <version>2.8.1</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>2.8.1</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-annotations</artifactId>
+        <version>2.8.1</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

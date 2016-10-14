@@ -25,7 +25,7 @@ import edu.jhu.hlt.cadet.feedback.store.SentenceFeedback;
 import edu.jhu.hlt.cadet.feedback.store.SentenceIdentifier;
 import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.search.SearchFeedback;
-import edu.jhu.hlt.concrete.search.SearchResults;
+import edu.jhu.hlt.concrete.search.SearchResult;
 import edu.jhu.hlt.concrete.search.SearchType;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 
@@ -74,7 +74,7 @@ public class SqlFeedbackStore implements FeedbackStore {
     }
 
     @Override
-    public void addSearchResults(SearchResults results) throws ConcreteException {
+    public void addSearchResults(SearchResult results) throws ConcreteException {
         FeedbackRecord record = FeedbackRecord.create(results);
         Session session = sessionFactory.openSession();
         session.beginTransaction();

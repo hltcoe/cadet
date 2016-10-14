@@ -27,7 +27,7 @@ import org.apache.thrift.protocol.TCompactProtocol;
 import edu.jhu.hlt.cadet.feedback.store.FeedbackException;
 import edu.jhu.hlt.concrete.search.SearchQuery;
 import edu.jhu.hlt.concrete.search.SearchResult;
-import edu.jhu.hlt.concrete.search.SearchResults;
+import edu.jhu.hlt.concrete.search.SearchResultItem;
 import edu.jhu.hlt.concrete.search.SearchType;
 
 @Entity
@@ -56,12 +56,12 @@ public class FeedbackRecord implements Serializable {
     @Column(updatable = false, nullable = false)
     private SearchType searchType;
 
-    public static FeedbackRecord create(SearchResults results) {
+    public static FeedbackRecord create(SearchResult results) {
         SearchQuery query = results.getSearchQuery();
         FeedbackRecord record = new FeedbackRecord();
         record.setUuid(results.getUuid().getUuidString());
         record.setTimestamp(new Date());
-        record.setFeedback(results.getSearchResults());
+        record.setFeedback(results.getSearchResultItems());
         record.setSearchType(query.getType());
         if (query.isSetUserId()) {
             record.setUserId(query.getUserId());
@@ -135,10 +135,10 @@ public class FeedbackRecord implements Serializable {
         searchResultsBlob = blob;
     }
 
-    public SearchResults getSearchResults() throws FeedbackException {
+    public SearchResult getSearchResults() throws FeedbackException {
         // TDeserializer is not thread safe so construct each time
         TDeserializer deserializer = new TDeserializer(new TCompactProtocol.Factory());
-        SearchResults results = new SearchResults();
+        SearchResult results = new SearchResult();
         try {
             deserializer.deserialize(results, searchResultsBlob);
         } catch (TException e) {
@@ -172,9 +172,9 @@ public class FeedbackRecord implements Serializable {
         this.feedback = feedback;
     }
 
-    public void setFeedback(List<SearchResult> results) {
+    public void setFeedback(List<SearchResultItem> results) {
         feedback = new HashSet<Feedback>();
-        for (SearchResult result : results) {
+        for (SearchResultItem result : results) {
             feedback.add(new Feedback(result));
         }
     }

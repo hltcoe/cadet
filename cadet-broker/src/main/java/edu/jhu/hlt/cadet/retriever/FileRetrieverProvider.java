@@ -11,8 +11,8 @@ import com.typesafe.config.Config;
 
 import edu.jhu.hlt.cadet.CadetConfig;
 import edu.jhu.hlt.concrete.Communication;
-import edu.jhu.hlt.concrete.access.RetrieveRequest;
-import edu.jhu.hlt.concrete.access.RetrieveResults;
+import edu.jhu.hlt.concrete.access.FetchRequest;
+import edu.jhu.hlt.concrete.access.FetchResult;
 import edu.jhu.hlt.concrete.serialization.CompactCommunicationSerializer;
 import edu.jhu.hlt.concrete.services.ServiceInfo;
 import edu.jhu.hlt.concrete.services.ServicesException;
@@ -58,8 +58,8 @@ public class FileRetrieverProvider implements RetrieverProvider {
     public void close() {}
 
     @Override
-    public RetrieveResults retrieve(RetrieveRequest request) throws ServicesException, TException {
-        RetrieveResults results = new RetrieveResults();
+    public FetchResult fetch(FetchRequest request) throws ServicesException, TException {
+      FetchResult results = new FetchResult();
 
         for (String id : request.getCommunicationIds()) {
             String path = directory + id + "." + EXTENSION;

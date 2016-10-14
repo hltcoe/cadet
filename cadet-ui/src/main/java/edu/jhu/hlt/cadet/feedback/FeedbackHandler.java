@@ -8,14 +8,14 @@ import org.apache.thrift.TException;
 import edu.jhu.hlt.cadet.feedback.store.FeedbackException;
 import edu.jhu.hlt.cadet.feedback.store.FeedbackStore;
 import edu.jhu.hlt.concrete.UUID;
-import edu.jhu.hlt.concrete.search.Feedback;
+import edu.jhu.hlt.concrete.search.FeedbackService;
 import edu.jhu.hlt.concrete.search.SearchFeedback;
-import edu.jhu.hlt.concrete.search.SearchResults;
+import edu.jhu.hlt.concrete.search.SearchResult;
 import edu.jhu.hlt.concrete.services.ServiceInfo;
 import edu.jhu.hlt.concrete.services.ServicesException;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 
-public class FeedbackHandler implements Feedback.Iface {
+public class FeedbackHandler implements FeedbackService.Iface {
     private static Logger logger = LoggerFactory.getLogger(FeedbackHandler.class);
 
     private FeedbackStore store;
@@ -33,7 +33,7 @@ public class FeedbackHandler implements Feedback.Iface {
     }
 
     @Override
-    public void startFeedback(SearchResults results) throws TException {
+    public void startFeedback(SearchResult results) throws TException {
         logger.info("Enrolling " + results.getUuid().getUuidString() + " into feedback storage");
         try {
             store.addSearchResults(results);

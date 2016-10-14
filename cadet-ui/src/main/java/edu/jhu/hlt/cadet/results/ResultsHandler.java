@@ -15,17 +15,17 @@ import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.learn.Annotation;
 import edu.jhu.hlt.concrete.learn.AnnotationTask;
 import edu.jhu.hlt.concrete.search.SearchResult;
-import edu.jhu.hlt.concrete.search.SearchResults;
+import edu.jhu.hlt.concrete.search.SearchResultItem;
 import edu.jhu.hlt.concrete.search.SearchType;
 import edu.jhu.hlt.concrete.services.AnnotationTaskType;
 import edu.jhu.hlt.concrete.services.AnnotationUnitIdentifier;
 import edu.jhu.hlt.concrete.services.AnnotationUnitType;
 import edu.jhu.hlt.concrete.services.ServiceInfo;
 import edu.jhu.hlt.concrete.services.ServicesException;
-import edu.jhu.hlt.concrete.services.results.ResultsServer;
+import edu.jhu.hlt.concrete.services.results.ResultsServerService;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 
-public class ResultsHandler implements ResultsServer.Iface, SortReceiverCallback {
+public class ResultsHandler implements ResultsServerService.Iface, SortReceiverCallback {
     private static Logger logger = LoggerFactory.getLogger(ResultsHandler.class);
 
     private final int chunkSize = 10;
@@ -58,7 +58,7 @@ public class ResultsHandler implements ResultsServer.Iface, SortReceiverCallback
     }
 
     @Override
-    public void registerSearchResult(SearchResults results, AnnotationTaskType taskType)
+    public void registerSearchResult(SearchResult results, AnnotationTaskType taskType)
                     throws ServicesException, TException {
         logger.info("Results Server: registering search results "
                         + results.getUuid().getUuidString() + " for " + taskType.name());
@@ -85,61 +85,38 @@ public class ResultsHandler implements ResultsServer.Iface, SortReceiverCallback
     }
 
     @Override
-    public List<SearchResults> getSearchResults(AnnotationTaskType taskType, int limit)
+    public List<SearchResult> getSearchResults(AnnotationTaskType taskType, int limit)
                     throws ServicesException, TException {
         return resultsStore.getByTask(taskType, limit);
     }
 
     @Override
-    public List<SearchResults> getSearchResultsByUser(AnnotationTaskType taskType, String userId,
+    public List<SearchResult> getSearchResultsByUser(AnnotationTaskType taskType, String userId,
                     int limit) throws ServicesException, TException {
         return resultsStore.getByUser(taskType, userId, limit);
     }
 
     @Override
-    public SearchResults getLatestSearchResult(String userId) throws ServicesException, TException {
+    public SearchResult getLatestSearchResult(String userId) throws ServicesException, TException {
         return resultsStore.getLatest(userId);
     }
 
     @Override
-    public SearchResults getSearchResult(UUID searchResultsId) throws ServicesException, TException {
+    public SearchResult getSearchResult(UUID searchResultsId) throws ServicesException, TException {
         logger.info("Results server: retrieving result " + searchResultsId.getUuidString());
         return resultsStore.getByID(searchResultsId);
     }
 
-    protected void validate(SearchResults results) throws ConcreteException {
+    protected void validate(SearchResult results) throws ConcreteException {
         if (!results.isSetSearchQuery()) {
             throw new ConcreteException("Search results needs a search query");
         }
-        if (!results.isSetSearchResults()) {
+        if (!results.isSetSearchResultItems()) {
             throw new ConcreteException("Search results list cannot be missing");
         }
         if (!results.getSearchQuery().isSetRawQuery()) {
             throw new ConcreteException("Search query cannot be empty");
         }
-    }
-
-    @Override
-    public UUID startSession(UUID searchResultsId) throws ServicesException, TException {
-        SearchResults searchResults = getSearchResult(searchResultsId);
-        AnnotationSession session = new AnnotationSession(searchResults);
-        sessionStore.add(session);
-
-        logger.info("Results server: starting annotation session on " 
-                        + searchResultsId.getUuidString() + " with session id " + session.getId().getUuidString());
-
-        if (client != null) {
-            // TODO hardcoded to NER and Chinese
-            AnnotationTaskType taskType = AnnotationTaskType.NER;
-            AnnotationUnitType annType = convert(searchResults.getSearchQuery().getType());
-            List<AnnotationUnitIdentifier> list = createList(
-                            searchResults.getSearchResults(), annType == AnnotationUnitType.SENTENCE);
-            AnnotationTask task = new AnnotationTask(taskType, annType, list);
-            task.setLanguage("zho");
-            client.start(session.getId(), task);
-        }
-
-        return session.getId();
     }
 
     private AnnotationUnitType convert(SearchType type) {
@@ -158,9 +135,9 @@ public class ResultsHandler implements ResultsServer.Iface, SortReceiverCallback
         return rtnType;
     }
 
-    private List<AnnotationUnitIdentifier> createList(List<SearchResult> results, boolean sentences) {
+    private List<AnnotationUnitIdentifier> createList(List<SearchResultItem> results, boolean sentences) {
         List<AnnotationUnitIdentifier> list = new ArrayList<>();
-        for (SearchResult result : results) {
+        for (SearchResultItem result : results) {
             AnnotationUnitIdentifier id = new AnnotationUnitIdentifier(result.getCommunicationId());
             if (sentences) {
                 id.setSentenceId(result.getSentenceId());
@@ -236,4 +213,26 @@ public class ResultsHandler implements ResultsServer.Iface, SortReceiverCallback
         return senderAlive;
     }
 
+    @Override
+    public UUID startSession(UUID searchResultsId, AnnotationTaskType arg1) throws ServicesException, TException {
+      SearchResult searchResults = getSearchResult(searchResultsId);
+      AnnotationSession session = new AnnotationSession(searchResults);
+      sessionStore.add(session);
+
+      logger.info("Results server: starting annotation session on "
+                      + searchResultsId.getUuidString() + " with session id " + session.getId().getUuidString());
+
+      if (client != null) {
+          // TODO hardcoded to NER and Chinese
+          AnnotationTaskType taskType = AnnotationTaskType.NER;
+          AnnotationUnitType annType = convert(searchResults.getSearchQuery().getType());
+          List<AnnotationUnitIdentifier> list = createList(
+                          searchResults.getSearchResultItems(), annType == AnnotationUnitType.SENTENCE);
+          AnnotationTask task = new AnnotationTask(taskType, annType, list);
+          task.setLanguage("zho");
+          client.start(session.getId(), task);
+      }
+
+      return session.getId();
+    }
 }

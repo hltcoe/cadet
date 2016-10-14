@@ -1,6 +1,8 @@
 package edu.jhu.hlt.cadet.results;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 
@@ -12,7 +14,6 @@ import com.typesafe.config.Config;
 import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.search.SearchQuery;
 import edu.jhu.hlt.concrete.search.SearchResult;
-import edu.jhu.hlt.concrete.search.SearchResults;
 import edu.jhu.hlt.concrete.services.AnnotationTaskType;
 import edu.jhu.hlt.concrete.services.ServicesException;
 import edu.jhu.hlt.concrete.util.ConcreteException;
@@ -22,7 +23,7 @@ public class ResultsHandlerTest {
     @Test
     public void testValidation() {
         SearchQuery q = new SearchQuery();
-        SearchResults r = new SearchResults();
+        SearchResult r = new SearchResult();
         r.setUuid(new UUID("test"));
         ResultsHandler handler = new ResultsHandler();
 
@@ -43,7 +44,7 @@ public class ResultsHandlerTest {
             assertEquals("Search results list cannot be missing", e.getMessage());
         }
 
-        r.setSearchResults(new ArrayList<SearchResult>());
+        r.setSearchResultItems(new ArrayList<>());
         // must have query text
         try {
             handler.validate(r);
@@ -69,8 +70,8 @@ public class ResultsHandlerTest {
 
         SearchQuery q = new SearchQuery();
         q.setRawQuery("what time is it ?");
-        SearchResults r = new SearchResults(new UUID("test"), q);
-        r.setSearchResults(new ArrayList<SearchResult>());
+        SearchResult r = new SearchResult(new UUID("test"), q);
+        r.setSearchResultItems(new ArrayList<>());
 
         handler.registerSearchResult(r, AnnotationTaskType.NER);
 
@@ -86,8 +87,8 @@ public class ResultsHandlerTest {
         SearchQuery q = new SearchQuery();
         q.setRawQuery("what time is it ?");
         q.setName("time");
-        SearchResults r = new SearchResults(new UUID("test"), q);
-        r.setSearchResults(new ArrayList<SearchResult>());
+        SearchResult r = new SearchResult(new UUID("test"), q);
+        r.setSearchResultItems(new ArrayList<>());
 
         handler.registerSearchResult(r, AnnotationTaskType.NER);
 
@@ -103,8 +104,8 @@ public class ResultsHandlerTest {
 
         SearchQuery q = new SearchQuery();
         q.setRawQuery("lox and bagel");
-        SearchResults r = new SearchResults(new UUID("test"), q);
-        r.setSearchResults(new ArrayList<SearchResult>());
+        SearchResult r = new SearchResult(new UUID("test"), q);
+        r.setSearchResultItems(new ArrayList<>());
 
         handler.registerSearchResult(r, AnnotationTaskType.NER);
 
@@ -119,7 +120,7 @@ public class ResultsHandlerTest {
         public void close() {}
 
         @Override
-        public boolean process(SearchResults results) {
+        public boolean process(SearchResult results) {
             return false;
         }
     }

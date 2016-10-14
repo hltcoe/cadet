@@ -11,7 +11,7 @@ import com.typesafe.config.Config;
 
 import edu.jhu.hlt.cadet.CadetConfig;
 import edu.jhu.hlt.concrete.Communication;
-import edu.jhu.hlt.concrete.access.Sender;
+import edu.jhu.hlt.concrete.access.StoreCommunicationService;
 import edu.jhu.hlt.concrete.services.ServiceInfo;
 
 /**
@@ -25,8 +25,9 @@ public class RemoteSenderProvider implements SenderProvider {
 
     private TFramedTransport transport;
     private TCompactProtocol protocol;
-    private Sender.Client client;
+    private StoreCommunicationService.Client client;
 
+    @Override
     public void init(Config config) {
         host = config.getString(CadetConfig.SEND_HOST);
         port = config.getInt(CadetConfig.SEND_PORT);
@@ -36,7 +37,7 @@ public class RemoteSenderProvider implements SenderProvider {
 
         transport = new TFramedTransport(new TSocket(host, port), Integer.MAX_VALUE);
         protocol = new TCompactProtocol(transport);
-        client = new Sender.Client(protocol);
+        client = new StoreCommunicationService.Client(protocol);
     }
 
     @Override
@@ -50,7 +51,7 @@ public class RemoteSenderProvider implements SenderProvider {
     public void send(Communication communication) throws TException {
         logger.info("Storing Comm Id: " + communication.getId());
         transport.open();
-        client.send(communication);
+        client.store(communication);
         transport.close();
     }
 

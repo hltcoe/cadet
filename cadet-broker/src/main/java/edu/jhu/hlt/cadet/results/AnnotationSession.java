@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.learn.Annotation;
-import edu.jhu.hlt.concrete.search.SearchResults;
+import edu.jhu.hlt.concrete.search.SearchResult;
 import edu.jhu.hlt.concrete.services.AnnotationUnitIdentifier;
 import edu.jhu.hlt.concrete.uuid.UUIDFactory;
 
@@ -19,25 +19,25 @@ import edu.jhu.hlt.concrete.uuid.UUIDFactory;
  */
 public class AnnotationSession {
     private final UUID id;
-    private final SearchResults searchResults;
+    private final SearchResult searchResults;
     private List<AnnotationUnitIdentifier> orderedResults;
     private Set<AnnotationUnitIdentifier> processedResults;
     private Set<Annotation> annotations;
     private Object resultsLock = new Object();
     private Object annotationLock = new Object();
 
-    public AnnotationSession(SearchResults results) {
+    public AnnotationSession(SearchResult results) {
         id = UUIDFactory.newUUID();
         searchResults = results;
         processedResults = new HashSet<AnnotationUnitIdentifier>();
         annotations = new HashSet<Annotation>();
 
-        if (searchResults.getSearchResultsIterator().next().isSetSentenceId()) {
-            orderedResults = searchResults.getSearchResults().stream()
+        if (searchResults.getSearchResultItemsIterator().next().isSetSentenceId()) {
+            orderedResults = searchResults.getSearchResultItems().stream()
                                 .map(entry -> createAUI(entry.getCommunicationId(), entry.getSentenceId()))
                                 .collect(Collectors.toList());
         } else {
-            orderedResults = searchResults.getSearchResults().stream()
+            orderedResults = searchResults.getSearchResultItems().stream()
                                 .map(entry -> new AnnotationUnitIdentifier(entry.getCommunicationId()))
                                 .collect(Collectors.toList());
         }
