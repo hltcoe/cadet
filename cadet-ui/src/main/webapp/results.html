@@ -30,9 +30,9 @@
     $(document).ready(function() {
         CADET.init();
 
-        var searchResultsList = CADET.results.getSearchResults(AnnotationTaskType.NER, 0);
+        var searchResultList = CADET.results.getSearchResults(AnnotationTaskType.NER, 0);
 
-        if (searchResultsList.length === 0) {
+        if (searchResultList.length === 0) {
             $('#search_results').append(
                 $('<h1>').text('No saved search results found'));
         }
@@ -55,34 +55,34 @@
                                 $('<th>'))));
             var resultsTableBody = $('<tbody>');
 
-            for (var i = 0; i < searchResultsList.length; i++) {
-                var searchResults = searchResultsList[i];
+            for (var i = 0; i < searchResultList.length; i++) {
+                var searchResult = searchResultList[i];
 
                 var termsText = '';
-                if (searchResults.searchQuery.terms) {
-                    termsText = searchResults.searchQuery.terms.join(', ');
+                if (searchResult.searchQuery.terms) {
+                    termsText = searchResult.searchQuery.terms.join(', ');
                 }
 
                 var questionsText = '';
-                if (searchResults.searchQuery.questions) {
-                    questionsText = searchResults.searchQuery.questions.join(', ');
+                if (searchResult.searchQuery.questions) {
+                    questionsText = searchResult.searchQuery.questions.join(', ');
                 }
 
                 resultsTableBody.append(
                     $('<tr>')
                         .append(
-                            $('<td>').text(searchResults.searchQuery.userId))
+                            $('<td>').text(searchResult.searchQuery.userId))
                         .append(
                             $('<td>').text(termsText))
                         .append(
                             $('<td>').text(questionsText))
                         .append(
-                            $('<td>').text(searchResults.searchResults.length))
+                            $('<td>').text(searchResult.searchResultItems.length))
                         .append(
                             $('<td>').append(
                                 $('<a>')
                                     .addClass('btn btn-primary btn-sm')
-                                    .attr('href', 'ner.html?searchResultsId=' + searchResults.uuid.uuidString)
+                                    .attr('href', 'ner.html?searchResultId=' + searchResult.uuid.uuidString)
                                     .text('Annotate')
                                 )));
             }
