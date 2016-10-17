@@ -54,14 +54,14 @@
 
     // Global variables
     var SEARCH_RESULT_TABLE;
-    var SEARCH_RESULTS;
+    var SEARCH_RESULT;
 
     function createResultsTable() {
         SEARCH_RESULT_TABLE = $('#results_table').DataTable({
             buttons: [
                 {
                     action: function (e, dt, node, config, results) {
-                        CADET.registerSearchResultWithGuard(SEARCH_RESULTS);
+                        CADET.registerSearchResultWithGuard(SEARCH_RESULT);
                     },
                     text: 'Export'
                 },
@@ -74,7 +74,7 @@
                 {
                     title: 'Feedback',
                     className: 'feedback_buttons',
-                    render: function(data, type, searchResult) {
+                    render: function(data, type, searchResultItem) {
                         return '';
                     },
                     sortable: false,
@@ -82,16 +82,16 @@
                 },
                 {
                     title: 'Communication ID',
-                    render: function(data, type, searchResult) {
-                        return searchResult.communicationId;
+                    render: function(data, type, searchResultItem) {
+                        return searchResultItem.communicationId;
                     },
                     visible: false
                 },
                 {
                     title: 'Sentence ID',
-                    render: function(data, type, searchResult) {
-                        if (searchResult.sentenceId) {
-                            return searchResult.sentenceId.uuidString;
+                    render: function(data, type, searchResultItem) {
+                        if (searchResultItem.sentenceId) {
+                            return searchResultItem.sentenceId.uuidString;
                         }
                         else {
                             return '';
@@ -101,41 +101,41 @@
                 },
                 {
                     title: 'Score',
-                    render: function(data, type, searchResult) {
-                        return searchResult.score;
+                    render: function(data, type, searchResultItem) {
+                        return searchResultItem.score;
                     },
                     visible: false
                 },
                 {
                     title: 'Text',
                     className: 'search_result_text',
-                    render: function(data, type, searchResult) {
+                    render: function(data, type, searchResultItem) {
                         if (type === 'display') {
                             // The render function can be called multiple times.  We only retrieve
                             // the Communication when the render type is 'display'
                             //   https://datatables.net/reference/option/columns.render
                             try {
-                                var retrieveResults = CADET.retrieveComms([searchResult.communicationId]);
+                                var retrieveResults = CADET.retrieveComms([searchResultItem.communicationId]);
                                 if (retrieveResults.communications.length === 1) {
-                                    searchResult.communication = retrieveResults.communications[0];
-                                    searchResult.communication.addInternalReferences();
+                                    searchResultItem.communication = retrieveResults.communications[0];
+                                    searchResultItem.communication.addInternalReferences();
 
-                                    // searchResult.sentence will be null if searchResult.sentenceId is not valid
-                                    searchResult.sentence = searchResult.communication.getSentenceWithUUID(
-                                        searchResult.sentenceId);
+                                    // searchResultItem.sentence will be null if searchResultItem.sentenceId is not valid
+                                    searchResultItem.sentence = searchResultItem.communication.getSentenceWithUUID(
+                                        searchResultItem.sentenceId);
                                 }
                             }
                             catch (error) {
                                 displayAndThrowError(error);
                             }
 
-                            var searchResultText = '';
+                            var searchResultItemText = '';
 
-                            if (searchResult.sentence) {
-                                searchResultText = $('<span>').sentenceWidget(searchResult.sentence).text();
+                            if (searchResultItem.sentence) {
+                                searchResultItemText = $('<span>').sentenceWidget(searchResultItem.sentence).text();
                             }
                             else {
-                                if (searchResult.sentenceId) {
+                                if (searchResultItem.sentenceId) {
                                     console.error('SearchResult specified an invalid sentenceId');
                                 }
                                 else {
@@ -143,23 +143,23 @@
                                     console.warn('SearchResult did not include an (optional) sentenceId');
                                 }
 
-                                var firstSentence = getFirstSentenceInCommunication(searchResult.communication);
+                                var firstSentence = getFirstSentenceInCommunication(searchResultItem.communication);
                                 if (firstSentence) {
-                                    searchResultText = $('<span>').sentenceWidget(firstSentence).text();
+                                    searchResultItemText = $('<span>').sentenceWidget(firstSentence).text();
                                 }
-                                else if (!searchResult.communication) {
-                                    searchResultText = '<div class="alert alert-danger" role="alert" ' +
+                                else if (!searchResultItem.communication) {
+                                    searchResultItemText = '<div class="alert alert-danger" role="alert" ' +
                                                        'style="font-style: italic">' +
                                                        'Unable to retrieve Communication for this SearchResult' +
                                                        '</div>';
                                 }
                                 else {
                                     console.warn('Communication did not contain any Sentences');
-                                    searchResultText = searchResult.communication.text;
+                                    searchResultItemText = searchResultItem.communication.text;
                                 }
                             }
 
-                            return searchResultText;
+                            return searchResultItemText;
                         }
                         else { // type !== 'display'
                             return '';
@@ -167,7 +167,7 @@
                     }
                 }
             ],
-            createdRow: function(row, searchResult, index) {
+            createdRow: function(row, searchResultItem, index) {
                 // Add event handlers to DOM elements created by render()
                 //
                 // For more information about how to use DataTables' createdRow, see:
@@ -188,7 +188,7 @@
                                         .attr('type', 'radio')
                                         .attr('autocomplete', 'off'))
                                 .on('click',
-                                    {'searchResult': searchResult, 'searchResults': SEARCH_RESULTS},
+                                    {'searchResultItem': searchResultItem, 'searchResult': SEARCH_RESULT},
                                     saveSentenceFeedback))
                         .append(
                             // Negative feedback button
@@ -200,15 +200,15 @@
                                         .attr('type', 'radio')
                                         .attr('autocomplete', 'off'))
                                 .on('click',
-                                    {'searchResult': searchResult, 'searchResults': SEARCH_RESULTS},
+                                    {'searchResultItem': searchResultItem, 'searchResult': SEARCH_RESULT},
                                     saveSentenceFeedback)));
 
-                var searchResultId = SEARCH_RESULTS.uuid.uuidString + '_' + index;
-                $('.search_result_text', row).attr('id', searchResult.communicationId)
+                var searchResultItemId = SEARCH_RESULT.uuid.uuidString + '_' + index;
+                $('.search_result_item_text', row).attr('id', searchResultItem.communicationId)
                    .on('click',
                        {
-                           'searchResult': searchResult,
-                           'searchResultId': searchResultId,
+                           'searchResultItem': searchResultItem,
+                           'searchResultItemId': searchResultItemId,
                        },
                        openSearchResultTab);
             },
@@ -235,13 +235,13 @@
     /**
      */
     function createEntityMentionSearchMenu(event) {
-        var searchResult = event.data.searchResult;
+        var searchResultItem = event.data.searchResultItem;
 
         var entityMentionList = [];
         for (var i = 0; i < this.classList.length; i++) {
             if (this.classList[i].startsWith('entity_mention_')) {
                 var entityMentionId = this.classList[i].substring(15);
-                var entityMention = searchResult.communication.getEntityMentionWithUUID({
+                var entityMention = searchResultItem.communication.getEntityMentionWithUUID({
                     'uuidString': entityMentionId
                 });
                 entityMentionList.push(entityMention);
@@ -253,7 +253,7 @@
         for (var j = 0; j < entityMentionList.length; j++) {
             var searchQuery = new SearchQuery();
             searchQuery.type = SearchType.ENTITY_MENTIONS;
-            searchQuery.communicationId = searchResult.communicationId;
+            searchQuery.communicationId = searchResultItem.communicationId;
             searchQuery.tokens = entityMentionList[j].tokens;
             searchQuery.userId = CADET.userId;
 
@@ -298,11 +298,11 @@
         }
     }
 
-    function addResultsToResultsTable(searchResults) {
-        SEARCH_RESULTS = searchResults;
+    function addResultToResultsTable(searchResult) {
+        SEARCH_RESULT = searchResult;
         SEARCH_RESULT_TABLE.clear();
-        if (searchResults.searchResults.length > 0) {
-            SEARCH_RESULT_TABLE.rows.add(searchResults.searchResults);
+        if (searchResult.searchResultItems.length > 0) {
+            SEARCH_RESULT_TABLE.rows.add(searchResult.searchResultItems);
         }
         SEARCH_RESULT_TABLE.draw();
     }
@@ -320,15 +320,15 @@
         // removes any previous error messages
         $('#errors').empty();
 
-        var searchResults;
+        var searchResult;
         try {
-            searchResults = CADET.search.search(searchQuery);
+            searchResult = CADET.search.search(searchQuery);
         }
         catch (error) {
             displayAndThrowError(error);
         }
 
-        addResultsToResultsTable(searchResults);
+        addResultToResultsTable(searchResult);
 
         $('a[href="#search_results"]').tab('show');
     }
@@ -462,11 +462,11 @@
     }
 
     function saveSentenceFeedback(event) {
+        var searchResultItem = event.data.searchResultItem;
         var searchResult = event.data.searchResult;
-        var searchResults = event.data.searchResults;
-        var searchResultsId = searchResults.uuid;
-        var communicationId = searchResult.communicationId;
-        var sentenceId = searchResult.sentenceId;
+        var searchResultId = searchResult.uuid;
+        var communicationId = searchResultItem.communicationId;
+        var sentenceId = searchResultItem.sentenceId;
 
         var feedback;
         if ($(this).data('polarity')==='pos'){
@@ -477,8 +477,8 @@
         }
 
         try {
-            CADET.startFeedbackWithGuard(searchResults);
-            CADET.feedback.addSentenceFeedback(searchResultsId, communicationId, sentenceId, feedback);
+            CADET.startFeedbackWithGuard(searchResult);
+            CADET.feedback.addSentenceFeedback(searchResultId, communicationId, sentenceId, feedback);
         }
         catch (error) {
             displayAndThrowError(error);
