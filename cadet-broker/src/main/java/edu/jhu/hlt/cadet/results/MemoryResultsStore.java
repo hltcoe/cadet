@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import edu.jhu.hlt.concrete.UUID;
-import edu.jhu.hlt.concrete.search.SearchResults;
+import edu.jhu.hlt.concrete.search.SearchResult;
 import edu.jhu.hlt.concrete.services.AnnotationTaskType;
 import edu.jhu.hlt.concrete.services.ServicesException;
 
@@ -20,7 +20,7 @@ public class MemoryResultsStore implements ResultsStore {
     private Object dataLock = new Object();
 
     @Override
-    public void add(SearchResults results, AnnotationTaskType taskType) throws ServicesException {
+    public void add(SearchResult results, AnnotationTaskType taskType) throws ServicesException {
         synchronized(dataLock) {
             if (data.containsKey(results.getUuid())) {
                 // unexpected behavior will be caused if apps reuse UUIDs for search results
@@ -32,7 +32,7 @@ public class MemoryResultsStore implements ResultsStore {
     }
 
     @Override
-    public SearchResults getByID(UUID id) {
+    public SearchResult getByID(UUID id) {
         synchronized(dataLock) {
             Item item = data.get(id);
             if (item != null) {
@@ -44,7 +44,7 @@ public class MemoryResultsStore implements ResultsStore {
     }
 
     @Override
-    public SearchResults getLatest(String userId) {
+    public SearchResult getLatest(String userId) {
         Entry<UUID, Item> item = null;
         synchronized(dataLock) {
             item = data.entrySet().stream()
@@ -60,11 +60,11 @@ public class MemoryResultsStore implements ResultsStore {
     }
 
     @Override
-    public List<SearchResults> getByTask(AnnotationTaskType taskType, int limit) {
+    public List<SearchResult> getByTask(AnnotationTaskType taskType, int limit) {
         if (limit == 0) {
             limit = Integer.MAX_VALUE;
         }
-        List<SearchResults> results = null;
+        List<SearchResult> results = null;
         synchronized(dataLock) {
             results = data.entrySet().stream()
                             .filter(entry -> entry.getValue().tasks.contains(taskType))
@@ -77,11 +77,11 @@ public class MemoryResultsStore implements ResultsStore {
     }
 
     @Override
-    public List<SearchResults> getByUser(AnnotationTaskType taskType, String userId, int limit) {
+    public List<SearchResult> getByUser(AnnotationTaskType taskType, String userId, int limit) {
         if (limit == 0) {
             limit = Integer.MAX_VALUE;
         }
-        List<SearchResults> results = null;
+        List<SearchResult> results = null;
         synchronized(dataLock) {
             results = data.entrySet().stream()
                             .filter(entry -> userId.equals(entry.getValue().userId))
@@ -95,12 +95,12 @@ public class MemoryResultsStore implements ResultsStore {
     }
 
     private class Item implements Comparable<Item> {
-        public SearchResults results;
+        public SearchResult results;
         public Set<AnnotationTaskType> tasks;
         public Instant timestamp;
         public String userId;
 
-        public Item(SearchResults results, AnnotationTaskType taskType) {
+        public Item(SearchResult results, AnnotationTaskType taskType) {
             this.results = results;
             this.tasks = new HashSet<AnnotationTaskType>();
             this.tasks.add(taskType);

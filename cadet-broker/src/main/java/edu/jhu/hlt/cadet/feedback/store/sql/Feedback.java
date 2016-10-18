@@ -11,7 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import edu.jhu.hlt.concrete.search.SearchFeedback;
-import edu.jhu.hlt.concrete.search.SearchResult;
+import edu.jhu.hlt.concrete.search.SearchResultItem;
 
 @Entity
 public class Feedback implements Serializable {
@@ -30,7 +30,7 @@ public class Feedback implements Serializable {
 
     public Feedback() {}
 
-    public Feedback(SearchResult result) {
+    public Feedback(SearchResultItem result) {
         setCommId(result.getCommunicationId());
         if (result.isSetSentenceId()) {
             setSentId(result.getSentenceId().getUuidString());

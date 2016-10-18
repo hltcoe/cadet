@@ -13,10 +13,10 @@ import org.apache.thrift.transport.TFramedTransport;
 import com.typesafe.config.Config;
 
 import edu.jhu.hlt.cadet.CadetConfig;
-import edu.jhu.hlt.concrete.search.Search;
 import edu.jhu.hlt.concrete.search.SearchCapability;
+import edu.jhu.hlt.concrete.search.SearchService;
 import edu.jhu.hlt.concrete.search.SearchQuery;
-import edu.jhu.hlt.concrete.search.SearchResults;
+import edu.jhu.hlt.concrete.search.SearchResult;
 import edu.jhu.hlt.concrete.services.ServiceInfo;
 import edu.jhu.hlt.concrete.services.ServicesException;
 
@@ -31,7 +31,7 @@ public class RemoteSearchProvider implements SearchProvider {
 
     private TFramedTransport transport;
     private TCompactProtocol protocol;
-    private Search.Client client;
+    private SearchService.Client client;
 
     @Override
     public void init(Config config) {
@@ -55,7 +55,7 @@ public class RemoteSearchProvider implements SearchProvider {
 
         transport = new TFramedTransport(new TSocket(host, port), Integer.MAX_VALUE);
         protocol = new TCompactProtocol(transport);
-        client = new Search.Client(protocol);
+        client = new SearchService.Client(protocol);
     }
 
     @Override
@@ -66,8 +66,8 @@ public class RemoteSearchProvider implements SearchProvider {
     }
 
     @Override
-    public SearchResults search(SearchQuery searchQuery) throws ServicesException, TException {
-        SearchResults results = null;
+    public SearchResult search(SearchQuery searchQuery) throws ServicesException, TException {
+        SearchResult results = null;
 
         transport.open();
         results = client.search(searchQuery);

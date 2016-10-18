@@ -15,7 +15,7 @@ import com.typesafe.config.Config;
 
 import edu.jhu.hlt.cadet.CadetConfig;
 import edu.jhu.hlt.concrete.UUID;
-import edu.jhu.hlt.concrete.learn.ActiveLearnerServer;
+import edu.jhu.hlt.concrete.learn.ActiveLearnerServerService;
 import edu.jhu.hlt.concrete.learn.Annotation;
 import edu.jhu.hlt.concrete.learn.AnnotationTask;
 import edu.jhu.hlt.concrete.services.AsyncContactInfo;
@@ -29,7 +29,7 @@ public class RemoteActiveLearningClient implements ActiveLearningClient {
 
     private TFramedTransport transport;
     private TCompactProtocol protocol;
-    private ActiveLearnerServer.Client client;
+    private ActiveLearnerServerService.Client client;
 
     @Override
     public void init(Config config) {
@@ -50,7 +50,7 @@ public class RemoteActiveLearningClient implements ActiveLearningClient {
 
         transport = new TFramedTransport(new TSocket(learnerHost, learnerPort), Integer.MAX_VALUE);
         protocol = new TCompactProtocol(transport);
-        client = new ActiveLearnerServer.Client(protocol);
+        client = new ActiveLearnerServerService.Client(protocol);
     }
 
     @Override

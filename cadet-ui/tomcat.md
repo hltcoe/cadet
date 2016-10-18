@@ -22,7 +22,7 @@ Add the following tags to the `<tomcat-users>` section of the `tomcat-users.xml`
 The username and password in the `tomcat-users.xml` file are the
 same username and password values specified in the `pom.xml` file.
 
-After you have updated `comcat-users.xml`, you will need to
+After you have updated `tomcat-users.xml`, you will need to
 restart Tomcat.  If you have installed Tomcat as a Linux package, you
 can do this using:
 

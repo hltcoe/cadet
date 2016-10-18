@@ -9,18 +9,18 @@ import org.junit.Test;
 import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.search.SearchFeedback;
 import edu.jhu.hlt.concrete.search.SearchQuery;
+import edu.jhu.hlt.concrete.search.SearchResultItem;
 import edu.jhu.hlt.concrete.search.SearchResult;
-import edu.jhu.hlt.concrete.search.SearchResults;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 
 public class CommunicationFeedbackTest {
 
     @Test
     public void testValidateWithGoodObject() {
-        SearchResults sr = new SearchResults(new UUID("test"), new SearchQuery());
-        SearchResult item = new SearchResult();
+        SearchResult sr = new SearchResult(new UUID("test"), new SearchQuery());
+        SearchResultItem item = new SearchResultItem();
         item.setCommunicationId("nytimes_89");
-        sr.addToSearchResults(item);
+        sr.addToSearchResultItems(item);
 
         try {
             @SuppressWarnings("unused")
@@ -32,7 +32,7 @@ public class CommunicationFeedbackTest {
 
     @Test(expected = ConcreteException.class)
     public void testValidateWithBadObject() throws ConcreteException {
-        SearchResults sr = new SearchResults(new UUID("test"), new SearchQuery());
+        SearchResult sr = new SearchResult(new UUID("test"), new SearchQuery());
 
         @SuppressWarnings("unused")
         CommunicationFeedback cf = new CommunicationFeedback(sr);
@@ -40,9 +40,9 @@ public class CommunicationFeedbackTest {
 
     @Test(expected = ConcreteException.class)
     public void testValidateWithMissingCommId() throws ConcreteException {
-        SearchResults sr = new SearchResults(new UUID("test"), new SearchQuery());
-        SearchResult item = new SearchResult();
-        sr.addToSearchResults(item);
+        SearchResult sr = new SearchResult(new UUID("test"), new SearchQuery());
+        SearchResultItem item = new SearchResultItem();
+        sr.addToSearchResultItems(item);
 
         @SuppressWarnings("unused")
         CommunicationFeedback cf = new CommunicationFeedback(sr);
@@ -50,13 +50,13 @@ public class CommunicationFeedbackTest {
 
     @Test
     public void testAddFeedback() throws ConcreteException {
-        SearchResults sr = new SearchResults(new UUID("test"), new SearchQuery());
-        SearchResult item1 = new SearchResult();
+        SearchResult sr = new SearchResult(new UUID("test"), new SearchQuery());
+        SearchResultItem item1 = new SearchResultItem();
         item1.setCommunicationId("nytimes_89");
-        sr.addToSearchResults(item1);
-        SearchResult item2 = new SearchResult();
+        sr.addToSearchResultItems(item1);
+        SearchResultItem item2 = new SearchResultItem();
         item2.setCommunicationId("nytimes_12");
-        sr.addToSearchResults(item2);
+        sr.addToSearchResultItems(item2);
         CommunicationFeedback cf = new CommunicationFeedback(sr);
 
         cf.addFeedback("nytimes_89", SearchFeedback.NEGATIVE);
@@ -69,10 +69,10 @@ public class CommunicationFeedbackTest {
 
     @Test
     public void testAddFeedbackWithUnknownId() throws ConcreteException {
-        SearchResults sr = new SearchResults(new UUID("test"), new SearchQuery());
-        SearchResult item = new SearchResult();
+      SearchResult sr = new SearchResult(new UUID("test"), new SearchQuery());
+        SearchResultItem item = new SearchResultItem();
         item.setCommunicationId("nytimes_89");
-        sr.addToSearchResults(item);
+        sr.addToSearchResultItems(item);
         CommunicationFeedback cf = new CommunicationFeedback(sr);
 
         assertFalse(cf.addFeedback("latimes_55", SearchFeedback.NEGATIVE));

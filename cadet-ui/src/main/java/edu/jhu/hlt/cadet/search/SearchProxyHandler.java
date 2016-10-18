@@ -8,13 +8,13 @@ import java.util.Map;
 import org.apache.thrift.TException;
 
 import edu.jhu.hlt.concrete.search.SearchCapability;
-import edu.jhu.hlt.concrete.search.SearchProxy;
+import edu.jhu.hlt.concrete.search.SearchProxyService;
 import edu.jhu.hlt.concrete.search.SearchQuery;
-import edu.jhu.hlt.concrete.search.SearchResults;
+import edu.jhu.hlt.concrete.search.SearchResult;
 import edu.jhu.hlt.concrete.services.ServiceInfo;
 import edu.jhu.hlt.concrete.services.ServicesException;
 
-public class SearchProxyHandler implements SearchProxy.Iface {
+public class SearchProxyHandler implements SearchProxyService.Iface {
     Map<String, SearchProvider> providerMap = new HashMap<String, SearchProvider>();
 
     public void addProvider(String providerName, SearchProvider provider) {
@@ -51,7 +51,7 @@ public class SearchProxyHandler implements SearchProxy.Iface {
     }
 
     @Override
-    public SearchResults search(SearchQuery query, String provider)
+    public SearchResult search(SearchQuery query, String provider)
             throws ServicesException, TException {
         return providerMap.get(provider).search(query);
     }

@@ -11,8 +11,8 @@ import edu.jhu.hlt.concrete.Sentence;
 import edu.jhu.hlt.concrete.sentence.SentenceFactory;
 import edu.jhu.hlt.concrete.TextSpan;
 import edu.jhu.hlt.concrete.Tokenization;
-import edu.jhu.hlt.concrete.access.RetrieveRequest;
-import edu.jhu.hlt.concrete.access.RetrieveResults;
+import edu.jhu.hlt.concrete.access.FetchRequest;
+import edu.jhu.hlt.concrete.access.FetchResult;
 import edu.jhu.hlt.concrete.random.RandomConcreteFactory;
 import edu.jhu.hlt.concrete.services.ServiceInfo;
 import edu.jhu.hlt.concrete.services.ServicesException;
@@ -33,8 +33,8 @@ public class MockRetrieverProvider implements RetrieverProvider {
     public void close() {}
 
     @Override
-    public RetrieveResults retrieve(RetrieveRequest request) throws ServicesException, TException {
-        RetrieveResults results = new RetrieveResults();
+    public FetchResult fetch(FetchRequest request) throws ServicesException, TException {
+        FetchResult results = new FetchResult();
         RandomConcreteFactory factory = new RandomConcreteFactory();
         NonsenseGenerator gen = NonsenseGenerator.getInstance();
         for (String commId : request.getCommunicationIds()) {

@@ -14,7 +14,7 @@ import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.search.SearchCapability;
 import edu.jhu.hlt.concrete.search.SearchQuery;
 import edu.jhu.hlt.concrete.search.SearchResult;
-import edu.jhu.hlt.concrete.search.SearchResults;
+import edu.jhu.hlt.concrete.search.SearchResultItem;
 import edu.jhu.hlt.concrete.search.SearchType;
 import edu.jhu.hlt.concrete.services.ServiceInfo;
 import edu.jhu.hlt.concrete.services.ServicesException;
@@ -32,15 +32,15 @@ public class MockSearchProvider implements SearchProvider {
     public void close() {}
 
     @Override
-    public SearchResults search(SearchQuery searchQuery) throws ServicesException, TException {
+    public SearchResult search(SearchQuery searchQuery) throws ServicesException, TException {
         return createMockData(searchQuery);
     }
 
-    private SearchResults createMockData(SearchQuery query) {
+    private SearchResult createMockData(SearchQuery query) {
         AnalyticUUIDGeneratorFactory f = new AnalyticUUIDGeneratorFactory();
         AnalyticUUIDGeneratorFactory.AnalyticUUIDGenerator gen = f.create();
 
-        SearchResults results = new SearchResults();
+        SearchResult results = new SearchResult();
 
         Map<String, String> comms = new HashMap<String, String>();
         comms.put("99508872582148096", "74c72918-6825-25a1-b4a1-000034f6aa82");
@@ -64,13 +64,13 @@ public class MockSearchProvider implements SearchProvider {
         results.setSearchQuery(query);
 
         for (Map.Entry<String, String> comm : comms.entrySet()) {
-            SearchResult result = new SearchResult();
+            SearchResultItem result = new SearchResultItem();
             if (query.getType() == SearchType.SENTENCES) {
                 result.setSentenceId(new UUID(comm.getValue()));
             }
             result.setCommunicationId(comm.getKey());
             result.setScore(0.0);
-            results.addToSearchResults(result);
+            results.addToSearchResultItems(result);
         }
 
         return results;

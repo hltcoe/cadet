@@ -7,15 +7,15 @@ import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.jhu.hlt.concrete.search.Search;
 import edu.jhu.hlt.concrete.search.SearchCapability;
 import edu.jhu.hlt.concrete.search.SearchQuery;
 import edu.jhu.hlt.concrete.search.SearchResult;
-import edu.jhu.hlt.concrete.search.SearchResults;
+import edu.jhu.hlt.concrete.search.SearchResultItem;
+import edu.jhu.hlt.concrete.search.SearchService;
 import edu.jhu.hlt.concrete.services.ServiceInfo;
 import edu.jhu.hlt.concrete.services.ServicesException;
 
-public class SearchHandler implements Search.Iface {
+public class SearchHandler implements SearchService.Iface {
     private static Logger logger = LoggerFactory.getLogger(SearchHandler.class);
 
     private SearchProvider searchProvider;
@@ -28,13 +28,13 @@ public class SearchHandler implements Search.Iface {
     }
 
     @Override
-    public SearchResults search(SearchQuery searchQuery) throws ServicesException, TException {
+    public SearchResult search(SearchQuery searchQuery) throws ServicesException, TException {
 
         logSearchQuery(searchQuery);
 
         validate(searchQuery);
 
-        SearchResults results = searchProvider.search(searchQuery);
+        SearchResult results = searchProvider.search(searchQuery);
 
         logSearchResults(results);
 
@@ -72,13 +72,13 @@ public class SearchHandler implements Search.Iface {
         }
     }
 
-    protected static void logSearchResults(SearchResults searchResults) {
-        Iterator<SearchResult> searchResultsIterator = searchResults.getSearchResultsIterator();
+    protected static void logSearchResults(SearchResult searchResults) {
+        Iterator<SearchResultItem> searchResultsIterator = searchResults.getSearchResultItemsIterator();
 
-        if (searchResults.getSearchResultsSize() == 0) {
+        if (searchResults.getSearchResultItemsSize() == 0) {
             logger.info("Search: No results returned");
         } else {
-            logger.info("Search: " + searchResults.getSearchResultsSize() + " result(s) provided");
+            logger.info("Search: " + searchResults.getSearchResultItemsSize() + " result(s) provided");
             while (searchResultsIterator.hasNext()) {
                 logger.debug("SearchResult: " + searchResultsIterator.next());
             }

@@ -7,11 +7,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.jhu.hlt.concrete.UUID;
-import edu.jhu.hlt.concrete.learn.ActiveLearnerClient;
+import edu.jhu.hlt.concrete.learn.ActiveLearnerClientService;
 import edu.jhu.hlt.concrete.services.AnnotationUnitIdentifier;
 import edu.jhu.hlt.concrete.services.ServiceInfo;
 
-public class SortReceiverHandler implements ActiveLearnerClient.Iface {
+public class SortReceiverHandler implements ActiveLearnerClientService.Iface {
     private static final Logger logger = LoggerFactory.getLogger(SortReceiverHandler.class);
 
     private SortReceiverCallback callback;

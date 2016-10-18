@@ -2,8 +2,8 @@
 //
 // None of the code in this file should manipulate the DOM.
 
-/* globals AnnotationTaskType, FeedbackClient, RetrieverClient,
-           ResultsServerClient, RetrieveRequest, SearchClient,
+/* globals AnnotationTaskType, FeedbackClient, FetchRequest,
+           RetrieverClient, ResultsServerClient, SearchClient,
            SearchProxy, SearchQuery, SearchType, SenderClient, Thrift
 */
 
@@ -26,18 +26,18 @@ var CADET = {
     defaultSearchProviders: {},
     searchProvidersForSearchType: {},
 
-    /** Takes a SearchResults and RetrieveResults object.  For each
-     *  SearchResult (singular) object in SearchResults, add reference
+    /** Takes a SearchResult and RetrieveResults object.  For each
+     *  SearchResultItem object in SearchResult, add reference
      *  variables:
      *    - 'communication', which points to the Communication
-     *        identified by searchResult.communicationId
+     *        identified by searchResultItem.communicationId
      *    - 'sentence', which points to the Sentence identified
-     *        by searchResult.sentenceId
+     *        by searchResultItem.sentenceId
      *
-     * @param {SearchResults} searchResults
+     * @param {SearchResult} searchResult
      * @param {RetrieveResults} retrieveResults
      */
-    addReferencesToSearchResults: function(searchResults, retrieveResults) {
+    addReferencesToSearchResultItems: function(searchResult, retrieveResults) {
         var comm;
         var commIdToComm = {};
         for (var i = 0; i < retrieveResults.communications.length; i++) {
@@ -45,15 +45,15 @@ var CADET = {
             commIdToComm[comm.id] = comm;
             comm.addInternalReferences();
         }
-        if (searchResults.searchResults) {
-            for (var j = 0; j < searchResults.searchResults.length; j++) {
-                var searchResult = searchResults.searchResults[j];
-                comm = commIdToComm[searchResult.communicationId];
-                searchResult.communication = comm;
+        if (searchResult.searchResultItems) {
+            for (var j = 0; j < searchResult.searchResultItems.length; j++) {
+                var searchResultItem = searchResult.searchResultItems[j];
+                comm = commIdToComm[searchResultItem.communicationId];
+                searchResultItem.communication = comm;
 
                 if (comm) {
-                    // searchResult.sentence will be null if searchResult.sentenceId is not a valid Sentence UUID
-                    searchResult.sentence = comm.getSentenceWithUUID(searchResult.sentenceId);
+                    // searchResultItem.sentence will be null if searchResultItem.sentenceId is not valid Sentence UUID
+                    searchResultItem.sentence = comm.getSentenceWithUUID(searchResultItem.sentenceId);
                 }
             }
         }
@@ -144,17 +144,17 @@ var CADET = {
         return q;
     },
 
-    /** Takes a SearchResult (singular) and a RetrieveResults, returns the Communication
-     *  that is identified by the SearchResult and stored in the RetrieveResults.  Returns
-     *  null if RetrieveResults did not contain the requested Communication
+    /** Takes a SearchResultItem and a RetrieveResults, returns the Communication
+     *  that is identified by the SearchResultItem and stored in the RetrieveResults.
+     *  Returns null if RetrieveResults did not contain the requested Communication
      *
-     * @param {SearchResult} searchResult -
+     * @param {SearchResultItem} searchResultItem -
      * @param {RetrieveResults} retrieveResults - contains a list of Communications
      * @returns {Communication|null}
      */
-    getCommunicationForSearchResult: function(searchResult, retrieveResults) {
+    getCommunicationForSearchResult: function(searchResultItem, retrieveResults) {
         for (var i = 0; i < retrieveResults.communications.length; i++) {
-            if (retrieveResults.communications[i].id === searchResult.communicationId) {
+            if (retrieveResults.communications[i].id === searchResultItem.communicationId) {
                 return retrieveResults.communications[i];
             }
         }
@@ -162,15 +162,15 @@ var CADET = {
     },
 
     /** Get list of Communication IDs stored in SearchResults
-     * @param {SearchResults} results
+     * @param {SearchResult} result
      * @returns {List} - A list of Communication ID strings
      */
-    getCommunicationIdListFromSearchResults: function(results) {
+    getCommunicationIdListFromSearchResults: function(result) {
         var idList = [];
-        // iterates over searchResults and adds communication IDs to idList
-        if (results.searchResults) {
-            for (var i = 0; i < results.searchResults.length; i++){
-                idList.push(results.searchResults[i].communicationId);
+        // iterates over searchResultItems and adds communication IDs to idList
+        if (result.searchResultItems) {
+            for (var i = 0; i < result.searchResultItems.length; i++){
+                idList.push(result.searchResultItems[i].communicationId);
             }
         }
         // returns a list of communication IDs
@@ -208,16 +208,16 @@ var CADET = {
     init: function() {
         var feedback_transport = new Thrift.Transport('FeedbackServlet');
         var feedback_protocol = new Thrift.Protocol(feedback_transport);
-        this.feedback = new FeedbackClient(feedback_protocol);
+        this.feedback = new FeedbackServiceClient(feedback_protocol);
 
         var retriever_transport = new Thrift.Transport('RetrieverServlet');
         var retriever_protocol = new Thrift.Protocol(retriever_transport);
-        this.retriever = new RetrieverClient(retriever_protocol);
+        this.retriever = new FetchCommunicationServiceClient(retriever_protocol);
         this.retrieve = this.retriever;
 
         var search_transport = new Thrift.Transport('SearchServlet');
         var search_protocol = new Thrift.Protocol(search_transport);
-        this.search = new SearchClient(search_protocol);
+        this.search = new SearchServiceClient(search_protocol);
 
         var search_proxy_transport = new Thrift.Transport('SearchProxyServlet');
         var search_proxy_protocol = new Thrift.Protocol(search_proxy_transport);
@@ -225,11 +225,11 @@ var CADET = {
 
         var send_transport = new Thrift.Transport('SenderServlet');
         var send_protocol = new Thrift.Protocol(send_transport);
-        this.send = new SenderClient(send_protocol);
+        this.send = new StoreCommunicationServiceClient(send_protocol);
 
         var results_transport = new Thrift.Transport('ResultsServer');
         var results_protocol = new Thrift.Protocol(results_transport);
-        this.results = new ResultsServerClient(results_protocol);
+        this.results = new ResultsServerServiceClient(results_protocol);
 
         this.configureSearchProviders();
     },
@@ -238,12 +238,12 @@ var CADET = {
      *  function IFF it has not called before for this particular
      *  SearchResults object.
      *
-     * @param {SearchResults} searchResults
+     * @param {SearchResult} searchResult
      */
-    registerSearchResultWithGuard: function(searchResults) {
-        if (!this.registeredSearchResults.hasOwnProperty(searchResults.uuid.uuidString)) {
-            CADET.results.registerSearchResult(searchResults, AnnotationTaskType.NER);
-            this.registeredSearchResults[searchResults.uuid.uuidString] = true;
+    registerSearchResultWithGuard: function(searchResult) {
+        if (!this.registeredSearchResults.hasOwnProperty(searchResult.uuid.uuidString)) {
+            CADET.results.registerSearchResult(searchResult, AnnotationTaskType.NER);
+            this.registeredSearchResults[searchResult.uuid.uuidString] = true;
         }
     },
 
@@ -252,15 +252,15 @@ var CADET = {
      * @returns {RetrieveResults}
      */
     retrieveComms: function(idList) {
-        // create args object to pass to RetrieveRequest
+        // create args object to pass to FetchRequest
         var args = {};
         // list of communication IDs
         args.communicationIds = idList;
-        // create RetrieveRequest object
-        var request = new RetrieveRequest(args);
+        // create FetchRequest object
+        var request = new FetchRequest(args);
 
         // retrieve the communications
-        var results = this.retriever.retrieve(request);
+        var results = this.retriever.fetch(request);
         return results;
     },
 
@@ -276,12 +276,12 @@ var CADET = {
     /** Call the Feedback server's startFeedback() function IFF it has not
      *  called before for this particular SearchResults object.
      *
-     * @param {SearchResults} searchResults
+     * @param {SearchResult} searchResult
      */
-    startFeedbackWithGuard: function(searchResults) {
-        if (!this.resultsWithFeedbackStarted.hasOwnProperty(searchResults.uuid.uuidString)) {
-            CADET.feedback.startFeedback(searchResults);
-            this.resultsWithFeedbackStarted[searchResults.uuid.uuidString] = true;
+    startFeedbackWithGuard: function(searchResult) {
+        if (!this.resultsWithFeedbackStarted.hasOwnProperty(searchResult.uuid.uuidString)) {
+            CADET.feedback.startFeedback(searchResult);
+            this.resultsWithFeedbackStarted[searchResult.uuid.uuidString] = true;
         }
     }
 };
