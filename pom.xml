@@ -24,7 +24,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jdk.version>1.8</jdk.version>
     <slf4j.version>1.7.21</slf4j.version>
-    <concrete-services.version>4.10.7.1</concrete-services.version>
+    <concrete-services.version>4.10.7.3</concrete-services.version>
   </properties>
 
   <modules>
@@ -69,7 +69,7 @@
       <dependency>
         <groupId>edu.jhu.hlt</groupId>
         <artifactId>tift</artifactId>
-        <version>4.10.5</version>
+        <version>4.10.6</version>
       </dependency>
       <dependency>
         <groupId>com.typesafe</groupId>
@@ -182,5 +182,4 @@
       <organizationUrl>http://hltcoe.jhu.edu/</organizationUrl>
     </developer>
   </developers>
-
 </project>
