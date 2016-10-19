@@ -24,6 +24,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jdk.version>1.8</jdk.version>
     <slf4j.version>1.7.21</slf4j.version>
+    <log4j.version>2.7</log4j.version>
     <concrete-services.version>4.10.7.3</concrete-services.version>
   </properties>
 
@@ -104,22 +105,22 @@
       <dependency>
         <groupId>org.apache.logging.log4j</groupId>
         <artifactId>log4j-api</artifactId>
-        <version>2.7</version>
+        <version>${log4j.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.logging.log4j</groupId>
         <artifactId>log4j-core</artifactId>
-        <version>2.7</version>
+        <version>${log4j.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.logging.log4j</groupId>
         <artifactId>log4j-web</artifactId>
-        <version>2.7</version>
+        <version>${log4j.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.logging.log4j</groupId>
         <artifactId>log4j-slf4j-impl</artifactId>
-        <version>2.7</version>
+        <version>${log4j.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
