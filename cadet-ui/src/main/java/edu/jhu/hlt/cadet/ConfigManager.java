@@ -11,7 +11,6 @@ import edu.jhu.hlt.cadet.results.ResultsHandler;
 import edu.jhu.hlt.cadet.results.ResultsPlugin;
 import edu.jhu.hlt.cadet.retriever.RetrieverHandler;
 import edu.jhu.hlt.cadet.retriever.RetrieverProvider;
-import edu.jhu.hlt.cadet.search.SearchHandler;
 import edu.jhu.hlt.cadet.search.SearchProvider;
 import edu.jhu.hlt.cadet.search.SearchProxyHandler;
 import edu.jhu.hlt.cadet.send.SenderHandler;
@@ -62,7 +61,6 @@ public class ConfigManager {
     private boolean initialized = false;
     private Config config;
     private Set<Provider> providers = new HashSet<>();
-    private SearchHandler searchHandler;
     private SearchProxyHandler searchProxyHandler;
     private RetrieverHandler retrieverHandler;
     private ResultsHandler resultsHandler;
@@ -126,11 +124,6 @@ public class ConfigManager {
     }
 
     private void createDependencies() {
-        searchHandler = new SearchHandler();
-        String spName = config.getString(CadetConfig.SEARCH_PROVIDER);
-        SearchProvider sp = (SearchProvider)constructProvider(spName);
-        searchHandler.init(sp);
-
         retrieverHandler = new RetrieverHandler();
         String rpName = config.getString(CadetConfig.RETRIEVE_PROVIDER);
         RetrieverProvider rp = (RetrieverProvider)constructProvider(rpName);
@@ -245,16 +238,6 @@ public class ConfigManager {
      */
     public boolean isLearningOn() {
         return isLearningOn;
-    }
-
-    /**
-     * Get the search handler
-     */
-    public SearchHandler getSearchHandler() {
-        if (!initialized) {
-            throw new RuntimeException("ConfigManager used before initialized");
-        }
-        return searchHandler;
     }
 
     /**

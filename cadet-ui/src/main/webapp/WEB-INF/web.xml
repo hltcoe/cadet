@@ -17,12 +17,6 @@
         </servlet>
 
 	<servlet>
-		<display-name>SearchServlet</display-name>
-		<servlet-name>SearchServlet</servlet-name>
-		<servlet-class>edu.jhu.hlt.cadet.search.SearchServlet</servlet-class>
-	</servlet>
-
-	<servlet>
 		<display-name>SearchProxyServlet</display-name>
 		<servlet-name>SearchProxyServlet</servlet-name>
 		<servlet-class>edu.jhu.hlt.cadet.search.SearchProxyServlet</servlet-class>
@@ -74,11 +68,6 @@
                 <servlet-name>AdminServlet</servlet-name>
                 <url-pattern>/AdminServlet</url-pattern>
         </servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>SearchServlet</servlet-name>
-		<url-pattern>/SearchServlet</url-pattern>
-	</servlet-mapping>
 
 	<servlet-mapping>
 		<servlet-name>SearchProxyServlet</servlet-name>

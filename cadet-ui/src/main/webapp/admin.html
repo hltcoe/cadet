@@ -73,7 +73,7 @@
         });
 
         $.getJSON('AdminServlet', function(config) {
-            var services = ['feedback', 'results', 'retrieve', 'search', 'send'];
+            var services = ['feedback', 'results', 'retrieve', 'send'];
             for (var i = 0; i < services.length; i++) {
                 var serviceAlive;
                 try {

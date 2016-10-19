@@ -215,13 +215,9 @@ var CADET = {
         this.retriever = new FetchCommunicationServiceClient(retriever_protocol);
         this.retrieve = this.retriever;
 
-        var search_transport = new Thrift.Transport('SearchServlet');
-        var search_protocol = new Thrift.Protocol(search_transport);
-        this.search = new SearchServiceClient(search_protocol);
-
         var search_proxy_transport = new Thrift.Transport('SearchProxyServlet');
         var search_proxy_protocol = new Thrift.Protocol(search_proxy_transport);
-        this.search_proxy = new SearchProxyClient(search_proxy_protocol);
+        this.search_proxy = new SearchProxyServiceClient(search_proxy_protocol);
 
         var send_transport = new Thrift.Transport('SenderServlet');
         var send_protocol = new Thrift.Protocol(send_transport);
@@ -274,7 +270,7 @@ var CADET = {
     },
 
     /** Call the Feedback server's startFeedback() function IFF it has not
-     *  called before for this particular SearchResults object.
+     *  called before for this particular SearchResult object.
      *
      * @param {SearchResult} searchResult
      */
