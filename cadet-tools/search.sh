@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
 DIR=`dirname $0`
-JAR=$(find $DIR/target/ -name '*.jar')
+JAR=$(find $DIR/target/ -name 'cadet-tools-fat*.jar')
 java -cp .:$JAR edu.jhu.hlt.concrete.services.search.SearchTool "$@"
