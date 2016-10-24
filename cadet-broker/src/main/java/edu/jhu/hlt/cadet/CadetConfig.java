@@ -21,9 +21,10 @@ public class CadetConfig {
     /**
      * Search
      */
-    public static final String SEARCH_HOST = "cadet.search.host";
-    public static final String SEARCH_PORT = "cadet.search.port";
-    public static final String SEARCH_PROVIDER = "cadet.search.provider";
+    public static final String SEARCH_PROVIDERS = "cadet.search.providers";
+    // Custom search settings are relative to the provider name path
+    // (e.g. the search provider named "cadet.search.providers.foo" has
+    // the path "cadet.search.providers.foo.host", etc).
     public static final String SEARCH_HOST_CUSTOM = "host";
     public static final String SEARCH_PORT_CUSTOM = "port";
     public static final String SEARCH_PROVIDER_CUSTOM = "provider";
