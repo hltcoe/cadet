@@ -39,9 +39,15 @@ public class SearchProxyHandler implements SearchProxyService.Iface {
     }
 
     @Override
-    public List<String> getCorpora(String provider)
+    public List<String> getCorpora(String providerName)
             throws ServicesException, TException {
-        return providerMap.get(provider).getCorpora();
+        SearchProvider searchProvider = providerMap.get(providerName);
+        if (searchProvider != null) {
+            return searchProvider.getCorpora();
+        }
+        else {
+            throw new ServicesException("Unable to find configuration for SearchProvider named " + providerName);
+        }
     }
 
     @Override
@@ -51,8 +57,14 @@ public class SearchProxyHandler implements SearchProxyService.Iface {
     }
 
     @Override
-    public SearchResult search(SearchQuery query, String provider)
+    public SearchResult search(SearchQuery query, String providerName)
             throws ServicesException, TException {
-        return providerMap.get(provider).search(query);
+        SearchProvider searchProvider = providerMap.get(providerName);
+        if (searchProvider != null) {
+            return searchProvider.search(query);
+        }
+        else {
+            throw new ServicesException("Unable to find configuration for SearchProvider named " + providerName);
+        }
     }
 }
