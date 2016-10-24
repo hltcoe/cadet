@@ -177,10 +177,10 @@ public class ConfigManager {
     }
 
     private void createSearchProxyHandler() {
-        if (config.hasPath(SEARCH_PROVIDERS)) {
+        if (config.hasPath(CadetConfig.SEARCH_PROVIDERS)) {
             searchProxyHandler = new SearchProxyHandler();
 
-            ConfigObject providersConfig = config.getObject(SEARCH_PROVIDERS);
+            ConfigObject providersConfig = config.getObject(CadetConfig.SEARCH_PROVIDERS);
             for (String providerName : providersConfig.keySet()) {
                 logger.info("providerName: " + providerName);
 
