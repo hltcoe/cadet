@@ -74,19 +74,11 @@ public class SearchProxyHandler implements SearchProxyService.Iface {
 
         logSearchQuery(query);
 
-        validate(query);
-
         SearchResult result = searchProvider.search(query);
 
         logSearchResults(result);
 
         return result;
-    }
-
-    private void validate(SearchQuery query) throws ServicesException {
-        if (query.getRawQuery() == null || query.getRawQuery().isEmpty()) {
-            throw new ServicesException("Search query is empty");
-        }
     }
 
     protected static void logSearchQuery(SearchQuery searchQuery) {
