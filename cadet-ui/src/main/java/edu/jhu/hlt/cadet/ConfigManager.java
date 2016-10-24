@@ -11,8 +11,8 @@ import edu.jhu.hlt.cadet.results.ResultsHandler;
 import edu.jhu.hlt.cadet.results.ResultsPlugin;
 import edu.jhu.hlt.cadet.retriever.RetrieverHandler;
 import edu.jhu.hlt.cadet.retriever.RetrieverProvider;
-import edu.jhu.hlt.cadet.search.SearchHandler;
 import edu.jhu.hlt.cadet.search.SearchProvider;
+import edu.jhu.hlt.cadet.search.SearchProxyHandler;
 import edu.jhu.hlt.cadet.send.SenderHandler;
 import edu.jhu.hlt.cadet.send.SenderProvider;
 
@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
+import com.typesafe.config.ConfigObject;
 
 /**
  * Manages the configuration and dependencies for the CADET search application
@@ -60,7 +61,7 @@ public class ConfigManager {
     private boolean initialized = false;
     private Config config;
     private Set<Provider> providers = new HashSet<>();
-    private SearchHandler searchHandler;
+    private SearchProxyHandler searchProxyHandler;
     private RetrieverHandler retrieverHandler;
     private ResultsHandler resultsHandler;
     private FeedbackHandler feedbackHandler;
@@ -123,11 +124,6 @@ public class ConfigManager {
     }
 
     private void createDependencies() {
-        searchHandler = new SearchHandler();
-        String spName = config.getString(CadetConfig.SEARCH_PROVIDER);
-        SearchProvider sp = (SearchProvider)constructProvider(spName);
-        searchHandler.init(sp);
-
         retrieverHandler = new RetrieverHandler();
         String rpName = config.getString(CadetConfig.RETRIEVE_PROVIDER);
         RetrieverProvider rp = (RetrieverProvider)constructProvider(rpName);
@@ -138,6 +134,7 @@ public class ConfigManager {
         feedbackHandler = new FeedbackHandler(fbStore);
 
         createResultsServer();
+        createSearchProxyHandler();
     }
 
     private void createResultsServer() {
@@ -179,15 +176,39 @@ public class ConfigManager {
         }
     }
 
+    private void createSearchProxyHandler() {
+        if (config.hasPath(CadetConfig.SEARCH_PROVIDERS)) {
+            searchProxyHandler = new SearchProxyHandler();
+
+            ConfigObject providersConfig = config.getObject(CadetConfig.SEARCH_PROVIDERS);
+            for (String providerName : providersConfig.keySet()) {
+                logger.info("providerName: " + providerName);
+
+                // We create a Config object rooted at the name of the SearchProvider
+                // (e.g. "cadet.search.providers.foo")
+                ConfigObject providerConfigObject = (ConfigObject)providersConfig.get(providerName);
+                Config providerConfig = providerConfigObject.toConfig();
+
+                String spName = providerConfig.getString("provider");
+                SearchProvider sp = (SearchProvider)constructProvider(spName, providerConfig);
+                searchProxyHandler.addProvider(providerName, sp);
+            }
+        }
+    }
+
     /**
      * Construct objects according to the pattern of empty constructor and then init(config)
      * @param clazz  full qualified class name
      * @return Provider object
      */
     private Provider constructProvider(String clazz) {
+        return constructProvider(clazz, config);
+    }
+
+    private Provider constructProvider(String clazz, Config customConfig) {
         try {
             Provider provider = (Provider)Class.forName(clazz).getConstructors()[0].newInstance();
-            provider.init(config);
+            provider.init(customConfig);
             providers.add(provider);
             return provider;
         } catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException | InstantiationException ex) {
@@ -220,13 +241,13 @@ public class ConfigManager {
     }
 
     /**
-     * Get the search handler
+     * Get the search proxy handler
      */
-    public SearchHandler getSearchHandler() {
+    public SearchProxyHandler getSearchProxyHandler() {
         if (!initialized) {
             throw new RuntimeException("ConfigManager used before initialized");
         }
-        return searchHandler;
+        return searchProxyHandler;
     }
 
     /**

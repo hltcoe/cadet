@@ -1,5 +1,7 @@
 package edu.jhu.hlt.cadet.search;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +13,7 @@ import org.apache.thrift.transport.TFramedTransport;
 import com.typesafe.config.Config;
 
 import edu.jhu.hlt.cadet.CadetConfig;
+import edu.jhu.hlt.concrete.search.SearchCapability;
 import edu.jhu.hlt.concrete.search.SearchService;
 import edu.jhu.hlt.concrete.search.SearchQuery;
 import edu.jhu.hlt.concrete.search.SearchResult;
@@ -32,8 +35,14 @@ public class RemoteSearchProvider implements SearchProvider {
 
     @Override
     public void init(Config config) {
-        host = config.getString(CadetConfig.SEARCH_HOST);
-        port = config.getInt(CadetConfig.SEARCH_PORT);
+        logger.info("Using custom SearchProvider settings");
+        init(config.getString(CadetConfig.SEARCH_HOST_CUSTOM),
+             config.getInt(CadetConfig.SEARCH_PORT_CUSTOM));
+    }
+
+    public void init(String h, int p) {
+        host = h;
+        port = p;
 
         logger.info("SearchHandler HOST: " + host);
         logger.info("SearcheHandler PORT: " + port);
@@ -81,4 +90,19 @@ public class RemoteSearchProvider implements SearchProvider {
         return info;
     }
 
+    @Override
+    public List<SearchCapability> getCapabilities() throws ServicesException, TException {
+	transport.open();
+	List<SearchCapability> capabilities = client.getCapabilities();
+	transport.close();
+	return capabilities;
+    }
+
+    @Override
+    public List<String> getCorpora() throws ServicesException, TException {
+	transport.open();
+	List<String> corpora = client.getCorpora();
+	transport.close();
+	return corpora;
+    }
 }

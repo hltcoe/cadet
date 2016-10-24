@@ -322,7 +322,15 @@
 
         var searchResult;
         try {
-            searchResult = CADET.search.search(searchQuery);
+            if (searchQuery.type === SearchType.COMMUNICATIONS) {
+                searchResult = CADET.search_proxy.search(searchQuery, CADET.defaultSearchProviders.COMMUNICATIONS);
+            }
+            else if (searchQuery.type === SearchType.ENTITY_MENTIONS) {
+                searchResult = CADET.search_proxy.search(searchQuery, CADET.defaultSearchProviders.ENTITY_MENTIONS);
+            }
+            else if (searchQuery.type === SearchType.SENTENCES) {
+                searchResult = CADET.search_proxy.search(searchQuery, CADET.defaultSearchProviders.SENTENCES);
+            }
         }
         catch (error) {
             displayAndThrowError(error);
@@ -486,7 +494,7 @@
     }
 
     function updateServiceStatus() {
-        var services = ['search', 'retriever', 'feedback'];
+        var services = ['search_proxy', 'retriever', 'feedback'];
         var serviceStatusMessage = '';
         var unavailableServices = [];
 

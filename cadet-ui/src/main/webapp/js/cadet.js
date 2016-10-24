@@ -2,9 +2,9 @@
 //
 // None of the code in this file should manipulate the DOM.
 
-/* globals AnnotationTaskType, FeedbackClient, RetrieverClient,
-           ResultsServerClient, FetchRequest, SearchClient,
-           SearchQuery, SearchType, Thrift
+/* globals AnnotationTaskType, FeedbackClient, FetchRequest,
+           RetrieverClient, ResultsServerClient, SearchClient,
+           SearchProxy, SearchQuery, SearchType, SenderClient, Thrift
 */
 
 var CADET = {
@@ -13,6 +13,7 @@ var CADET = {
     retrieve: undefined,  // alias for retriever
     retriever: undefined,
     search: undefined,
+    search_proxy: undefined,
     send: undefined,
     results: undefined,
 
@@ -21,6 +22,9 @@ var CADET = {
 
     registeredSearchResults: {},
     resultsWithFeedbackStarted: {},
+
+    defaultSearchProviders: {},
+    searchProvidersForSearchType: {},
 
     /** Takes a SearchResult and RetrieveResults object.  For each
      *  SearchResultItem object in SearchResult, add reference
@@ -50,6 +54,48 @@ var CADET = {
                 if (comm) {
                     // searchResultItem.sentence will be null if searchResultItem.sentenceId is not valid Sentence UUID
                     searchResultItem.sentence = comm.getSentenceWithUUID(searchResultItem.sentenceId);
+                }
+            }
+        }
+    },
+
+    configureSearchProviders: function() {
+        function updateSearchProviderFromLocalStorage(searchTypeString, providers) {
+            if (localStorage.getItem('CADET.defaultSearchProviders.' + searchTypeString)) {
+                if (providers.includes(localStorage.getItem('CADET.defaultSearchProviders.' + searchTypeString))) {
+                    CADET.defaultSearchProviders[searchTypeString] = localStorage.getItem('CADET.defaultSearchProviders.' + searchTypeString);
+                }
+                else {
+                    localStorage.removeItem('CADET.defaultSearchProviders.' + searchTypeString);
+                }
+            }
+        }
+
+        var providers = CADET.search_proxy.getProviders();
+        var searchTypes = ['COMMUNICATIONS', 'ENTITY_MENTIONS', 'SENTENCES'];
+
+        for (var s = 0; s < searchTypes.length; s++) {
+            this.searchProvidersForSearchType[searchTypes[s]] = [];
+            updateSearchProviderFromLocalStorage(searchTypes[s], providers);
+        }
+
+        for (var i = 0; i < providers.length; i++) {
+            var capabilities = [];
+            try {
+                capabilities = CADET.search_proxy.getCapabilities(providers[i]);
+            }
+            catch (error) {
+                // TODO: Don't ignore error
+            }
+            for (var j = 0; j < capabilities.length; j++) {
+                for (var si = 0; si < searchTypes.length; si++) {
+                    if (capabilities[j].type === SearchType[searchTypes[si]]) {
+                        this.searchProvidersForSearchType[searchTypes[si]].push(providers[i]);
+
+                        if (!this.defaultSearchProviders[searchTypes[si]]) {
+                            this.defaultSearchProviders[searchTypes[si]] = providers[i];
+                        }
+                    }
                 }
             }
         }
@@ -131,6 +177,34 @@ var CADET = {
         return idList;
     },
 
+    /** Get human readable string describing SearchType
+     * @param {SearchType} searchType
+     * @returns {String}
+     */
+    getSearchTypeString: function(searchType) {
+        if (searchType === SearchType.COMMUNICATIONS) {
+            return 'COMMUNICATIONS';
+        }
+        else if (searchType === SearchType.SECTIONS) {
+            return 'SECTIONS';
+        }
+        else if (searchType === SearchType.SENTENCES) {
+            return 'SENTENCES';
+        }
+        else if (searchType === SearchType.ENTITIES) {
+            return 'ENTITIES';
+        }
+        else if (searchType === SearchType.ENTITY_MENTIONS) {
+            return 'ENTITY_MENTIONS';
+        }
+        else if (searchType === SearchType.SITUATIONS) {
+            return 'SITUATIONS';
+        }
+        else if (searchType === SearchType.SITUATION_MENTIONS) {
+            return 'SITUATION_MENTIONS';
+        }
+    },
+
     init: function() {
         var feedback_transport = new Thrift.Transport('FeedbackServlet');
         var feedback_protocol = new Thrift.Protocol(feedback_transport);
@@ -141,9 +215,9 @@ var CADET = {
         this.retriever = new FetchCommunicationServiceClient(retriever_protocol);
         this.retrieve = this.retriever;
 
-        var search_transport = new Thrift.Transport('SearchServlet');
-        var search_protocol = new Thrift.Protocol(search_transport);
-        this.search = new SearchServiceClient(search_protocol);
+        var search_proxy_transport = new Thrift.Transport('SearchProxyServlet');
+        var search_proxy_protocol = new Thrift.Protocol(search_proxy_transport);
+        this.search_proxy = new SearchProxyServiceClient(search_proxy_protocol);
 
         var send_transport = new Thrift.Transport('SenderServlet');
         var send_protocol = new Thrift.Protocol(send_transport);
@@ -152,6 +226,8 @@ var CADET = {
         var results_transport = new Thrift.Transport('ResultsServer');
         var results_protocol = new Thrift.Protocol(results_transport);
         this.results = new ResultsServerServiceClient(results_protocol);
+
+        this.configureSearchProviders();
     },
 
     /** Call the ResultsServer server's registerSearchResult()
@@ -184,8 +260,17 @@ var CADET = {
         return results;
     },
 
+    /** Set default search provider for specified SearchType
+     * @param {String} searchTypeString - e.g. 'COMMUNICATIONS', 'ENTITY_MENTIONS'
+     * @param {String} providerName
+     */
+    setDefaultSearchProvider: function(searchTypeString, providerName) {
+        this.defaultSearchProviders[searchTypeString] = providerName;
+        localStorage.setItem('CADET.defaultSearchProviders.' + searchTypeString, providerName);
+    },
+
     /** Call the Feedback server's startFeedback() function IFF it has not
-     *  called before for this particular SearchResults object.
+     *  called before for this particular SearchResult object.
      *
      * @param {SearchResult} searchResult
      */
