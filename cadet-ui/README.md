@@ -81,12 +81,23 @@ All the services have mock implementations that can be used for development and 
 
 ### Search
 
+The configuration file supports multiple providers for the *Search* Service.
+
 ```
 cadet {
     search {
-        host = "localhost"
-        port = 8088
-        provider = "edu.jhu.hlt.cadet.search.RemoteSearchProvider"
+        providers {
+            name_for_a_search_provider {
+                host = "localhost"
+                port = 8088
+                provider = "edu.jhu.hlt.cadet.search.RemoteSearchProvider"
+            }
+            name_for_another_search_provider {
+                host = "localhost"
+                port = 7977
+                provider = "edu.jhu.hlt.cadet.search.RemoteSearchProvider"
+            }
+        }
     }
 }
 ```
