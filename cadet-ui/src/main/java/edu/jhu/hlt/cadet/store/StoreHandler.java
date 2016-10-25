@@ -10,7 +10,7 @@ import edu.jhu.hlt.concrete.services.ServicesException;
 
 public class StoreHandler implements StoreCommunicationService.Iface {
 
-    private StoreProvider senderProvider;
+    private StoreProvider storeProvider;
 
     /**
      * Initialize the handler - must be called before any other methods
@@ -18,21 +18,21 @@ public class StoreHandler implements StoreCommunicationService.Iface {
      * @param provider
      */
     public void init(StoreProvider provider) {
-        senderProvider = provider;
+        storeProvider = provider;
     }
 
     @Override
     public void store(Communication communication) throws ServicesException, TException {
-        throw new ServicesException("Sender.send() is not currently exposed via a Servlet");
+        throw new ServicesException("StoreCommunicationService.store() is not currently exposed via a Servlet");
     }
 
     @Override
     public ServiceInfo about() throws TException {
-        return senderProvider.about();
+        return storeProvider.about();
     }
 
     @Override
     public boolean alive() throws TException {
-        return senderProvider.alive();
+        return storeProvider.alive();
     }
 }

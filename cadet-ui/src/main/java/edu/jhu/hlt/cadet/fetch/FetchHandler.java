@@ -18,7 +18,7 @@ import edu.jhu.hlt.concrete.Communication;
 public class FetchHandler implements FetchCommunicationService.Iface {
     private static Logger logger = LoggerFactory.getLogger(FetchHandler.class);
 
-    private FetchProvider retrieverProvider;
+    private FetchProvider fetchProvider;
 
     public FetchHandler() {}
 
@@ -28,7 +28,7 @@ public class FetchHandler implements FetchCommunicationService.Iface {
      * @param provider
      */
     public void init(FetchProvider provider) {
-        retrieverProvider = provider;
+        fetchProvider = provider;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class FetchHandler implements FetchCommunicationService.Iface {
 
         logFetchRequest(request);
 
-        FetchResult results = retrieverProvider.fetch(request);
+        FetchResult results = fetchProvider.fetch(request);
 
         logFetchResult(results);
 
@@ -44,7 +44,7 @@ public class FetchHandler implements FetchCommunicationService.Iface {
     }
 
     protected static void logFetchRequest(FetchRequest request) {
-        logger.info("Retrieve: requesting " + request.getCommunicationIdsSize() + " communications");
+        logger.info("Fetch: requesting " + request.getCommunicationIdsSize() + " communications");
 
         Iterator<String> commIterator = request.getCommunicationIdsIterator();
         while (commIterator.hasNext()) {
@@ -53,7 +53,7 @@ public class FetchHandler implements FetchCommunicationService.Iface {
     }
 
     protected static void logFetchResult(FetchResult results) {
-        logger.info("Retrieve: returning " + results.getCommunicationsSize() + " communications");
+        logger.info("Fetch: returning " + results.getCommunicationsSize() + " communications");
 
         Iterator<Communication> communicationIterator = results.getCommunicationsIterator();
         while (communicationIterator.hasNext()) {
@@ -63,11 +63,11 @@ public class FetchHandler implements FetchCommunicationService.Iface {
 
     @Override
     public ServiceInfo about() throws TException {
-        return retrieverProvider.about();
+        return fetchProvider.about();
     }
 
     @Override
     public boolean alive() throws TException {
-        return retrieverProvider.alive();
+        return fetchProvider.alive();
     }
 }

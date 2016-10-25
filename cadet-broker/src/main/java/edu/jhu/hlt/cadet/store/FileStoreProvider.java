@@ -60,7 +60,7 @@ public class FileStoreProvider implements StoreProvider {
     public void close() {}
 
     @Override
-    public void send(Communication comm) throws TException {
+    public void store(Communication comm) throws TException {
         logger.info("Storing Comm Id: " + comm.getId());
 
         String filename = directory + comm.getId() + "." + EXTENSION;

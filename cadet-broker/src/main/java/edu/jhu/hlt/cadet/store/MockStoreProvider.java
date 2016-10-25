@@ -22,7 +22,7 @@ public class MockStoreProvider implements StoreProvider {
     public void close() {}
 
     @Override
-    public void send(Communication communication) throws TException {
+    public void store(Communication communication) throws TException {
         logger.info("Storing Comm Id: " + communication.getId());
     }
 

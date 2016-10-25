@@ -15,7 +15,7 @@ import edu.jhu.hlt.concrete.access.StoreCommunicationService;
 import edu.jhu.hlt.concrete.services.ServiceInfo;
 
 /**
- * Sends documents to a remote service that implements the Sender thrift service
+ * Store documents on a remote service that implements the StoreCommunicationService thrift service
  */
 public class RemoteStoreProvider implements StoreProvider {
     private static Logger logger = LoggerFactory.getLogger(RemoteStoreProvider.class);
@@ -29,11 +29,11 @@ public class RemoteStoreProvider implements StoreProvider {
 
     @Override
     public void init(Config config) {
-        host = config.getString(CadetConfig.SEND_HOST);
-        port = config.getInt(CadetConfig.SEND_PORT);
+        host = config.getString(CadetConfig.STORE_HOST);
+        port = config.getInt(CadetConfig.STORE_PORT);
 
-        logger.info("SendHandler HOST: " + host);
-        logger.info("SendHandler PORT: " + port);
+        logger.info("RemoteStoreProvider HOST: " + host);
+        logger.info("RemoteStoreProvider PORT: " + port);
 
         transport = new TFramedTransport(new TSocket(host, port), Integer.MAX_VALUE);
         protocol = new TCompactProtocol(transport);
@@ -48,7 +48,7 @@ public class RemoteStoreProvider implements StoreProvider {
     }
 
     @Override
-    public void send(Communication communication) throws TException {
+    public void store(Communication communication) throws TException {
         logger.info("Storing Comm Id: " + communication.getId());
         transport.open();
         client.store(communication);

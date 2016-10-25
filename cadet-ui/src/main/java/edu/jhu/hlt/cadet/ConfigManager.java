@@ -40,7 +40,7 @@ import com.typesafe.config.ConfigObject;
  * ConfigManager directly.
  * 
  * The manager constructs and initializes system level dependencies such as the
- * search handler, retrieve handler, and results handler. These handlers are initialized
+ * search handler, fetch handler, and results handler. These handlers are initialized
  * based on configuration information.
  */
 public class ConfigManager {
@@ -62,10 +62,10 @@ public class ConfigManager {
     private Config config;
     private Set<Provider> providers = new HashSet<>();
     private SearchProxyHandler searchProxyHandler;
-    private FetchHandler retrieverHandler;
+    private FetchHandler fetchHandler;
     private ResultsHandler resultsHandler;
     private FeedbackHandler feedbackHandler;
-    private StoreHandler senderHandler;
+    private StoreHandler storeHandler;
     private SortReceiverServer sortServer;
     private boolean isLearningOn = false;
 
@@ -124,10 +124,10 @@ public class ConfigManager {
     }
 
     private void createDependencies() {
-        retrieverHandler = new FetchHandler();
-        String rpName = config.getString(CadetConfig.RETRIEVE_PROVIDER);
-        FetchProvider rp = (FetchProvider)constructProvider(rpName);
-        retrieverHandler.init(rp);
+        fetchHandler = new FetchHandler();
+        String fpName = config.getString(CadetConfig.FETCH_PROVIDER);
+        FetchProvider fp = (FetchProvider)constructProvider(fpName);
+        fetchHandler.init(fp);
 
         String fbStoreName = config.getString(CadetConfig.FEEDBACK_STORE);
         FeedbackStore fbStore = (FeedbackStore)constructProvider(fbStoreName);
@@ -144,11 +144,11 @@ public class ConfigManager {
             }
         }
         resultsHandler = new ResultsHandler();
-        senderHandler = new StoreHandler();
-        String sendName = config.getString(CadetConfig.SEND_PROVIDER);
-        StoreProvider sender = (StoreProvider) constructProvider(sendName);
-        senderHandler.init(sender);
-        resultsHandler.setSenderProvider(sender);
+        storeHandler = new StoreHandler();
+        String spName = config.getString(CadetConfig.STORE_PROVIDER);
+        StoreProvider storeProvider = (StoreProvider) constructProvider(spName);
+        storeHandler.init(storeProvider);
+        resultsHandler.setStoreProvider(storeProvider);
         String clientName = config.getString(CadetConfig.LEARN_PROVIDER);
         ActiveLearningClient client = (ActiveLearningClient)constructProvider(clientName);
         if (isLearningOn) {
@@ -251,13 +251,13 @@ public class ConfigManager {
     }
 
     /**
-     * Get the retriever handler
+     * Get the fetch handler
      */
-    public FetchHandler getRetrieverHandler() {
+    public FetchHandler getFetchHandler() {
         if (!initialized) {
             throw new RuntimeException("ConfigManager used before initialized");
         }
-        return retrieverHandler;
+        return fetchHandler;
     }
 
     /**
@@ -281,13 +281,13 @@ public class ConfigManager {
     }
 
     /**
-     * Get the sender handler
+     * Get the store handler
      */
-    public StoreHandler getSenderHandler() {
+    public StoreHandler getStoreHandler() {
         if (!initialized) {
             throw new RuntimeException("ConfigManager used before initialized");
         }
-        return senderHandler;
+        return storeHandler;
     }
 
     /**

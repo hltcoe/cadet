@@ -10,6 +10,6 @@ public class StoreServlet extends TServlet {
     private static final long serialVersionUID = -9037326284809983170L;
 
     public StoreServlet() {
-        super(new StoreCommunicationService.Processor<>(ConfigManager.getInstance().getSenderHandler()), new TJSONProtocol.Factory());
+        super(new StoreCommunicationService.Processor<>(ConfigManager.getInstance().getStoreHandler()), new TJSONProtocol.Factory());
     }
 }

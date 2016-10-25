@@ -10,6 +10,6 @@ public class FetchServlet extends TServlet {
     private static final long serialVersionUID = -9037326284809983170L;
 
     public FetchServlet() {
-        super(new FetchCommunicationService.Processor<>(ConfigManager.getInstance().getRetrieverHandler()), new TJSONProtocol.Factory());
+        super(new FetchCommunicationService.Processor<>(ConfigManager.getInstance().getFetchHandler()), new TJSONProtocol.Factory());
     }
 }

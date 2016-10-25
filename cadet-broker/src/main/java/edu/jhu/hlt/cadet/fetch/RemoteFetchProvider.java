@@ -18,7 +18,7 @@ import edu.jhu.hlt.concrete.services.ServiceInfo;
 import edu.jhu.hlt.concrete.services.ServicesException;
 
 /**
- * Retrieves documents from a remote service that implements the Retrieve thrift service
+ * Fetch documents from a remote service that implements the FetchCommunicationService thrift service
  */
 public class RemoteFetchProvider implements FetchProvider {
     private static Logger logger = LoggerFactory.getLogger(RemoteFetchProvider.class);
@@ -32,11 +32,11 @@ public class RemoteFetchProvider implements FetchProvider {
 
     @Override
     public void init(Config config) {
-        host = config.getString(CadetConfig.RETRIEVE_HOST);
-        port = config.getInt(CadetConfig.RETRIEVE_PORT);
+        host = config.getString(CadetConfig.FETCH_HOST);
+        port = config.getInt(CadetConfig.FETCH_PORT);
 
-        logger.info("RetrieveHandler HOST: " + host);
-        logger.info("RetrieveHandler PORT: " + port);
+        logger.info("RemoteFetchProvider HOST: " + host);
+        logger.info("RemoteFetchProvider PORT: " + port);
 
         transport = new TFramedTransport(new TSocket(host, port), Integer.MAX_VALUE);
         protocol = new TCompactProtocol(transport);
