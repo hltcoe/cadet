@@ -109,50 +109,50 @@ Providers for the *Search* Service:
 - **edu.jhu.hlt.cadet.search.MockSearchProvider** - 
    Returns hard coded Communication IDs
 
-### Retrieve
+### Fetch
 
 ```
 cadet {
-    retrieve {
+    fetch {
         host = "localhost"
         port = 44111
-        provider = "edu.jhu.hlt.cadet.retriever.RemoteRetrieverProvider"
+        provider = "edu.jhu.hlt.cadet.fetch.RemoteFetchProvider"
     }
 }
 ```
 
-Providers for the *Retriever* Service:
+Providers for the *FetchCommunicationService* Service:
 
-- **edu.jhu.hlt.cadet.retriever.RemoteRetrieverProvider** - 
-   Connects to remote retrieve service with Thrift
-- **edu.jhu.hlt.cadet.retriever.ScionRetrieverProvider** - 
+- **edu.jhu.hlt.cadet.fetch.RemoteFetchProvider** -
+   Connects to remote FetchCommunicationService service with Thrift
+- **edu.jhu.hlt.cadet.fetch.ScionFetchProvider** -
    Connects directly to Accumulo to pull communications. Must have direct communication to accumulo to use this provider.
-- **edu.jhu.hlt.cadet.retriever.FileRetrieverProvider** - 
+- **edu.jhu.hlt.cadet.fetch.FileFetchProvider** -
    Returns communications from a directory. See the class for more details.
-- **edu.jhu.hlt.cadet.retriever.MockRetrieverProvider** - 
+- **edu.jhu.hlt.cadet.fetch.MockFetchProvider** -
    Returns Communications containing randomly generated "nonsense" sentences
 
-### Send
+### Store
 
 ```
 cadet {
-    send {
+    store {
         host = localhost
         port = 8888
-        provider = "edu.jhu.hlt.cadet.send.RemoteSenderProvider"
+        provider = "edu.jhu.hlt.cadet.store.RemoteStoreProvider"
     }
 }
 ```
 
-Providers for the *Send* Service:
+Providers for the *StoreCommunicationService* Service:
 
-- **edu.jhu.hlt.cadet.send.RemoteSenderProvider** - 
-   Sends the annotations to a remote server
-- **edu.jhu.hlt.cadet.send.ScionSendProvider** - 
+- **edu.jhu.hlt.cadet.store.RemoteStoreProvider** -
+   Store the annotations to a remote server
+- **edu.jhu.hlt.cadet.store.ScionStoreProvider** -
    Not integrated yet
-- **edu.jhu.hlt.cadet.send.FileSenderProvider** - 
+- **edu.jhu.hlt.cadet.store.FileStoreProvider** -
    Saves communications to a directory. See the class for more details.
-- **edu.jhu.hlt.cadet.send.MockSenderProvider** - 
+- **edu.jhu.hlt.cadet.store.MockStoreProvider** -
    Logs requests to store annotations
 
 ### Feedback
@@ -212,7 +212,7 @@ Providers for the *Learn* Service:
 
 ### File-based Providers
 
-In order to use **FileRetrieverProvider** or **FileSendProvider**, you will need to include an
+In order to use **FileFetchProvider** or **FileStoreProvider**, you will need to include an
 additional configuration setting in your configuration file specifying
 the path to the Communication files.
 
@@ -230,7 +230,7 @@ cadet {
 
 ### Using Scion Directly
 
-In order to use **ScionRetrieverProvider** or **ScionSendProvider** you need to include an additional
+In order to use **ScionFetchProvider** or **ScionStoreProvider** you need to include an additional
 configuration setting in your configuration file as shown below. Note that it is under the `scion` namespace rather than `cadet`.
 Tomcat and accumulo need to be on the same network rather than relying on port forwarding.
 
