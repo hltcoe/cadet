@@ -33,6 +33,32 @@
     var CONFIG_INFO_TABLE;
     var SEARCH_PROVIDER_TABLE;
 
+    function getProviderString(serviceConfig) {
+        if (serviceConfig.hasOwnProperty('provider')) {
+            return serviceConfig.provider;
+        }
+        else {
+            return 'N/A';
+        }
+    }
+
+    function getProviderInfoString(serviceConfig) {
+        if (serviceConfig.hasOwnProperty('provider')) {
+            if (serviceConfig.provider.includes('Remote') &&
+                serviceConfig.hasOwnProperty('host') &&
+                serviceConfig.hasOwnProperty('port'))
+            {
+                return serviceConfig.host + ':' + serviceConfig.port;
+            }
+            else {
+                return '';
+            }
+        }
+        else {
+            return 'N/A';
+        }
+    }
+
     $(document).ready(function() {
         CADET.init();
 
@@ -84,26 +110,6 @@
                     serviceAlive = false;
                 }
 
-                var provider;
-                var providerInfo;
-                if (config.cadet[services[i]].hasOwnProperty('provider')) {
-                    provider = config.cadet[services[i]].provider;
-                    if (provider.includes('Remote') &&
-                        config.cadet[services[i]].hasOwnProperty('host') &&
-                        config.cadet[services[i]].hasOwnProperty('port'))
-                    {
-                        providerInfo = config.cadet[services[i]].host + ':' +
-                                       config.cadet[services[i]].port;
-                    }
-                    else {
-                        providerInfo = '';
-                    }
-                }
-                else {
-                    provider = 'N/A';
-                    providerInfo = 'N/A';
-                }
-
                 var serviceInfoDetails;
                 try {
                     var serviceInfo = CADET[services[i]].about();
@@ -119,69 +125,79 @@
                 CONFIG_INFO_TABLE.row.add({
                     'status': serviceAlive,
                     'service': services[i],
-                    'provider': provider,
-                    'providerInfo': providerInfo,
+                    'provider': getProviderString(config.cadet[services[i]]),
+                    'providerInfo': getProviderInfoString(config.cadet[services[i]]),
                     'serviceInfo': serviceInfoDetails
                 });
             }
             CONFIG_INFO_TABLE.draw();
-        });
 
 
-        SEARCH_PROVIDER_TABLE = $('#search_provider_table').DataTable({
-            columns: [
-                {
-                    title: 'Provider',
-                    data: 'provider'
-                },
-                {
-                    title: 'Capabilities',
-                    data: 'capabilities'
-                },
-                {
-                    title: 'Corpora',
-                    data: 'corpora'
-                }
-            ],
-            dom: 'rt'
-        });
-
-        var providers = CADET.search_proxy.getProviders();
-        for (var j = 0; j < providers.length; j++) {
-            var capabilities = [];
-            var capabilities_description = '';
-            try {
-                capabilities = CADET.search_proxy.getCapabilities(providers[j]);
-            }
-            catch (error) {
-                // TODO: Don't ignore error
-            }
-            for (var l = 0; l < capabilities.length; l++) {
-                capabilities_description += '<li>' +
-                                            CADET.getSearchTypeString(capabilities[l].type) + ': ' +
-                                            capabilities[l].lang +
-                                            '</li>';
-            }
-
-            var corpora = [];
-            var corpora_description = '';
-            try {
-                corpora = CADET.search_proxy.getCorpora(providers[j]);
-            }
-            catch (error) {
-                // TODO: Don't ignore error
-            }
-            for (var k = 0; k < corpora.length; k++) {
-                corpora_description += '<li>' + corpora[k] + '</li>';
-            }
-
-            SEARCH_PROVIDER_TABLE.row.add({
-                'provider': providers[j],
-                'capabilities': capabilities_description,
-                'corpora': corpora_description
+            SEARCH_PROVIDER_TABLE = $('#search_provider_table').DataTable({
+                columns: [
+                    {
+                        title: 'Name',
+                        data: 'name'
+                    },
+                    {
+                        title: 'Provider',
+                        data: 'provider'
+                    },
+                    {
+                        title: 'Provider Info',
+                        data: 'providerInfo'
+                    },
+                    {
+                        title: 'Capabilities',
+                        data: 'capabilities'
+                    },
+                    {
+                        title: 'Corpora',
+                        data: 'corpora'
+                    }
+                ],
+                dom: 'rt'
             });
-        }
-        SEARCH_PROVIDER_TABLE.draw();
+
+            var providerNames = CADET.search_proxy.getProviders();
+            for (var j = 0; j < providerNames.length; j++) {
+                var capabilities = [];
+                var capabilities_description = '';
+                try {
+                    capabilities = CADET.search_proxy.getCapabilities(providerNames[j]);
+                }
+                catch (error) {
+                    // TODO: Don't ignore error
+                }
+                for (var l = 0; l < capabilities.length; l++) {
+                    capabilities_description += '<li>' +
+                                                CADET.getSearchTypeString(capabilities[l].type) + ': ' +
+                                                capabilities[l].lang +
+                                                '</li>';
+                }
+
+                var corpora = [];
+                var corpora_description = '';
+                try {
+                    corpora = CADET.search_proxy.getCorpora(providerNames[j]);
+                }
+                catch (error) {
+                    // TODO: Don't ignore error
+                }
+                for (var k = 0; k < corpora.length; k++) {
+                    corpora_description += '<li>' + corpora[k] + '</li>';
+                }
+
+                SEARCH_PROVIDER_TABLE.row.add({
+                    'name': providerNames[j],
+                    'provider': getProviderString(config.cadet.search.providers[providerNames[j]]),
+                    'providerInfo': getProviderInfoString(config.cadet.search.providers[providerNames[j]]),
+                    'capabilities': capabilities_description,
+                    'corpora': corpora_description
+                });
+            }
+            SEARCH_PROVIDER_TABLE.draw();
+        });
 
         var searchTypes = ['COMMUNICATIONS', 'ENTITY_MENTIONS', 'SENTENCES'];
         for (var i = 0; i < searchTypes.length; i++) {
