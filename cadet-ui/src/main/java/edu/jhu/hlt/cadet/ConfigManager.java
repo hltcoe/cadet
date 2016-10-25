@@ -121,6 +121,17 @@ public class ConfigManager {
             logger.warn("Falling back to default configuration");
             config = defaultConfig;
         }
+
+        if (config.hasPath(CadetConfig.DEPRECATED_FETCH_PATHNAME) ||
+            config.hasPath(CadetConfig.DEPRECATED_STORE_PATHNAME)) {
+            throw new RuntimeException(
+                    "Your CADET configuration file is using the deprecated service names '" +
+                    CadetConfig.DEPRECATED_FETCH_PATHNAME + "' and/or '" +
+                    CadetConfig.DEPRECATED_STORE_PATHNAME + "'. " +
+                    "Please update the file to use the new service names '" +
+                    CadetConfig.FETCH_PATHNAME + "' and '" +
+                    CadetConfig.STORE_PATHNAME + "'");
+        }
     }
 
     private void createDependencies() {

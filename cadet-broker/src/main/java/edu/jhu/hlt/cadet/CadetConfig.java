@@ -35,6 +35,8 @@ public class CadetConfig {
     public static final String FETCH_HOST = "cadet.fetch.host";
     public static final String FETCH_PORT = "cadet.fetch.port";
     public static final String FETCH_PROVIDER = "cadet.fetch.provider";
+    public static final String FETCH_PATHNAME = "cadet.fetch";
+    public static final String DEPRECATED_FETCH_PATHNAME = "cadet.retrieve";
 
     /**
      * Store
@@ -42,6 +44,8 @@ public class CadetConfig {
     public static final String STORE_HOST = "cadet.store.host";
     public static final String STORE_PORT = "cadet.store.port";
     public static final String STORE_PROVIDER = "cadet.store.provider";
+    public static final String STORE_PATHNAME = "cadet.store";
+    public static final String DEPRECATED_STORE_PATHNAME = "cadet.send";
 
     /**
      * Feedback
