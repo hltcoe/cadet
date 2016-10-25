@@ -111,13 +111,13 @@
                     className: 'search_result_text',
                     render: function(data, type, searchResultItem) {
                         if (type === 'display') {
-                            // The render function can be called multiple times.  We only retrieve
+                            // The render function can be called multiple times.  We only fetch
                             // the Communication when the render type is 'display'
                             //   https://datatables.net/reference/option/columns.render
                             try {
-                                var retrieveResults = CADET.retrieveComms([searchResultItem.communicationId]);
-                                if (retrieveResults.communications.length === 1) {
-                                    searchResultItem.communication = retrieveResults.communications[0];
+                                var fetchResult = CADET.fetchComms([searchResultItem.communicationId]);
+                                if (fetchResult.communications.length === 1) {
+                                    searchResultItem.communication = fetchResult.communications[0];
                                     searchResultItem.communication.addInternalReferences();
 
                                     // searchResultItem.sentence will be null if searchResultItem.sentenceId is not valid
@@ -150,7 +150,7 @@
                                 else if (!searchResultItem.communication) {
                                     searchResultItemText = '<div class="alert alert-danger" role="alert" ' +
                                                        'style="font-style: italic">' +
-                                                       'Unable to retrieve Communication for this SearchResult' +
+                                                       'Unable to fetch Communication for this SearchResult' +
                                                        '</div>';
                                 }
                                 else {
@@ -213,7 +213,7 @@
                        openSearchResultTab);
             },
 
-            // The deferRender option allows "lazy loading" of Communications via retrieve()
+            // The deferRender option allows "lazy loading" of Communications via fetch()
             //   https://datatables.net/examples/ajax/defer_render.html
             deferRender: true,
 
@@ -494,7 +494,7 @@
     }
 
     function updateServiceStatus() {
-        var services = ['search_proxy', 'retriever', 'feedback'];
+        var services = ['search_proxy', 'fetch', 'feedback'];
         var serviceStatusMessage = '';
         var unavailableServices = [];
 

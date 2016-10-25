@@ -23,8 +23,8 @@
 	</servlet>
 
 	<servlet>
-		<display-name>RetrieverServlet</display-name>
-		<servlet-name>RetrieverServlet</servlet-name>
+		<display-name>FetchServlet</display-name>
+		<servlet-name>FetchServlet</servlet-name>
 		<servlet-class>edu.jhu.hlt.cadet.fetch.FetchServlet</servlet-class>
 	</servlet>
 
@@ -35,8 +35,8 @@
 	</servlet>
 
         <servlet>
-		<display-name>SenderServlet</display-name>
-		<servlet-name>SenderServlet</servlet-name>
+		<display-name>StoreServlet</display-name>
+		<servlet-name>StoreServlet</servlet-name>
 		<servlet-class>edu.jhu.hlt.cadet.store.StoreServlet</servlet-class>
         </servlet>
 
@@ -75,8 +75,8 @@
 	</servlet-mapping>
 
 	<servlet-mapping>
-		<servlet-name>RetrieverServlet</servlet-name>
-		<url-pattern>/RetrieverServlet</url-pattern>
+		<servlet-name>FetchServlet</servlet-name>
+		<url-pattern>/FetchServlet</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
@@ -100,8 +100,8 @@
 	</servlet-mapping>
 
 	<servlet-mapping>
-		<servlet-name>SenderServlet</servlet-name>
-		<url-pattern>/SenderServlet</url-pattern>
+		<servlet-name>StoreServlet</servlet-name>
+		<url-pattern>/StoreServlet</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>

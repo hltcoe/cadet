@@ -73,7 +73,7 @@
         });
 
         $.getJSON('AdminServlet', function(config) {
-            var services = ['feedback', 'results', 'retrieve', 'send'];
+            var services = ['feedback', 'fetch', 'results', 'store'];
             for (var i = 0; i < services.length; i++) {
                 var serviceAlive;
                 try {
@@ -192,7 +192,7 @@
             for (var pi = 0; pi < providers.length; pi++) {
                 var option = $('<option>').text(providers[pi])
                                           .val(providers[pi]);
-                if (providers[pi] == CADET.defaultSearchProviders[searchTypes[i]]) {
+                if (providers[pi] === CADET.defaultSearchProviders[searchTypes[i]]) {
                     option.attr('selected', 'selected');
                 }
                 select.append(option);
