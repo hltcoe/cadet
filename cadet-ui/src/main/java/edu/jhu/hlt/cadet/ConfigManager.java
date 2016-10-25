@@ -5,16 +5,16 @@ import edu.jhu.hlt.cadet.learn.SortReceiverHandler;
 import edu.jhu.hlt.cadet.learn.SortReceiverServer;
 import edu.jhu.hlt.cadet.feedback.FeedbackHandler;
 import edu.jhu.hlt.cadet.feedback.store.FeedbackStore;
+import edu.jhu.hlt.cadet.fetch.FetchHandler;
+import edu.jhu.hlt.cadet.fetch.FetchProvider;
 import edu.jhu.hlt.cadet.results.MemorySessionStore;
 import edu.jhu.hlt.cadet.results.MemoryResultsStore;
 import edu.jhu.hlt.cadet.results.ResultsHandler;
 import edu.jhu.hlt.cadet.results.ResultsPlugin;
-import edu.jhu.hlt.cadet.retriever.RetrieverHandler;
-import edu.jhu.hlt.cadet.retriever.RetrieverProvider;
 import edu.jhu.hlt.cadet.search.SearchProvider;
 import edu.jhu.hlt.cadet.search.SearchProxyHandler;
-import edu.jhu.hlt.cadet.send.SenderHandler;
-import edu.jhu.hlt.cadet.send.SenderProvider;
+import edu.jhu.hlt.cadet.store.StoreProvider;
+import edu.jhu.hlt.cadet.store.StoreHandler;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -40,7 +40,7 @@ import com.typesafe.config.ConfigObject;
  * ConfigManager directly.
  * 
  * The manager constructs and initializes system level dependencies such as the
- * search handler, retrieve handler, and results handler. These handlers are initialized
+ * search handler, fetch handler, and results handler. These handlers are initialized
  * based on configuration information.
  */
 public class ConfigManager {
@@ -62,10 +62,10 @@ public class ConfigManager {
     private Config config;
     private Set<Provider> providers = new HashSet<>();
     private SearchProxyHandler searchProxyHandler;
-    private RetrieverHandler retrieverHandler;
+    private FetchHandler fetchHandler;
     private ResultsHandler resultsHandler;
     private FeedbackHandler feedbackHandler;
-    private SenderHandler senderHandler;
+    private StoreHandler storeHandler;
     private SortReceiverServer sortServer;
     private boolean isLearningOn = false;
 
@@ -121,13 +121,24 @@ public class ConfigManager {
             logger.warn("Falling back to default configuration");
             config = defaultConfig;
         }
+
+        if (config.hasPath(CadetConfig.DEPRECATED_FETCH_PATHNAME) ||
+            config.hasPath(CadetConfig.DEPRECATED_STORE_PATHNAME)) {
+            throw new RuntimeException(
+                    "Your CADET configuration file is using the deprecated service names '" +
+                    CadetConfig.DEPRECATED_FETCH_PATHNAME + "' and/or '" +
+                    CadetConfig.DEPRECATED_STORE_PATHNAME + "'. " +
+                    "Please update the file to use the new service names '" +
+                    CadetConfig.FETCH_PATHNAME + "' and '" +
+                    CadetConfig.STORE_PATHNAME + "'");
+        }
     }
 
     private void createDependencies() {
-        retrieverHandler = new RetrieverHandler();
-        String rpName = config.getString(CadetConfig.RETRIEVE_PROVIDER);
-        RetrieverProvider rp = (RetrieverProvider)constructProvider(rpName);
-        retrieverHandler.init(rp);
+        fetchHandler = new FetchHandler();
+        String fpName = config.getString(CadetConfig.FETCH_PROVIDER);
+        FetchProvider fp = (FetchProvider)constructProvider(fpName);
+        fetchHandler.init(fp);
 
         String fbStoreName = config.getString(CadetConfig.FEEDBACK_STORE);
         FeedbackStore fbStore = (FeedbackStore)constructProvider(fbStoreName);
@@ -144,11 +155,11 @@ public class ConfigManager {
             }
         }
         resultsHandler = new ResultsHandler();
-        senderHandler = new SenderHandler();
-        String sendName = config.getString(CadetConfig.SEND_PROVIDER);
-        SenderProvider sender = (SenderProvider) constructProvider(sendName);
-        senderHandler.init(sender);
-        resultsHandler.setSenderProvider(sender);
+        storeHandler = new StoreHandler();
+        String spName = config.getString(CadetConfig.STORE_PROVIDER);
+        StoreProvider storeProvider = (StoreProvider) constructProvider(spName);
+        storeHandler.init(storeProvider);
+        resultsHandler.setStoreProvider(storeProvider);
         String clientName = config.getString(CadetConfig.LEARN_PROVIDER);
         ActiveLearningClient client = (ActiveLearningClient)constructProvider(clientName);
         if (isLearningOn) {
@@ -251,13 +262,13 @@ public class ConfigManager {
     }
 
     /**
-     * Get the retriever handler
+     * Get the fetch handler
      */
-    public RetrieverHandler getRetrieverHandler() {
+    public FetchHandler getFetchHandler() {
         if (!initialized) {
             throw new RuntimeException("ConfigManager used before initialized");
         }
-        return retrieverHandler;
+        return fetchHandler;
     }
 
     /**
@@ -281,13 +292,13 @@ public class ConfigManager {
     }
 
     /**
-     * Get the sender handler
+     * Get the store handler
      */
-    public SenderHandler getSenderHandler() {
+    public StoreHandler getStoreHandler() {
         if (!initialized) {
             throw new RuntimeException("ConfigManager used before initialized");
         }
-        return senderHandler;
+        return storeHandler;
     }
 
     /**

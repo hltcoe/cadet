@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.jhu.hlt.cadet.learn.ActiveLearningClient;
 import edu.jhu.hlt.cadet.learn.SortReceiverCallback;
-import edu.jhu.hlt.cadet.send.SenderProvider;
+import edu.jhu.hlt.cadet.store.StoreProvider;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.learn.Annotation;
@@ -31,7 +31,7 @@ public class ResultsHandler implements ResultsServerService.Iface, SortReceiverC
     private final int chunkSize = 10;
     private ResultsStore resultsStore;
     private SessionStore sessionStore;
-    private SenderProvider sender;
+    private StoreProvider storeProvider;
     private ActiveLearningClient client;
     private List<ResultsPlugin> plugins = new ArrayList<ResultsPlugin>();
 
@@ -45,8 +45,8 @@ public class ResultsHandler implements ResultsServerService.Iface, SortReceiverC
         sessionStore = store;
     }
 
-    public void setSenderProvider(SenderProvider provider) {
-        sender = provider;
+    public void setStoreProvider(StoreProvider provider) {
+        storeProvider = provider;
     }
 
     public void setActiveLearningClient(ActiveLearningClient provider) {
@@ -103,7 +103,7 @@ public class ResultsHandler implements ResultsServerService.Iface, SortReceiverC
 
     @Override
     public SearchResult getSearchResult(UUID searchResultsId) throws ServicesException, TException {
-        logger.info("Results server: retrieving result " + searchResultsId.getUuidString());
+        logger.info("Results server: fetching result " + searchResultsId.getUuidString());
         return resultsStore.getByID(searchResultsId);
     }
 
@@ -177,7 +177,7 @@ public class ResultsHandler implements ResultsServerService.Iface, SortReceiverC
         }
 
         try {
-            sender.send(communication);
+            storeProvider.store(communication);
         } catch (TException e) {
             throw new ServicesException("Unable to save the annotated communication");
         }
@@ -209,8 +209,8 @@ public class ResultsHandler implements ResultsServerService.Iface, SortReceiverC
 
     @Override
     public boolean alive() throws TException {
-        boolean senderAlive = sender.alive();
-        return senderAlive;
+        boolean storeAlive = storeProvider.alive();
+        return storeAlive;
     }
 
     @Override

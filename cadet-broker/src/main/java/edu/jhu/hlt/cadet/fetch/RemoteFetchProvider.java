@@ -1,43 +1,46 @@
-package edu.jhu.hlt.cadet.send;
+package edu.jhu.hlt.cadet.fetch;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TCompactProtocol;
 import org.apache.thrift.transport.TFramedTransport;
 import org.apache.thrift.transport.TSocket;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.typesafe.config.Config;
 
 import edu.jhu.hlt.cadet.CadetConfig;
-import edu.jhu.hlt.concrete.Communication;
-import edu.jhu.hlt.concrete.access.StoreCommunicationService;
+import edu.jhu.hlt.concrete.access.FetchRequest;
+import edu.jhu.hlt.concrete.access.FetchResult;
+import edu.jhu.hlt.concrete.access.FetchCommunicationService;
 import edu.jhu.hlt.concrete.services.ServiceInfo;
+import edu.jhu.hlt.concrete.services.ServicesException;
 
 /**
- * Sends documents to a remote service that implements the Sender thrift service
+ * Fetch documents from a remote service that implements the FetchCommunicationService thrift service
  */
-public class RemoteSenderProvider implements SenderProvider {
-    private static Logger logger = LoggerFactory.getLogger(RemoteSenderProvider.class);
+public class RemoteFetchProvider implements FetchProvider {
+    private static Logger logger = LoggerFactory.getLogger(RemoteFetchProvider.class);
 
     private String host;
     private int port;
 
     private TFramedTransport transport;
     private TCompactProtocol protocol;
-    private StoreCommunicationService.Client client;
+    private FetchCommunicationService.Client client;
 
     @Override
     public void init(Config config) {
-        host = config.getString(CadetConfig.SEND_HOST);
-        port = config.getInt(CadetConfig.SEND_PORT);
+        host = config.getString(CadetConfig.FETCH_HOST);
+        port = config.getInt(CadetConfig.FETCH_PORT);
 
-        logger.info("SendHandler HOST: " + host);
-        logger.info("SendHandler PORT: " + port);
+        logger.info("RemoteFetchProvider HOST: " + host);
+        logger.info("RemoteFetchProvider PORT: " + port);
 
         transport = new TFramedTransport(new TSocket(host, port), Integer.MAX_VALUE);
         protocol = new TCompactProtocol(transport);
-        client = new StoreCommunicationService.Client(protocol);
+        client = new FetchCommunicationService.Client(protocol);
     }
 
     @Override
@@ -48,11 +51,12 @@ public class RemoteSenderProvider implements SenderProvider {
     }
 
     @Override
-    public void send(Communication communication) throws TException {
-        logger.info("Storing Comm Id: " + communication.getId());
+    public FetchResult fetch(FetchRequest request) throws ServicesException, TException {
         transport.open();
-        client.store(communication);
+        FetchResult results = client.fetch(request);
         transport.close();
+
+        return results;
     }
 
     @Override

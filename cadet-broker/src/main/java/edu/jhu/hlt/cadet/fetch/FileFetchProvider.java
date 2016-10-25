@@ -1,12 +1,7 @@
-package edu.jhu.hlt.cadet.send;
+package edu.jhu.hlt.cadet.fetch;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 
 import org.apache.thrift.TException;
 import org.slf4j.Logger;
@@ -16,24 +11,27 @@ import com.typesafe.config.Config;
 
 import edu.jhu.hlt.cadet.CadetConfig;
 import edu.jhu.hlt.concrete.Communication;
+import edu.jhu.hlt.concrete.access.FetchRequest;
+import edu.jhu.hlt.concrete.access.FetchResult;
 import edu.jhu.hlt.concrete.serialization.CompactCommunicationSerializer;
 import edu.jhu.hlt.concrete.services.ServiceInfo;
+import edu.jhu.hlt.concrete.services.ServicesException;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 
 /**
  * Assumes communications are stored as <comm id>.concrete
  * The concrete communications must be serialized with compact protocol.
  * Requires that the config parameter be set: files.data.dir
- * This overwrites the communication files so must have write access.
  */
-public class FileSenderProvider implements SenderProvider {
-    private static Logger logger = LoggerFactory.getLogger(FileSenderProvider.class);
+public class FileFetchProvider implements FetchProvider {
+    private static Logger logger = LoggerFactory.getLogger(FileFetchProvider.class);
+
     public static final String EXTENSION = "concrete";
 
     private String directory;
     private final CompactCommunicationSerializer serializer;
 
-    public FileSenderProvider() {
+    public FileFetchProvider() {
         serializer = new CompactCommunicationSerializer();
     }
 
@@ -60,31 +58,20 @@ public class FileSenderProvider implements SenderProvider {
     public void close() {}
 
     @Override
-    public void send(Communication comm) throws TException {
-        logger.info("Storing Comm Id: " + comm.getId());
+    public FetchResult fetch(FetchRequest request) throws ServicesException, TException {
+      FetchResult results = new FetchResult();
 
-        String filename = directory + comm.getId() + "." + EXTENSION;
-        if (!new File(filename).exists()) {
-            // we're only suppose to be overwriting files so this shouldn't happen
-            logger.warn(filename + " does not exist so won't save");
-            return;
+        for (String id : request.getCommunicationIds()) {
+            String path = directory + id + "." + EXTENSION;
+            try {
+                Communication comm = serializer.fromPath(Paths.get(path));
+                results.addToCommunications(comm);
+            } catch (ConcreteException e) {
+                logger.warn("Unable to read " + path, e);
+            }
         }
 
-        byte[] data = null;
-        try {
-            data = serializer.toBytes(comm);
-        } catch (ConcreteException e) {
-            logger.warn("Unable to serialize comm " + comm.getId(), e);
-            return;
-        }
-
-        try(OutputStream os = Files.newOutputStream(Paths.get(filename), StandardOpenOption.TRUNCATE_EXISTING);
-                        BufferedOutputStream bos = new BufferedOutputStream(os);) {
-            bos.write(data);
-        } catch (IOException e) {
-            logger.warn("Failed to write " + comm.getId(), e);
-            return;
-        }
+        return results;
     }
 
     @Override

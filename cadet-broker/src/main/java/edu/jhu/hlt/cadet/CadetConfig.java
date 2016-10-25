@@ -30,18 +30,22 @@ public class CadetConfig {
     public static final String SEARCH_PROVIDER_CUSTOM = "provider";
 
     /**
-     * Retrieve
+     * Fetch
      */
-    public static final String RETRIEVE_HOST = "cadet.retrieve.host";
-    public static final String RETRIEVE_PORT = "cadet.retrieve.port";
-    public static final String RETRIEVE_PROVIDER = "cadet.retrieve.provider";
+    public static final String FETCH_HOST = "cadet.fetch.host";
+    public static final String FETCH_PORT = "cadet.fetch.port";
+    public static final String FETCH_PROVIDER = "cadet.fetch.provider";
+    public static final String FETCH_PATHNAME = "cadet.fetch";
+    public static final String DEPRECATED_FETCH_PATHNAME = "cadet.retrieve";
 
     /**
-     * Send
+     * Store
      */
-    public static final String SEND_HOST = "cadet.send.host";
-    public static final String SEND_PORT = "cadet.send.port";
-    public static final String SEND_PROVIDER = "cadet.send.provider";
+    public static final String STORE_HOST = "cadet.store.host";
+    public static final String STORE_PORT = "cadet.store.port";
+    public static final String STORE_PROVIDER = "cadet.store.provider";
+    public static final String STORE_PATHNAME = "cadet.store";
+    public static final String DEPRECATED_STORE_PATHNAME = "cadet.send";
 
     /**
      * Feedback

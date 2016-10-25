@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package edu.jhu.hlt.cadet.retriever;
+package edu.jhu.hlt.cadet.fetch;
 
 import java.util.ArrayList;
 import java.util.List;

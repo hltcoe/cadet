@@ -1,4 +1,4 @@
-package edu.jhu.hlt.cadet.send;
+package edu.jhu.hlt.cadet.store;
 
 import org.apache.thrift.TException;
 
@@ -6,14 +6,14 @@ import edu.jhu.hlt.cadet.Provider;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.services.ServiceInfo;
 
-public interface SenderProvider extends Provider {
+public interface StoreProvider extends Provider {
     /**
-     * Send a communication
+     * Store a communication
      * 
-     * @param communication  a Communication object to send
+     * @param communication  a Communication object to store
      * @throws TException
      */
-    public void send(Communication communication) throws TException;
+    public void store(Communication communication) throws TException;
 
     /**
      * Is the service alive?
@@ -21,7 +21,7 @@ public interface SenderProvider extends Provider {
     public boolean alive() throws TException;
 
     /**
-     * Get information about the sender provider
+     * Get information about the store service provider
      */
     public ServiceInfo about() throws TException;
 }

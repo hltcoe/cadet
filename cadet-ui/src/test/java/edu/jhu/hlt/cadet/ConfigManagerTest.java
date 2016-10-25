@@ -33,6 +33,15 @@ public class ConfigManagerTest {
         fail("Did not throw exception");
     }
 
+    @Test(expected = RuntimeException.class)
+    public void testDeprecatedServiceNames() {
+        String filename = getFilePath("ConfigManager/deprecated-service-names.conf");
+        ConfigManager cm = ConfigManager.getInstance();
+        cm.init(filename);
+        fail("Did not throw exception");
+    }
+
+
     @Ignore
     public void testMissingConfigParameter() {
         String filename = getFilePath("ConfigManager/missing-provider-name.conf");

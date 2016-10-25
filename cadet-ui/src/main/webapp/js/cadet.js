@@ -2,19 +2,20 @@
 //
 // None of the code in this file should manipulate the DOM.
 
-/* globals AnnotationTaskType, FeedbackClient, FetchRequest,
-           RetrieverClient, ResultsServerClient, SearchClient,
-           SearchProxy, SearchQuery, SearchType, SenderClient, Thrift
+/* globals AnnotationTaskType, FeedbackServiceClient, FetchRequest,
+           FetchCommunicationServiceClient,
+           ResultsServerServiceClient, SearchClient, SearchQuery,
+           SearchProxyServiceClient, SearchType,
+           StoreCommunicationServiceClient, Thrift
 */
 
 var CADET = {
     // These variables are initialized by init()
     feedback: undefined,
-    retrieve: undefined,  // alias for retriever
-    retriever: undefined,
+    fetch: undefined,
     search: undefined,
     search_proxy: undefined,
-    send: undefined,
+    store: undefined,
     results: undefined,
 
     // This variable is used to set the searchQuery.userId field
@@ -26,7 +27,7 @@ var CADET = {
     defaultSearchProviders: {},
     searchProvidersForSearchType: {},
 
-    /** Takes a SearchResult and RetrieveResults object.  For each
+    /** Takes a SearchResult and FetchResult object.  For each
      *  SearchResultItem object in SearchResult, add reference
      *  variables:
      *    - 'communication', which points to the Communication
@@ -35,13 +36,13 @@ var CADET = {
      *        by searchResultItem.sentenceId
      *
      * @param {SearchResult} searchResult
-     * @param {RetrieveResults} retrieveResults
+     * @param {FetchResult} fetchResult
      */
-    addReferencesToSearchResultItems: function(searchResult, retrieveResults) {
+    addReferencesToSearchResultItems: function(searchResult, fetchResult) {
         var comm;
         var commIdToComm = {};
-        for (var i = 0; i < retrieveResults.communications.length; i++) {
-            comm = retrieveResults.communications[i];
+        for (var i = 0; i < fetchResult.communications.length; i++) {
+            comm = fetchResult.communications[i];
             commIdToComm[comm.id] = comm;
             comm.addInternalReferences();
         }
@@ -144,18 +145,18 @@ var CADET = {
         return q;
     },
 
-    /** Takes a SearchResultItem and a RetrieveResults, returns the Communication
-     *  that is identified by the SearchResultItem and stored in the RetrieveResults.
-     *  Returns null if RetrieveResults did not contain the requested Communication
+    /** Takes a SearchResultItem and a FetchResult, returns the Communication
+     *  that is identified by the SearchResultItem and stored in the FetchResult.
+     *  Returns null if FetchResult did not contain the requested Communication
      *
      * @param {SearchResultItem} searchResultItem -
-     * @param {RetrieveResults} retrieveResults - contains a list of Communications
+     * @param {FetchResult} fetchResult - contains a list of Communications
      * @returns {Communication|null}
      */
-    getCommunicationForSearchResult: function(searchResultItem, retrieveResults) {
-        for (var i = 0; i < retrieveResults.communications.length; i++) {
-            if (retrieveResults.communications[i].id === searchResultItem.communicationId) {
-                return retrieveResults.communications[i];
+    getCommunicationForSearchResult: function(searchResultItem, fetchResult) {
+        for (var i = 0; i < fetchResult.communications.length; i++) {
+            if (fetchResult.communications[i].id === searchResultItem.communicationId) {
+                return fetchResult.communications[i];
             }
         }
         return null;
@@ -210,22 +211,21 @@ var CADET = {
         var feedback_protocol = new Thrift.Protocol(feedback_transport);
         this.feedback = new FeedbackServiceClient(feedback_protocol);
 
-        var retriever_transport = new Thrift.Transport('RetrieverServlet');
-        var retriever_protocol = new Thrift.Protocol(retriever_transport);
-        this.retriever = new FetchCommunicationServiceClient(retriever_protocol);
-        this.retrieve = this.retriever;
+        var fetch_transport = new Thrift.Transport('FetchServlet');
+        var fetch_protocol = new Thrift.Protocol(fetch_transport);
+        this.fetch = new FetchCommunicationServiceClient(fetch_protocol);
+
+        var results_transport = new Thrift.Transport('ResultsServer');
+        var results_protocol = new Thrift.Protocol(results_transport);
+        this.results = new ResultsServerServiceClient(results_protocol);
 
         var search_proxy_transport = new Thrift.Transport('SearchProxyServlet');
         var search_proxy_protocol = new Thrift.Protocol(search_proxy_transport);
         this.search_proxy = new SearchProxyServiceClient(search_proxy_protocol);
 
-        var send_transport = new Thrift.Transport('SenderServlet');
-        var send_protocol = new Thrift.Protocol(send_transport);
-        this.send = new StoreCommunicationServiceClient(send_protocol);
-
-        var results_transport = new Thrift.Transport('ResultsServer');
-        var results_protocol = new Thrift.Protocol(results_transport);
-        this.results = new ResultsServerServiceClient(results_protocol);
+        var store_transport = new Thrift.Transport('StoreServlet');
+        var store_protocol = new Thrift.Protocol(store_transport);
+        this.store = new StoreCommunicationServiceClient(store_protocol);
 
         this.configureSearchProviders();
     },
@@ -243,11 +243,11 @@ var CADET = {
         }
     },
 
-    /** Retrieve Communications specified by Communication ID list
+    /** Fetch Communications specified by Communication ID list
      * @param {List} idList - A list of Communication ID strings
-     * @returns {RetrieveResults}
+     * @returns {FetchResult}
      */
-    retrieveComms: function(idList) {
+    fetchComms: function(idList) {
         // create args object to pass to FetchRequest
         var args = {};
         // list of communication IDs
@@ -255,8 +255,8 @@ var CADET = {
         // create FetchRequest object
         var request = new FetchRequest(args);
 
-        // retrieve the communications
-        var results = this.retriever.fetch(request);
+        // fetch the communications
+        var results = this.fetch.fetch(request);
         return results;
     },
 

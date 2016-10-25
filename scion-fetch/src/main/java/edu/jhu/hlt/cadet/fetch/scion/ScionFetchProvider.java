@@ -4,7 +4,7 @@ import org.apache.thrift.TException;
 
 import com.typesafe.config.Config;
 
-import edu.jhu.hlt.cadet.retriever.RetrieverProvider;
+import edu.jhu.hlt.cadet.fetch.FetchProvider;
 import edu.jhu.hlt.concrete.access.FetchRequest;
 import edu.jhu.hlt.concrete.access.FetchResult;
 import edu.jhu.hlt.concrete.services.ServiceInfo;
@@ -15,9 +15,9 @@ import edu.jhu.hlt.scion.concrete.server.FetchCommunicationServiceImpl;
 import edu.jhu.hlt.scion.core.accumulo.ConnectorFactory;
 
 /**
- * Retrieves communications from scion directly given commIDs
+ * Fetches communications from scion directly given commIDs
  */
-public class ScionRetrieverProvider implements RetrieverProvider {
+public class ScionFetchProvider implements FetchProvider {
   private FetchCommunicationServiceImpl impl;
 
   @Override
@@ -49,7 +49,7 @@ public class ScionRetrieverProvider implements RetrieverProvider {
   public ServiceInfo about() throws TException {
     ServiceInfo info = new ServiceInfo("Scion Fetch", "unknown");
     ScionConfig cfg = new ScionConfig();
-    info.setDescription("Scion based retriever with config: "
+    info.setDescription("Scion based fetch with config: "
         + "accumulo instance: " + cfg.getAccumuloInstanceName()
         + "zookeeper: " + cfg.getZookeeperServer());
     return info;

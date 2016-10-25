@@ -1,4 +1,4 @@
-package edu.jhu.hlt.cadet.retriever;
+package edu.jhu.hlt.cadet.fetch;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,22 +12,23 @@ import edu.jhu.hlt.concrete.services.ServiceInfo;
 import edu.jhu.hlt.concrete.services.ServicesException;
 import edu.jhu.hlt.concrete.access.FetchResult;
 import edu.jhu.hlt.concrete.access.FetchRequest;
+import edu.jhu.hlt.cadet.fetch.FetchProvider;
 import edu.jhu.hlt.concrete.Communication;
 
-public class RetrieverHandler implements FetchCommunicationService.Iface {
-    private static Logger logger = LoggerFactory.getLogger(RetrieverHandler.class);
+public class FetchHandler implements FetchCommunicationService.Iface {
+    private static Logger logger = LoggerFactory.getLogger(FetchHandler.class);
 
-    private RetrieverProvider retrieverProvider;
+    private FetchProvider fetchProvider;
 
-    public RetrieverHandler() {}
+    public FetchHandler() {}
 
     /**
      * Initialize the handler - must be called before any other methods
      *
      * @param provider
      */
-    public void init(RetrieverProvider provider) {
-        retrieverProvider = provider;
+    public void init(FetchProvider provider) {
+        fetchProvider = provider;
     }
 
     @Override
@@ -35,7 +36,7 @@ public class RetrieverHandler implements FetchCommunicationService.Iface {
 
         logFetchRequest(request);
 
-        FetchResult results = retrieverProvider.fetch(request);
+        FetchResult results = fetchProvider.fetch(request);
 
         logFetchResult(results);
 
@@ -43,7 +44,7 @@ public class RetrieverHandler implements FetchCommunicationService.Iface {
     }
 
     protected static void logFetchRequest(FetchRequest request) {
-        logger.info("Retrieve: requesting " + request.getCommunicationIdsSize() + " communications");
+        logger.info("Fetch: requesting " + request.getCommunicationIdsSize() + " communications");
 
         Iterator<String> commIterator = request.getCommunicationIdsIterator();
         while (commIterator.hasNext()) {
@@ -52,7 +53,7 @@ public class RetrieverHandler implements FetchCommunicationService.Iface {
     }
 
     protected static void logFetchResult(FetchResult results) {
-        logger.info("Retrieve: returning " + results.getCommunicationsSize() + " communications");
+        logger.info("Fetch: returning " + results.getCommunicationsSize() + " communications");
 
         Iterator<Communication> communicationIterator = results.getCommunicationsIterator();
         while (communicationIterator.hasNext()) {
@@ -62,11 +63,11 @@ public class RetrieverHandler implements FetchCommunicationService.Iface {
 
     @Override
     public ServiceInfo about() throws TException {
-        return retrieverProvider.about();
+        return fetchProvider.about();
     }
 
     @Override
     public boolean alive() throws TException {
-        return retrieverProvider.alive();
+        return fetchProvider.alive();
     }
 }
