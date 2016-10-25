@@ -1,4 +1,4 @@
-package edu.jhu.hlt.cadet.send;
+package edu.jhu.hlt.cadet.store;
 
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TCompactProtocol;
@@ -17,8 +17,8 @@ import edu.jhu.hlt.concrete.services.ServiceInfo;
 /**
  * Sends documents to a remote service that implements the Sender thrift service
  */
-public class RemoteSenderProvider implements SenderProvider {
-    private static Logger logger = LoggerFactory.getLogger(RemoteSenderProvider.class);
+public class RemoteStoreProvider implements StoreProvider {
+    private static Logger logger = LoggerFactory.getLogger(RemoteStoreProvider.class);
 
     private String host;
     private int port;

@@ -1,4 +1,4 @@
-package edu.jhu.hlt.cadet.retriever;
+package edu.jhu.hlt.cadet.fetch;
 
 import org.apache.thrift.TException;
 
@@ -24,7 +24,7 @@ import edu.jhu.hlt.tift.Tokenizer;
 /**
  * Generates mock communications for testing, debugging, and development
  */
-public class MockRetrieverProvider implements RetrieverProvider {
+public class MockFetchProvider implements FetchProvider {
 
     @Override
     public void init(Config config) {}

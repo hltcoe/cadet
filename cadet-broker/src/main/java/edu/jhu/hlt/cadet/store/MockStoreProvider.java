@@ -1,4 +1,4 @@
-package edu.jhu.hlt.cadet.send;
+package edu.jhu.hlt.cadet.store;
 
 import org.apache.thrift.TException;
 import org.slf4j.Logger;
@@ -12,8 +12,8 @@ import edu.jhu.hlt.concrete.services.ServiceInfo;
 /**
  * Receives communications for testing, debugging, and development
  */
-public class MockSenderProvider implements SenderProvider {
-    private static Logger logger = LoggerFactory.getLogger(MockSenderProvider.class);
+public class MockStoreProvider implements StoreProvider {
+    private static Logger logger = LoggerFactory.getLogger(MockStoreProvider.class);
 
     @Override
     public void init(Config config) {}

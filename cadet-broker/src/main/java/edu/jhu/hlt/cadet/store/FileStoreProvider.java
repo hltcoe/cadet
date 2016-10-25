@@ -1,4 +1,4 @@
-package edu.jhu.hlt.cadet.send;
+package edu.jhu.hlt.cadet.store;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -26,14 +26,14 @@ import edu.jhu.hlt.concrete.util.ConcreteException;
  * Requires that the config parameter be set: files.data.dir
  * This overwrites the communication files so must have write access.
  */
-public class FileSenderProvider implements SenderProvider {
-    private static Logger logger = LoggerFactory.getLogger(FileSenderProvider.class);
+public class FileStoreProvider implements StoreProvider {
+    private static Logger logger = LoggerFactory.getLogger(FileStoreProvider.class);
     public static final String EXTENSION = "concrete";
 
     private String directory;
     private final CompactCommunicationSerializer serializer;
 
-    public FileSenderProvider() {
+    public FileStoreProvider() {
         serializer = new CompactCommunicationSerializer();
     }
 

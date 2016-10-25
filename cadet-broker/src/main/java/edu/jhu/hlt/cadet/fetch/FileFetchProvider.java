@@ -1,4 +1,4 @@
-package edu.jhu.hlt.cadet.retriever;
+package edu.jhu.hlt.cadet.fetch;
 
 import java.io.File;
 import java.nio.file.Paths;
@@ -23,15 +23,15 @@ import edu.jhu.hlt.concrete.util.ConcreteException;
  * The concrete communications must be serialized with compact protocol.
  * Requires that the config parameter be set: files.data.dir
  */
-public class FileRetrieverProvider implements RetrieverProvider {
-    private static Logger logger = LoggerFactory.getLogger(FileRetrieverProvider.class);
+public class FileFetchProvider implements FetchProvider {
+    private static Logger logger = LoggerFactory.getLogger(FileFetchProvider.class);
 
     public static final String EXTENSION = "concrete";
 
     private String directory;
     private final CompactCommunicationSerializer serializer;
 
-    public FileRetrieverProvider() {
+    public FileFetchProvider() {
         serializer = new CompactCommunicationSerializer();
     }
 

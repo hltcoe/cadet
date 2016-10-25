@@ -1,4 +1,4 @@
-package edu.jhu.hlt.cadet.retriever;
+package edu.jhu.hlt.cadet.fetch;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,21 +12,22 @@ import edu.jhu.hlt.concrete.services.ServiceInfo;
 import edu.jhu.hlt.concrete.services.ServicesException;
 import edu.jhu.hlt.concrete.access.FetchResult;
 import edu.jhu.hlt.concrete.access.FetchRequest;
+import edu.jhu.hlt.cadet.fetch.FetchProvider;
 import edu.jhu.hlt.concrete.Communication;
 
-public class RetrieverHandler implements FetchCommunicationService.Iface {
-    private static Logger logger = LoggerFactory.getLogger(RetrieverHandler.class);
+public class FetchHandler implements FetchCommunicationService.Iface {
+    private static Logger logger = LoggerFactory.getLogger(FetchHandler.class);
 
-    private RetrieverProvider retrieverProvider;
+    private FetchProvider retrieverProvider;
 
-    public RetrieverHandler() {}
+    public FetchHandler() {}
 
     /**
      * Initialize the handler - must be called before any other methods
      *
      * @param provider
      */
-    public void init(RetrieverProvider provider) {
+    public void init(FetchProvider provider) {
         retrieverProvider = provider;
     }
 

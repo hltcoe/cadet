@@ -1,4 +1,4 @@
-package edu.jhu.hlt.cadet.retriever;
+package edu.jhu.hlt.cadet.fetch;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,8 +20,8 @@ import edu.jhu.hlt.concrete.services.ServicesException;
 /**
  * Retrieves documents from a remote service that implements the Retrieve thrift service
  */
-public class RemoteRetrieverProvider implements RetrieverProvider {
-    private static Logger logger = LoggerFactory.getLogger(RemoteRetrieverProvider.class);
+public class RemoteFetchProvider implements FetchProvider {
+    private static Logger logger = LoggerFactory.getLogger(RemoteFetchProvider.class);
 
     private String host;
     private int port;

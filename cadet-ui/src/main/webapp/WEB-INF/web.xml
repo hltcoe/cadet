@@ -25,7 +25,7 @@
 	<servlet>
 		<display-name>RetrieverServlet</display-name>
 		<servlet-name>RetrieverServlet</servlet-name>
-		<servlet-class>edu.jhu.hlt.cadet.retriever.RetrieverServlet</servlet-class>
+		<servlet-class>edu.jhu.hlt.cadet.fetch.FetchServlet</servlet-class>
 	</servlet>
 
 	<servlet>
@@ -37,7 +37,7 @@
         <servlet>
 		<display-name>SenderServlet</display-name>
 		<servlet-name>SenderServlet</servlet-name>
-		<servlet-class>edu.jhu.hlt.cadet.send.SenderServlet</servlet-class>
+		<servlet-class>edu.jhu.hlt.cadet.store.StoreServlet</servlet-class>
         </servlet>
 
 	<servlet>

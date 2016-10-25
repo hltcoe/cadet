@@ -1,4 +1,4 @@
-package edu.jhu.hlt.cadet.retriever;
+package edu.jhu.hlt.cadet.fetch;
 
 import org.apache.thrift.TException;
 
@@ -8,7 +8,7 @@ import edu.jhu.hlt.concrete.access.FetchResult;
 import edu.jhu.hlt.concrete.services.ServiceInfo;
 import edu.jhu.hlt.concrete.services.ServicesException;
 
-public interface RetrieverProvider extends Provider {
+public interface FetchProvider extends Provider {
     /**
      * Retrieve communications
      *
