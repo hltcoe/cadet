@@ -79,7 +79,7 @@
             fetchRequest.communicationIds.push(annotationUnitIdentifiers[i].communicationId)
             communicationIdToAUI[annotationUnitIdentifiers[i].communicationId] = annotationUnitIdentifiers[i];
         }
-        var fetchResults = CADET.retriever.fetch(fetchRequest);
+        var fetchResults = CADET.fetch.fetch(fetchRequest);
 
         for (var j = 0; j < fetchResults.communications.length; j++) {
             fetchResults.communications[j].annotationUnitIdentifier =
