@@ -142,7 +142,7 @@
                                     console.warn('SearchResult did not include an (optional) sentenceId');
                                 }
 
-                                var firstSentence = getFirstSentenceInCommunication(searchResultItem.communication);
+                                var firstSentence = searchResultItem.communication.getFirstSentence();
                                 if (firstSentence) {
                                     searchResultItemText = $('<span>').sentenceWidget(firstSentence).text();
                                 }
@@ -358,42 +358,6 @@
         executeSearchQuery(CADET.createSearchQueryFromSearchString(searchInput, queryName));
     }
 
-    /** Return the EntityMentionSet in the Communication with the specified toolname
-     * @param {Communication} communication
-     * @param {String} toolname
-     * @returns {EntityMentionSet|null}
-     */
-    function getEntityMentionSetWithToolname(communication, toolname) {
-        if (communication && communication.entityMentionSetList && communication.entityMentionSetList.length > 0) {
-            for (var i = 0; i < communication.entityMentionSetList.length; i++) {
-                if (communication.entityMentionSetList[i].metadata.tool === toolname) {
-                    return communication.entityMentionSetList[i];
-                }
-            }
-        }
-        return null;
-    }
-
-    /** Return the first Sentence in a Communication, or null
-     * @param {Communication} communication
-     * @returns {Sentence|null}
-     */
-    function getFirstSentenceInCommunication(communication) {
-        if (communication) {
-            // The first few Sections may be empty, so we need to iterate over Sections
-            if (communication.sectionList && communication.sectionList.length) {
-                for (var i = 0; i < communication.sectionList.length; i++) {
-                    if (communication.sectionList[i].sentenceList &&
-                        communication.sectionList[i].sentenceList.length)
-                    {
-                        return communication.sectionList[i].sentenceList[0];
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
     /** Create a new tab containing the Communication text for a search result
      */
     function openSearchResultTab(event) {
@@ -425,13 +389,13 @@
         $('#tab-content').append('<div id="' + searchResultId +'" class="tab-pane"></div>');
 
         // Add content to <div> for the newly created tab
-        if (getFirstSentenceInCommunication(searchResult.communication)) {
+        if (searchResult.communication.getFirstSentence()) {
             // communicationWidget() will only render text if the Communication has Sentences
             var communicationDiv = $('<div>').communicationWidget(searchResult.communication);
             $('div #' + searchResultId).append(communicationDiv);
 
             // The Kelvin KB is built using Serif EntityMentions
-            var serifMentionEMS = getEntityMentionSetWithToolname(searchResult.communication, "Serif: mentions");
+            var serifMentionEMS = searchResult.communication.getEntityMentionSetWithToolname("Serif: mentions");
             if (serifMentionEMS) {
                 communicationDiv.addEntityMentionSet(serifMentionEMS);
             }
