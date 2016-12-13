@@ -4,17 +4,17 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_1.xsd">
 	
-	<display-name>CADET Search</display-name>
+	<display-name>CADET UI</display-name>
 
 	<listener>
 		<listener-class>edu.jhu.hlt.cadet.BootLoader</listener-class>
 	</listener>
 
-        <servlet>
-                 <display-name>AdminServlet</display-name>
-                 <servlet-name>AdminServlet</servlet-name>
-                 <servlet-class>edu.jhu.hlt.cadet.AdminServlet</servlet-class>
-        </servlet>
+	<servlet>
+		<display-name>AdminServlet</display-name>
+		<servlet-name>AdminServlet</servlet-name>
+		<servlet-class>edu.jhu.hlt.cadet.AdminServlet</servlet-class>
+	</servlet>
 
 	<servlet>
 		<display-name>SearchProxyServlet</display-name>
@@ -34,11 +34,11 @@
 		<servlet-class>edu.jhu.hlt.cadet.feedback.FeedbackServlet</servlet-class>
 	</servlet>
 
-        <servlet>
+	<servlet>
 		<display-name>StoreServlet</display-name>
 		<servlet-name>StoreServlet</servlet-name>
 		<servlet-class>edu.jhu.hlt.cadet.store.StoreServlet</servlet-class>
-        </servlet>
+	</servlet>
 
 	<servlet>
 		<display-name>ViewFeedback</display-name>
@@ -64,10 +64,10 @@
 		<servlet-class>edu.jhu.hlt.cadet.results.ViewSessionsServlet</servlet-class>
 	</servlet>
 
-        <servlet-mapping>
-                <servlet-name>AdminServlet</servlet-name>
-                <url-pattern>/AdminServlet</url-pattern>
-        </servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>AdminServlet</servlet-name>
+		<url-pattern>/AdminServlet</url-pattern>
+	</servlet-mapping>
 
 	<servlet-mapping>
 		<servlet-name>SearchProxyServlet</servlet-name>
