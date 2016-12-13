@@ -92,17 +92,17 @@ public class RemoteSearchProvider implements SearchProvider {
 
     @Override
     public List<SearchCapability> getCapabilities() throws ServicesException, TException {
-	transport.open();
-	List<SearchCapability> capabilities = client.getCapabilities();
-	transport.close();
-	return capabilities;
+        transport.open();
+        List<SearchCapability> capabilities = client.getCapabilities();
+        transport.close();
+        return capabilities;
     }
 
     @Override
     public List<String> getCorpora() throws ServicesException, TException {
-	transport.open();
-	List<String> corpora = client.getCorpora();
-	transport.close();
-	return corpora;
+        transport.open();
+        List<String> corpora = client.getCorpora();
+        transport.close();
+        return corpora;
     }
 }

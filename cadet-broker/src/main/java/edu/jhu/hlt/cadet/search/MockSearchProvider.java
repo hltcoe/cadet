@@ -88,25 +88,25 @@ public class MockSearchProvider implements SearchProvider {
 
     @Override
     public List<SearchCapability> getCapabilities() throws ServicesException {
-	List<SearchCapability> capabilities = new ArrayList<SearchCapability>();
+        List<SearchCapability> capabilities = new ArrayList<SearchCapability>();
 
-	SearchCapability communicationsCapability = new SearchCapability();
-	communicationsCapability.setLang("eng");
-	communicationsCapability.setType(SearchType.COMMUNICATIONS);
-	capabilities.add(communicationsCapability);
+        SearchCapability communicationsCapability = new SearchCapability();
+        communicationsCapability.setLang("eng");
+        communicationsCapability.setType(SearchType.COMMUNICATIONS);
+        capabilities.add(communicationsCapability);
 
-	SearchCapability sentencesCapability = new SearchCapability();
-	sentencesCapability.setLang("eng");
-	sentencesCapability.setType(SearchType.SENTENCES);
-	capabilities.add(sentencesCapability);
+        SearchCapability sentencesCapability = new SearchCapability();
+        sentencesCapability.setLang("eng");
+        sentencesCapability.setType(SearchType.SENTENCES);
+        capabilities.add(sentencesCapability);
 
-	return capabilities;
+        return capabilities;
     }
 
     @Override
     public List<String> getCorpora() throws ServicesException {
-	List<String> corpora = new ArrayList<String>();
-	corpora.add("MockCorpora");
-	return corpora;
+        List<String> corpora = new ArrayList<String>();
+        corpora.add("MockCorpora");
+        return corpora;
     }
 }
