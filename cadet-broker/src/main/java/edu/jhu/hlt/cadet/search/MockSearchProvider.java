@@ -25,6 +25,27 @@ import edu.jhu.hlt.concrete.uuid.AnalyticUUIDGeneratorFactory;
  */
 public class MockSearchProvider implements SearchProvider {
 
+    private static Map<String, String> comms = new HashMap<String, String>();
+    static {
+        comms.put("99508872582148096", "74c72918-6825-25a1-b4a1-000034f6aa82");
+        comms.put("100023698194575360", "e9362194-4e5e-33ec-1c88-00000744e98c");
+        comms.put("103308526105014272", "08754e53-aa72-fcd8-e8a5-00001f08def3");
+        comms.put("103308534493626369", "da94bceb-fd22-5c65-cd69-000073cf2fd6");
+        comms.put("103308534502006784", "c02cb5d3-821b-93ec-8ee0-00004b3de2ed");
+        comms.put("103308534502010880", "23e63560-5081-b518-9fce-00003ac08cfa");
+        comms.put("103308534514585600", "f566af93-605c-0b45-1545-000061fdfc0b");
+        comms.put("103308534510387201", "c8debea6-e889-5f34-e7e5-000029ae176f");
+        comms.put("103308530320281600", "959c3597-1dfc-2721-1ade-00002e90c015");
+        comms.put("103308530316099584", "baefca4f-5eab-475b-b7da-0000292a92f4");
+        comms.put("103308534485237762", "dedc4f62-69af-7c54-d3c8-00000802aa91");
+        comms.put("103308534485237760", "4e67542a-5bc6-ab8a-3311-00007504f2e7");
+        comms.put("103308534489415680", "145b10ec-e73f-960a-a79e-0000072ac3a6");        
+    }
+
+    public static Map<String, String> getMockCommsIds() {
+        return comms;
+    }
+
     @Override
     public void init(Config config) {}
 
@@ -41,22 +62,6 @@ public class MockSearchProvider implements SearchProvider {
         AnalyticUUIDGeneratorFactory.AnalyticUUIDGenerator gen = f.create();
 
         SearchResult results = new SearchResult();
-
-        Map<String, String> comms = new HashMap<String, String>();
-        comms.put("99508872582148096", "74c72918-6825-25a1-b4a1-000034f6aa82");
-        comms.put("100023698194575360", "e9362194-4e5e-33ec-1c88-00000744e98c");
-        comms.put("103308526105014272", "08754e53-aa72-fcd8-e8a5-00001f08def3");
-        comms.put("103308534493626369", "da94bceb-fd22-5c65-cd69-000073cf2fd6");
-        comms.put("103308534502006784", "c02cb5d3-821b-93ec-8ee0-00004b3de2ed");
-        comms.put("103308534502010880", "23e63560-5081-b518-9fce-00003ac08cfa");
-        comms.put("103308534514585600", "f566af93-605c-0b45-1545-000061fdfc0b");
-        comms.put("103308534510387201", "c8debea6-e889-5f34-e7e5-000029ae176f");
-        comms.put("103308530320281600", "959c3597-1dfc-2721-1ade-00002e90c015");
-        comms.put("103308530316099584", "baefca4f-5eab-475b-b7da-0000292a92f4");
-        comms.put("103308534485237762", "dedc4f62-69af-7c54-d3c8-00000802aa91");
-        comms.put("103308534485237760", "4e67542a-5bc6-ab8a-3311-00007504f2e7");
-        comms.put("103308534489415680", "145b10ec-e73f-960a-a79e-0000072ac3a6");
-
         AnnotationMetadata metadata = new AnnotationMetadata();
         metadata.setTool("MockSearchProvider");
         results.setMetadata(metadata);

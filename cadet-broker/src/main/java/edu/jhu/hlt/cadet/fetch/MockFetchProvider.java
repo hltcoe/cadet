@@ -1,9 +1,12 @@
 package edu.jhu.hlt.cadet.fetch;
 
+import java.util.Map;
+
 import org.apache.thrift.TException;
 
 import com.typesafe.config.Config;
 
+import edu.jhu.hlt.cadet.search.MockSearchProvider;
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.Section;
 import edu.jhu.hlt.concrete.section.SectionFactory;
@@ -11,6 +14,7 @@ import edu.jhu.hlt.concrete.Sentence;
 import edu.jhu.hlt.concrete.sentence.SentenceFactory;
 import edu.jhu.hlt.concrete.TextSpan;
 import edu.jhu.hlt.concrete.Tokenization;
+import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.access.FetchRequest;
 import edu.jhu.hlt.concrete.access.FetchResult;
 import edu.jhu.hlt.concrete.random.RandomConcreteFactory;
@@ -25,6 +29,7 @@ import edu.jhu.hlt.tift.Tokenizer;
  * Generates mock communications for testing, debugging, and development
  */
 public class MockFetchProvider implements FetchProvider {
+    static private Map<String, String> comms;
 
     @Override
     public void init(Config config) {}
@@ -34,6 +39,12 @@ public class MockFetchProvider implements FetchProvider {
 
     @Override
     public FetchResult fetch(FetchRequest request) throws ServicesException, TException {
+
+        // this allows us to provide sentence Ids that support the mock search provider
+        if (comms == null) {
+            comms = MockSearchProvider.getMockCommsIds();
+        }
+
         FetchResult results = new FetchResult();
         RandomConcreteFactory factory = new RandomConcreteFactory();
         NonsenseGenerator gen = NonsenseGenerator.getInstance();
@@ -51,6 +62,10 @@ public class MockFetchProvider implements FetchProvider {
                 Section section = new SectionFactory(uuidGen).fromTextSpan(ts, "passage");
                 Sentence sentence = new SentenceFactory(uuidGen).create();
                 sentence.setTextSpan(ts);
+                // set the sentence ID to match what's sent from mock search
+                if (comms.containsKey(commId)) {
+                    sentence.setUuid(new UUID(comms.get(commId)));
+                }
                 Tokenization tokenization = Tokenizer.WHITESPACE.tokenizeToConcrete(text, 0);
                 sentence.setTokenization(tokenization);
                 section.addToSentenceList(sentence);
