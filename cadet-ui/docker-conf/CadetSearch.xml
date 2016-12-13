@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Context reloadable="true" privileged="true">
-  <Parameter name="cadet.config" value="/usr/local/tomcat/conf/cadet.conf" override="false"/>
-</Context>

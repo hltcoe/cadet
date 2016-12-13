@@ -138,6 +138,10 @@
                prefix="localhost_access_log." suffix=".txt"
                pattern="%h %l %u %t &quot;%r&quot; %s %b" />
 
+        <!-- CADET ui mapped to root -->
+        <Context path="" docBase="cadet-ui" reloadable="true">
+          <Parameter name="cadet.config" value="/usr/local/tomcat/conf/cadet.conf" override="false"/>
+        </Context>
       </Host>
     </Engine>
   </Service>
