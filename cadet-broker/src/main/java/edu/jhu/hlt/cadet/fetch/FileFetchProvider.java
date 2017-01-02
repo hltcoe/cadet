@@ -2,6 +2,7 @@ package edu.jhu.hlt.cadet.fetch;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.List;
 
 import org.apache.thrift.TException;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.access.FetchRequest;
 import edu.jhu.hlt.concrete.access.FetchResult;
 import edu.jhu.hlt.concrete.serialization.CompactCommunicationSerializer;
+import edu.jhu.hlt.concrete.services.NotImplementedException;
 import edu.jhu.hlt.concrete.services.ServiceInfo;
 import edu.jhu.hlt.concrete.services.ServicesException;
 import edu.jhu.hlt.concrete.util.ConcreteException;
@@ -72,6 +74,16 @@ public class FileFetchProvider implements FetchProvider {
         }
 
         return results;
+    }
+
+    @Override
+    public long getCommunicationCount() throws NotImplementedException, TException {
+        throw new NotImplementedException("File-based provider does not support iteration");
+    }
+
+    @Override
+    public List<String> getCommunicationIDs(long offset, long count) throws NotImplementedException, TException {
+        throw new NotImplementedException("File-based provider does not support iteration");
     }
 
     @Override

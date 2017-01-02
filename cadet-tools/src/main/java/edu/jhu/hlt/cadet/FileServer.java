@@ -1,7 +1,11 @@
 package edu.jhu.hlt.cadet;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.thrift.TException;
 import org.apache.thrift.TProcessorFactory;
@@ -23,6 +27,7 @@ import edu.jhu.hlt.concrete.access.FetchRequest;
 import edu.jhu.hlt.concrete.access.FetchResult;
 import edu.jhu.hlt.concrete.access.FetchCommunicationService;
 import edu.jhu.hlt.concrete.serialization.CompactCommunicationSerializer;
+import edu.jhu.hlt.concrete.services.NotImplementedException;
 import edu.jhu.hlt.concrete.services.ServiceInfo;
 import edu.jhu.hlt.concrete.services.ServicesException;
 import edu.jhu.hlt.concrete.util.ConcreteException;
@@ -66,7 +71,7 @@ public class FileServer {
         server.serve();
     }
 
-    private class Handler implements FetchCommunicationService.Iface {
+    class Handler implements FetchCommunicationService.Iface {
         private final String dataDir;
         private final CompactCommunicationSerializer serializer;
 
@@ -107,6 +112,37 @@ public class FileServer {
         }
 
         @Override
+        public long getCommunicationCount() throws NotImplementedException, TException {
+            File dir = new File(this.dataDir);
+            return dir.listFiles(new ConcreteFileFilter()).length;
+        }
+
+        @Override
+        public List<String> getCommunicationIDs(long offset, long count)
+                        throws NotImplementedException, TException {
+            List<String> ids = new ArrayList<String>();
+            File dir = new File(this.dataDir);
+            File[] files = dir.listFiles(new ConcreteFileFilter());
+
+            int from = (int)offset;
+            if (from >= files.length) {
+                return ids;
+            }
+
+            int to = from + (int)count;
+            if (to > files.length) {
+                to = files.length;
+            }
+
+            files = Arrays.copyOfRange(files, from, to);
+            for (File file : files) {
+                ids.add(file.getName().replace("." + EXTENSION, ""));
+            }
+
+            return ids;
+        }
+
+        @Override
         public ServiceInfo about() throws TException {
             return new ServiceInfo("File Server", "1.0.0");
         }
@@ -116,6 +152,17 @@ public class FileServer {
             return true;
         }
 
+        private class ConcreteFileFilter implements FileFilter {
+
+            @Override
+            public boolean accept(File pathname) {
+                String suffix = "." + EXTENSION;
+                if (pathname.getName().endsWith(suffix)) {
+                    return true;
+                }
+                return false;
+            }
+        }
     }
 
     private static class Opts {

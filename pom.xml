@@ -25,7 +25,7 @@
     <jdk.version>1.8</jdk.version>
     <slf4j.version>1.7.21</slf4j.version>
     <log4j.version>2.7</log4j.version>
-    <concrete-services.version>4.10.7.3</concrete-services.version>
+    <concrete-services.version>4.11.0.2</concrete-services.version>
   </properties>
 
   <modules>

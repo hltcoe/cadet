@@ -3,6 +3,8 @@ package edu.jhu.hlt.cadet.fetch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TCompactProtocol;
 import org.apache.thrift.transport.TFramedTransport;
@@ -14,6 +16,7 @@ import edu.jhu.hlt.cadet.CadetConfig;
 import edu.jhu.hlt.concrete.access.FetchRequest;
 import edu.jhu.hlt.concrete.access.FetchResult;
 import edu.jhu.hlt.concrete.access.FetchCommunicationService;
+import edu.jhu.hlt.concrete.services.NotImplementedException;
 import edu.jhu.hlt.concrete.services.ServiceInfo;
 import edu.jhu.hlt.concrete.services.ServicesException;
 
@@ -57,6 +60,22 @@ public class RemoteFetchProvider implements FetchProvider {
         transport.close();
 
         return results;
+    }
+
+    @Override
+    public long getCommunicationCount() throws NotImplementedException, TException {
+        transport.open();
+        long count = client.getCommunicationCount();
+        transport.close();
+        return count;
+    }
+
+    @Override
+    public List<String> getCommunicationIDs(long offset, long count) throws NotImplementedException, TException {
+        transport.open();
+        List<String> ids = client.getCommunicationIDs(offset, count);
+        transport.close();
+        return ids;
     }
 
     @Override

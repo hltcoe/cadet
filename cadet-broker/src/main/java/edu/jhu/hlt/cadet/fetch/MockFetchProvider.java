@@ -1,5 +1,6 @@
 package edu.jhu.hlt.cadet.fetch;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.thrift.TException;
@@ -18,6 +19,7 @@ import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.access.FetchRequest;
 import edu.jhu.hlt.concrete.access.FetchResult;
 import edu.jhu.hlt.concrete.random.RandomConcreteFactory;
+import edu.jhu.hlt.concrete.services.NotImplementedException;
 import edu.jhu.hlt.concrete.services.ServiceInfo;
 import edu.jhu.hlt.concrete.services.ServicesException;
 import edu.jhu.hlt.concrete.util.ConcreteException;
@@ -78,6 +80,16 @@ public class MockFetchProvider implements FetchProvider {
         }
 
         return results;
+    }
+
+    @Override
+    public long getCommunicationCount() throws NotImplementedException, TException {
+        throw new NotImplementedException("Mock does not support iteration");
+    }
+
+    @Override
+    public List<String> getCommunicationIDs(long offset, long count) throws NotImplementedException, TException {
+        throw new NotImplementedException("Mock does not support iteration");
     }
 
     @Override

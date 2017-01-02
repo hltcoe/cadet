@@ -4,10 +4,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.thrift.TException;
 
 import edu.jhu.hlt.concrete.access.FetchCommunicationService;
+import edu.jhu.hlt.concrete.services.NotImplementedException;
 import edu.jhu.hlt.concrete.services.ServiceInfo;
 import edu.jhu.hlt.concrete.services.ServicesException;
 import edu.jhu.hlt.concrete.access.FetchResult;
@@ -41,6 +43,16 @@ public class FetchHandler implements FetchCommunicationService.Iface {
         logFetchResult(results);
 
         return results;
+    }
+
+    @Override
+    public long getCommunicationCount() throws NotImplementedException, TException {
+        return fetchProvider.getCommunicationCount();
+    }
+
+    @Override
+    public List<String> getCommunicationIDs(long offset, long count) throws NotImplementedException, TException {
+        return fetchProvider.getCommunicationIDs(offset, count);
     }
 
     protected static void logFetchRequest(FetchRequest request) {
