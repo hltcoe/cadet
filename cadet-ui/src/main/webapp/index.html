@@ -252,6 +252,7 @@
             var searchQuery = new SearchQuery();
             searchQuery.type = SearchType.ENTITY_MENTIONS;
             searchQuery.communicationId = searchResultItem.communicationId;
+            searchQuery.communication = searchResultItem.communication;
             searchQuery.tokens = entityMentionList[j].tokens;
             searchQuery.userId = CADET.userId;
 
