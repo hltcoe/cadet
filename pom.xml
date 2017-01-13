@@ -38,7 +38,7 @@
   <dependencies>
     <dependency>
       <groupId>edu.jhu.hlt</groupId>
-      <artifactId>concrete-java</artifactId>
+      <artifactId>concrete-core</artifactId>
       <version>${concrete.version}</version>
       <exclusions>
         <exclusion>
@@ -80,7 +80,7 @@
       <dependency>
         <groupId>edu.jhu.hlt</groupId>
         <artifactId>tift</artifactId>
-        <version>4.10.6</version>
+        <version>${concrete.version}</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.logging.log4j</groupId>
