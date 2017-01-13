@@ -25,7 +25,7 @@
     <jdk.version>1.8</jdk.version>
     <slf4j.version>1.7.21</slf4j.version>
     <log4j.version>2.7</log4j.version>
-    <concrete-services.version>4.11.0.2</concrete-services.version>
+    <concrete.version>4.12.0</concrete.version>
   </properties>
 
   <modules>
@@ -38,8 +38,8 @@
   <dependencies>
     <dependency>
       <groupId>edu.jhu.hlt</groupId>
-      <artifactId>concrete-services-java</artifactId>
-      <version>${concrete-services.version}</version>
+      <artifactId>concrete-java</artifactId>
+      <version>${concrete.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.logging.log4j</groupId>
