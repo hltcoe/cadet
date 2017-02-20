@@ -13,7 +13,6 @@
     <script src="js/bootstrap.js"></script>
     <script src="js/thrift.js"></script>
     <script src="js/concrete.js"></script>
-    <script src="js/concrete-services.js"></script>
     <script src="js/cadet.js"></script>
     <style>
     img {
@@ -33,7 +32,7 @@
         cursor: pointer;
     }
 
-    .search_result_text {
+    .search_result_item_text {
         cursor: pointer;
     }
 
@@ -107,7 +106,7 @@
                 },
                 {
                     title: 'Text',
-                    className: 'search_result_text',
+                    className: 'search_result_item_text',
                     render: function(data, type, searchResultItem) {
                         if (type === 'display') {
                             // The render function can be called multiple times.  We only fetch
@@ -253,6 +252,7 @@
             var searchQuery = new SearchQuery();
             searchQuery.type = SearchType.ENTITY_MENTIONS;
             searchQuery.communicationId = searchResultItem.communicationId;
+            searchQuery.communication = searchResultItem.communication;
             searchQuery.tokens = entityMentionList[j].tokens;
             searchQuery.userId = CADET.userId;
 
@@ -361,15 +361,15 @@
     /** Create a new tab containing the Communication text for a search result
      */
     function openSearchResultTab(event) {
-        var searchResult = event.data.searchResult;
-        var searchResultId = event.data.searchResultId;
+        var searchResultItem = event.data.searchResultItem;
+        var searchResultItemId = event.data.searchResultItemId;
 
         // Add tab with Communication ID as title and an 'X' button for closing the tab
         $('#nav-tabs').append(
             $('<li>').append(
                 $('<a>').attr('data-toggle', 'tab')
-                        .attr('href', '#' + searchResultId)
-                        .text(searchResult.communicationId)
+                        .attr('href', '#' + searchResultItemId)
+                        .text(searchResultItem.communicationId)
                         .append(
                             // We are embedding the <span> with the remove ('X') link *in* the
                             // <a> link because of Bootstrap CSS rules that use the selectors
@@ -377,46 +377,46 @@
                             $('<span>')
                                 .addClass('glyphicon glyphicon-remove')
                                 .css('margin-left', '0.5em')
-                                .on('click', {'searchResultId': searchResultId}, function(event) {
+                                .on('click', {'searchResultItemId': searchResultItemId}, function(event) {
                                     // Remove the <div> with the tab content
-                                    $('#' + event.data.searchResultId).remove();
+                                    $('#' + event.data.searchResultItemId).remove();
                                     // Remove the tab
                                     $(this).closest('li').remove();
                                     // Show the Search Results tab
                                     $('a[href="#search_results"]').tab('show');
                                 }))));
 
-        $('#tab-content').append('<div id="' + searchResultId +'" class="tab-pane"></div>');
+        $('#tab-content').append('<div id="' + searchResultItemId +'" class="tab-pane"></div>');
 
         // Add content to <div> for the newly created tab
-        if (searchResult.communication.getFirstSentence()) {
+        if (searchResultItem.communication.getFirstSentence()) {
             // communicationWidget() will only render text if the Communication has Sentences
-            var communicationDiv = $('<div>').communicationWidget(searchResult.communication);
-            $('div #' + searchResultId).append(communicationDiv);
+            var communicationDiv = $('<div>').communicationWidget(searchResultItem.communication);
+            $('div #' + searchResultItemId).append(communicationDiv);
 
             // The Kelvin KB is built using Serif EntityMentions
-            var serifMentionEMS = searchResult.communication.getEntityMentionSetWithToolname("Serif: mentions");
-            if (serifMentionEMS) {
-                communicationDiv.addEntityMentionSet(serifMentionEMS);
-            }
-//            communicationDiv.addAllEntityMentionsInCommunication(searchResult.communication);
+//            var serifMentionEMS = searchResultItem.communication.getEntityMentionSetWithToolname("Serif: mentions");
+//            if (serifMentionEMS) {
+//                communicationDiv.addEntityMentionSet(serifMentionEMS);
+//            }
+            communicationDiv.addAllEntityMentionsInCommunication(searchResultItem.communication);
 
             communicationDiv.find('.entity_mention').on(
                 'click',
-                {'searchResult': searchResult},
+                {'searchResultItem': searchResultItem},
                 createEntityMentionSearchMenu
             );
-            if (searchResult.sentence) {
-                communicationDiv.getSentenceElements(searchResult.sentence)
+            if (searchResultItem.sentence) {
+                communicationDiv.getSentenceElements(searchResultItem.sentence)
                                 .css('background-color', 'yellow');
             }
         }
         else {
             // If the Communication does not have Sentences, just display the .text field
-            $('div #' + searchResultId).append($('<div>').text(searchResult.communication.text));
+            $('div #' + searchResultItemId).append($('<div>').text(searchResultItem.communication.text));
         }
 
-        $('a[href="#'+ searchResultId +'"]').tab('show');
+        $('a[href="#'+ searchResultItemId +'"]').tab('show');
     }
 
     /** Interactively prompt user for login name until a non-empty string is entered.
