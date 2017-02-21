@@ -1,0 +1,225 @@
+
+/* ------------------------------------------------------
+   CSS rules for parse trees drawn using 'dagre-d3'.
+
+   The BRAT CSS rules give all SVG elements a height of 1px (among
+   other issues), so we override the BRAT defaults here.
+   */
+
+div.dagre_parse {
+    clear: both;
+    margin-top: 0.5em;
+    overflow: visible;
+}
+
+.dagre_parse g.type-TOKEN > rect {
+    fill: #00ffd0;
+}
+
+.dagre_parse svg {
+    border: 1px solid #999;
+    overflow: hidden;
+    height: auto;
+    width: auto;
+}
+
+.dagre_parse text {
+    font-weight: 300;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serf;
+    font-size: 14px;
+}
+
+.dagre_parse .node rect {
+    stroke: #999;
+    stroke-width: 1px;
+    fill: #fff;
+}
+
+/* The fill color rules for text shown in parse tree nodes:
+ *   .dagre_parse .node.MYCLASSNAME rect {
+ *       fill: MYCOLOR;
+ *   }
+ * should match the corresponding 'background-color' rules for non-SVG elements:
+ *   .MYCLASSNAME {
+ *       background-color: MYCOLOR;
+ *   }
+ */
+.dagre_parse .node.highlighted_entity rect {
+    fill: pink;
+}
+.dagre_parse .node.highlighted_mention rect {
+    fill: yellow;
+}
+.dagre_parse .node.selected_entity rect {
+    fill: yellow;
+}
+
+.dagre_parse .edgeLabel rect {
+    fill: #fff;
+}
+
+.dagre_parse .edgePath path {
+    stroke: #333;
+    stroke-width: 1.5px;
+    fill: none;
+}
+
+
+
+/* ------------------------------------------------------
+   CSS rules for BRAT
+ */
+
+.brat_tokenization text {
+    font-size: 15px;
+}
+.brat_tokenization .arcs text {
+    font-size: 9px;
+}
+.brat_tokenization .span text {
+    font-size: 10px;
+}
+/* BRAT adds the 'hasSVG' class to the <div> */
+div .brat_tokenization.hasSVG {
+}
+
+div .brat_tokenization_label {
+    /* The color #81A4FC is the BRAT border color */
+    border-top: 1px solid #81A4FC;
+    border-left: 1px solid #81A4FC;
+    border-right: 1px solid #81A4FC;
+    background-color: pink;
+    padding-left: 0.5em;
+}
+div .brat_ner_tokenization_label {
+    background-color: pink;
+}
+div .brat_pos_tokenization_label {
+    background-color: #ccdaf6;
+}
+
+div .brat_tokenization_container {
+    margin-top: 0.75em;
+    margin-bottom: 1.25em;
+}
+
+span.token_label {
+    border: 1px solid #CCC;
+    cursor: pointer;
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+
+/* ------------------------------------------------------
+   CSS rules for Quicklime
+ */
+
+input.entity_set_highlighting_checkbox {
+    margin-right: 0.3em;
+}
+
+.parse_label {
+    border-top: 1px solid #999;
+    border-left: 1px solid #999;
+    border-right: 1px solid #999;
+    background-color: pink;
+    padding-left: 0.5em;
+}
+.constituent_parse_label {
+    background-color: #ccdaf6;
+}
+.dependency_parse_label_0 {
+    background-color: #fffda8;
+}
+.dependency_parse_label_1 {
+    background-color: #a4bced;
+}
+.dependency_parse_label_2 {
+    background-color: #adf6a2;
+}
+
+.highlighted_entity {
+    background-color: pink;
+}
+.highlighted_mention {
+    background-color: yellow;
+}
+.highlighted_entity.highlighted_mention {
+    background-color: pink;
+}
+.selected_entity {
+    background-color: yellow;
+    border-top: 1px solid #DDDDDD;
+}
+
+.mention_for_active_entity_set {
+    border-bottom: 3px solid #DDDDDD;
+}
+span.entity_counter {
+    font-weight: bold;
+    margin-left: 2em;
+}
+span.entity_total {
+    font-size: 0.8em;
+    margin-left: 0.5em;
+    margin-right: 1em;
+}
+ul.entity_list {
+    display: inline-block;
+}
+.section {
+    border: 10px solid #DDDDFF;
+    padding: 1em;
+}
+.sentence {
+    background-color: white;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+.tokenization_controls {
+    float: left;
+}
+.token {
+}
+.tokenization {
+    /* This 'float: left' prevents an issue with Chrome where the text in
+       a <div class="tokenization"> would not be displayed properly if
+       the sentence text word-wrapped.  Visually, the bottom of the
+       letters on one line would overlap the top of the letters on the
+       next line - almost as if the line-height was set to a negative
+       number.
+
+       In the DOM structure, the .tokenization <div> is nested inside
+       of a .sentence <div>:
+
+         <div class="sentence">
+           <div class="tokenization_controls">
+           <div class="tokenization">
+
+       Using the Chrome Developer tools to investigate, Chrome is
+       assigning a line height (of 40px) to the inner .tokenization
+       <div> that is *larger* than the line-height (22px) for the
+       outer .sentence <div>.
+
+       This issue affects Chrome 37 and earlier, but not Firefox 32
+       and earlier or Safari 7 and earlier.
+     */
+    float: left;
+}
+
+.toolname_title {
+    word-wrap: break-word;
+}
+
+/* ------------------------------------------------------
+   CSS tweaks for Bootstrap
+   */
+
+div.tooltip-inner {
+    /* The width is based on the pixel-width of the longest word in a toolname,
+       which is currently:
+         http://nlp.stanford.edu/nlp/javadoc/javanlp/edu/stanford/nlp/pipeline/POSTaggerAnnotator.html
+     */
+    max-width: 530px;
+}
