@@ -110,7 +110,19 @@ public class ConfigManager {
 
         if (configFile != null && fileExists(configFile)) {
             logger.info("Loading configuration from " + configFile);
-            config = ConfigFactory.parseFile(new File(configFile)).withFallback(defaultConfig);
+
+            Config unmergedCustomConfig = ConfigFactory.parseFile(new File(configFile));
+
+            // If the custom config has a list of SearchProviders, we use just this
+            // list of SearchProviders, instead of merging the SearchProvider lists
+            // from the original and custom config
+            if (unmergedCustomConfig.hasPath(CadetConfig.SEARCH_PROVIDERS) &&
+                !unmergedCustomConfig.getObject(CadetConfig.SEARCH_PROVIDERS).isEmpty()) {
+                config = ConfigFactory.parseFile(new File(configFile))
+                    .withFallback(defaultConfig.withoutPath(CadetConfig.SEARCH_PROVIDERS));
+            } else {
+                config = ConfigFactory.parseFile(new File(configFile)).withFallback(defaultConfig);
+            }
         } else if (configFile != null && !fileExists(configFile)) {
             logger.warn("Cannot access " + configFile);
         } else {
