@@ -36,6 +36,14 @@
         cursor: pointer;
     }
 
+    /* When displaying a Communication for a SearchResultItem, if the
+       SearchResultItem includes the (optional) sentenceId field, we
+       highlight the corresponding sentence in the displayed Communication.
+     */
+    .selected_search_sentence {
+        font-weight: bold;
+    }
+
     .communication .sentence {
         display: inline;
     }
@@ -79,11 +87,18 @@
                     width: '1%'
                 },
                 {
-                    title: 'Communication ID',
+                    title: 'Communication&nbsp;ID',
                     render: function(data, type, searchResultItem) {
-                        return searchResultItem.communicationId;
+                        return '<a href="quicklime/?id=' + searchResultItem.communicationId +
+                               '">' + searchResultItem.communicationId + '</>';
                     },
-                    visible: false
+                    // Using a width of 1% causes Chrome, Firefox and Safari to render
+                    // this column as narrow as possible while still being wide enough
+                    // to accommodate the column's title.  This does not actually
+                    // set the column width to be only 1% of the table width.  Without
+                    // this styling, the width of this column was taking up over half
+                    // of the width of the table when this column is shown by default.
+                    width: '1%'
                 },
                 {
                     title: 'Sentence ID',
@@ -141,19 +156,24 @@
                                     console.warn('SearchResult did not include an (optional) sentenceId');
                                 }
 
-                                var firstSentence = searchResultItem.communication.getFirstSentence();
-                                if (firstSentence) {
-                                    searchResultItemText = $('<span>').sentenceWidget(firstSentence).text();
-                                }
-                                else if (!searchResultItem.communication) {
+                                if (!searchResultItem.communication) {
                                     searchResultItemText = '<div class="alert alert-danger" role="alert" ' +
-                                                       'style="font-style: italic">' +
-                                                       'Unable to fetch Communication for this SearchResult' +
-                                                       '</div>';
+                                                           // Override margin-bottom for Bootstrap class 'alert-danger'
+                                                           'style="font-style: italic; margin-bottom: 0px">' +
+                                                           'Communication with ID "' +
+                                                           searchResultItem.communicationId +
+                                                           '" is not available' +
+                                                           '</div>';
                                 }
                                 else {
-                                    console.warn('Communication did not contain any Sentences');
-                                    searchResultItemText = searchResultItem.communication.text;
+                                    var firstSentence = searchResultItem.communication.getFirstSentence();
+                                    if (firstSentence) {
+                                        searchResultItemText = $('<span>').sentenceWidget(firstSentence).text();
+                                    }
+                                    else {
+                                        console.warn('Communication did not contain any Sentences');
+                                        searchResultItemText = searchResultItem.communication.text;
+                                    }
                                 }
                             }
 
@@ -319,6 +339,12 @@
         // removes any previous error messages
         $('#errors').empty();
 
+        if (CADET.defaultSearchProviders[CADET.getSearchTypeString(searchQuery.type)] === undefined) {
+            displayErrorMessage('No search provider registered for search type ' +
+                                CADET.getSearchTypeString(searchQuery.type));
+            return;
+        }
+
         var searchResult;
         try {
             if (searchQuery.type === SearchType.COMMUNICATIONS) {
@@ -395,11 +421,11 @@
             $('div #' + searchResultItemId).append(communicationDiv);
 
             // The Kelvin KB is built using Serif EntityMentions
-//            var serifMentionEMS = searchResultItem.communication.getEntityMentionSetWithToolname("Serif: mentions");
-//            if (serifMentionEMS) {
-//                communicationDiv.addEntityMentionSet(serifMentionEMS);
-//            }
-            communicationDiv.addAllEntityMentionsInCommunication(searchResultItem.communication);
+            var serifMentionEMS = searchResultItem.communication.getEntityMentionSetWithToolname("Serif: mentions");
+            if (serifMentionEMS) {
+                communicationDiv.addEntityMentionSet(serifMentionEMS);
+            }
+//            communicationDiv.addAllEntityMentionsInCommunication(searchResultItem.communication);
 
             communicationDiv.find('.entity_mention').on(
                 'click',
@@ -408,7 +434,7 @@
             );
             if (searchResultItem.sentence) {
                 communicationDiv.getSentenceElements(searchResultItem.sentence)
-                                .css('background-color', 'yellow');
+                                .addClass('selected_search_sentence');
             }
         }
         else {
