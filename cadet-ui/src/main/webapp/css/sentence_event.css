@@ -1,0 +1,122 @@
+<style>
+.argument {
+  /* Use color of Bootstrap 'btn-warning' buttons */
+  background-color: #ec961d;
+}
+.predicate {
+  /* Use color of Bootstrap 'btn-info' buttons */
+  background-color: #2babd2;
+}
+
+.token {
+  cursor: pointer;
+  display: inline-block;
+  min-width: 1em;
+}
+
+.btn-group, .communication_container
+{
+  display: inline-block;
+  margin: 0 auto;
+  float: left;
+  margin-left: 10px;
+}
+
+.btn-group
+{
+  padding-top: 10px;
+}
+
+input[type=radio]
+{
+  display: block;
+  padding-right: 15px;
+}
+
+.ordinal-group {
+  display: block;
+  font-size: 0.575em;
+  clear: both;
+  float: left;
+}
+
+label
+{
+  display: inline-block;
+  margin: 5px;
+}
+.dropbtn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+.dropbtn:hover, .dropbtn:focus {
+    background-color: #3e8e41;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    overflow: auto;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.sentence
+{
+  padding-bottom: 10px;
+  padding-left: : 30em;
+  clear: both;
+}
+
+.add_event
+{
+  float: left
+  clear: both;
+}
+
+#content-events
+{
+  padding-left: 15em;
+}
+
+#submit-events
+{
+  padding-top: 4em;
+  padding-left: 25em;
+}
+
+.options
+{
+  padding-left: 15em;
+}
+
+
+.dropdown a:hover {background-color: #f1f1f1}
+
+.show {display:block;}
+#sent-line {
+  margin: 20px 0;
+  border: 1px solid #f00;
+  position: absolute;
+  float: left;
+}
+</style>
