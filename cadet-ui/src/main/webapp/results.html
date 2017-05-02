@@ -50,6 +50,8 @@
                             .append(
                                 $('<th>').text('# Results'))
                             .append(
+                                $('<th>'))
+                            .append(
                                 $('<th>'))));
             var resultsTableBody = $('<tbody>');
 
@@ -80,16 +82,18 @@
                             $('<td>').append(
                                 $('<a>')
                                     .addClass('btn btn-primary btn-sm')
-                                    .attr('href', 'sentence_events.html?searchResultId=' + searchResult.uuid.uuidString)
+                                    .attr('id', 'ner-btn')
+                                    .attr('href', 'ner.html?searchResultId=' + searchResult.uuid.uuidString)
                                     .text('Annotate Ner')
-                                )));
-                        //.append(
-                        //    $('<td>').append(
-                        //        $('<a>')
-                        //            .addClass('btn btn-primary btn-sm')
-                        //            .attr('href', 'sentence_events.html?searchResultId=' + searchResult.uuid.uuidString)
-                        //            .text('Annotate SF')
-                        //        )));
+                                ))
+                        .append(
+                          $('<td>').append(
+                              $('<a>')
+                                  .addClass('btn btn-primary btn-sm')
+                                  .attr('id', 'sf-btn')
+                                  .attr('href', 'sentence_events.html?searchResultId=' + searchResult.uuid.uuidString)
+                                  .text('Annotate SF')
+                              )));
             }
             resultsTable.append(resultsTableBody);
             resultsTable.dataTable();
