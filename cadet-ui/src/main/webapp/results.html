@@ -80,16 +80,9 @@
                             $('<td>').append(
                                 $('<a>')
                                     .addClass('btn btn-primary btn-sm')
-                                    .attr('href', 'sentence_events.html?searchResultId=' + searchResult.uuid.uuidString)
-                                    .text('Annotate Ner')
+                                    .attr('href', 'ner.html?searchResultId=' + searchResult.uuid.uuidString)
+                                    .text('Annotate')
                                 )));
-                        //.append(
-                        //    $('<td>').append(
-                        //        $('<a>')
-                        //            .addClass('btn btn-primary btn-sm')
-                        //            .attr('href', 'sentence_events.html?searchResultId=' + searchResult.uuid.uuidString)
-                        //            .text('Annotate SF')
-                        //        )));
             }
             resultsTable.append(resultsTableBody);
             resultsTable.dataTable();
