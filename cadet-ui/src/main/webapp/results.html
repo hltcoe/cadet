@@ -81,24 +81,30 @@
                         .append(
                             $('<td>').append(
                                 $('<a>')
-                                    .addClass('btn btn-primary btn-sm')
-                                    .attr('id', 'ner-btn')
+                                    .addClass('btn btn-primary btn-sm ner-btn')
                                     .attr('href', 'ner.html?searchResultId=' + searchResult.uuid.uuidString)
                                     .text('Annotate Ner')
-                                ))
+                                ).attr('id', 'ner-btn_'+ i))
                         .append(
                           $('<td>').append(
                               $('<a>')
-                                  .addClass('btn btn-primary btn-sm')
-                                  .attr('id', 'sf-btn')
+                                  .addClass('btn btn-primary btn-sm sf-btn')
                                   .attr('href', 'sentence_events.html?searchResultId=' + searchResult.uuid.uuidString)
                                   .text('Annotate SF')
-                              )));
+                              ).attr('id', 'sf-btn_'+i)));
+
             }
             resultsTable.append(resultsTableBody);
             resultsTable.dataTable();
 
             $('#search_results').append(resultsTable);
+        }
+        for (var i = 0; i < searchResultList.length; i++) {
+          if (searchResultList[i].searchResultItems.length == 0) {
+            console.log('sf-btn_'+i);
+            $('#sf-btn_'+i).empty();
+            $('#ner-btn_'+i).empty();
+          }
         }
     });
     </script>
