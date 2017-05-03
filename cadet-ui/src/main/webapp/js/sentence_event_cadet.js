@@ -40,10 +40,10 @@ function getUrlParameter(sParam) {
     }
 }
 
-function updateDisplayedCommunications(comms, first) {
+function updateDisplayedCommunications(comms, sentNum, first) {
   //change_text(comms[0])
   var comm = comms[0];
-  var tokenizationList = comm.getTokenizationsAsList();
+  /*var tokenizationList = comm.getTokenizationsAsList();
   while (tokenizationList.length < 500) {
     var tok = Token;
     tok.text = "\t ";
@@ -57,6 +57,14 @@ function updateDisplayedCommunications(comms, first) {
   var tokenization = comm.sectionList[0].sentenceList[0].tokenization;//.tokenList;//tokenizationList[0];//[1];
 
 
+  var tokenizationWidget = $('#tokenization').tokenizationWidget(
+    tokenization, {whitespaceTokenization: true}); */
+
+  if (!first) {
+    document.getElementById("tokenization").innerHTML = '';
+  }
+
+  var tokenization = comm.sectionList[sentNum].sentenceList[0].tokenization;//.tokenList;//tokenizationList[0];//[1];
   var tokenizationWidget = $('#tokenization').tokenizationWidget(
     tokenization, {whitespaceTokenization: true});
 }
@@ -79,19 +87,13 @@ class CommunicationContainer extends React.Component {
 
   }
 
-  change_text(comm) {
+  change_text(i) {
     //$.getJSON('uz_data/uz_'+this.props.fileNumber+'_.concrete.json', function(commJSONData) {
 
       //var comm = new Communication();
       //comm.initFromTJSONProtocolObject(commJSONData);
 
-    var tokenizationList = comm.getTokenizationsAsList();
-    while (tokenizationList.length < 500) {
-      var tok = Token;
-      tok.text = "\t ";
-      tokenizationList.push(tok);
-    }
-    var tokenization = tokenizationList[4];//[1];
+    var tokenization = tokenizationList[i];//[1];
     document.getElementById("tokenization").innerHTML = '';
 
     var tokenizationWidget = $('#tokenization').tokenizationWidget(
@@ -213,17 +215,15 @@ class SubmitButton extends React.Component {
   }
 
   nextSentence() {
-    //var url = window.location.href;
-    if (this.state.sentsLabeled == 4) {
-      location.replace("results.html");
-    }
-    else {
-      // store the data, increment counter, load the next one
-      this.setState({
-        sentsLabeled: this.state.sentsLabeled + 1
-      });
-      console.log("Sentence labeled: " + this.state.sentsLabeled);
-    }
+    // this is where I should add the data to the communication and then load the next sentence
+    // store the data, increment counter, load the next one
+    //getNextCommunications(annotationUnitIdentifiers);
+    updateDisplayedCommunications(COMMS, this.state.sentsLabeled, false);
+    this.setState({
+      sentsLabeled: this.state.sentsLabeled + 1
+    });
+    console.log("Sentence labeled: " + this.state.sentsLabeled);
+
   }
 
   submitSentence() {
@@ -418,6 +418,6 @@ $(document).ready(function(){
          // TODO: User-friendly error message about missing searchResultId
      }
 
-     updateDisplayedCommunications(COMMS, true);
+     updateDisplayedCommunications(COMMS, 0, true);
     //});
 });
