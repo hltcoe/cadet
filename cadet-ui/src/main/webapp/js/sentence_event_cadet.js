@@ -107,6 +107,10 @@ class CommunicationContainer extends React.Component {
       </div>
     );
   }
+  componentdidmount() {
+
+  }
+
 }
 class EventTag extends React.Component {
   constructor() {
@@ -202,11 +206,53 @@ class SubmitButton extends React.Component {
   constructor() {
     super();
     this.submitSentence = this.submitSentence.bind(this);
+    this.nextSentence = this.nextSentence.bind(this);
+    this.state = {
+      sentsLabeled: 0
+    }
+  }
+
+  nextSentence() {
+    //var url = window.location.href;
+    if (this.state.sentsLabeled == 4) {
+      location.replace("results.html");
+    }
+    else {
+      // store the data, increment counter, load the next one
+      this.setState({
+        sentsLabeled: this.state.sentsLabeled + 1
+      });
+      console.log("Sentence labeled: " + this.state.sentsLabeled);
+    }
   }
 
   submitSentence() {
-    //var url = window.location.href;
-    var urls = window.location.href.split(window.location.origin)
+    //submit the Communcation to the backend
+    alert("Submit the Communication to the backend")
+    /*try {
+        if (COMMS && COMMS.length > 0) {
+            for (var i = 0; i < COMMS.length; i++) {
+                CADET.results.submitAnnotation(
+                    RESULTS_SERVER_SESSION_ID,
+                    // The .annotationUnitIdentifier field is added by getNextCommunications()
+                    COMMS[i].annotationUnitIdentifier,
+                    COMMS[i]);
+            }
+        }
+        var annotationUnitIdentifiers = CADET.results.getNextChunk(RESULTS_SERVER_SESSION_ID);
+        COMMS = getNextCommunications(annotationUnitIdentifiers);
+        if (COMMS.length > 0) {
+            updateDisplayedCommunications(COMMS, false);
+        }
+        else {
+            location.replace("results.html");
+        }
+    }
+    catch (error) {
+    }*/
+
+  }
+    /*var urls = window.location.href.split(window.location.origin)
     fetch(window.location.origin+"/next?"+urls[1], {
       method: 'PUT',
       headers: {
@@ -219,21 +265,31 @@ class SubmitButton extends React.Component {
       })
     }).then(function(responseObj) {
 		  console.log('status: ', responseObj.status);
-      var fileNum = Math.floor(Math.random() * 100);
-      commContainer.props.fileNumber = fileNum  //make it the response from JSON
+      //var fileNum = Math.floor(Math.random() * 100);
+      //commContainer.props.fileNumber = fileNum  //make it the response from JSON
       //commContainer.setProps({ fileNumber: fileNum });
-      commContainer.change_text()
+      //commContainer.change_text()
       eventTag.state.eventType = "Event 12";
       eventTag.state.ordinalRating = '1';
       eventTag.setState({eventType: "Event12", ordinalRating: '1'})
 
-    });
-
-  }
+    });*/
 
   render() {
+    if (this.state.sentsLabeled == 4)
+    {
+      return (
+        <div>
+            <button class="btn btn-primary" id="submit_button" onClick={this.submitSentence}>Submit</button>
+        </div>
+        //<button className="btn btn-default" type="submit" onClick={this.submitSentence}>Submit</button>-->
+      )
+    }
     return (
-      <button className="btn btn-default" type="submit" onClick={this.submitSentence}>Submit</button>
+      <div>
+          <button class="btn btn-primary" id="next_button" onClick={this.nextSentence}>Next</button>
+      </div>
+      //<button className="btn btn-default" type="submit" onClick={this.submitSentence}>Submit</button>-->
     )
   }
 }
@@ -260,10 +316,10 @@ ReactDOM.render(
   document.getElementById('add-event')
 );
 
-/*ReactDOM.render(
+ReactDOM.render(
   <SubmitButton />,
   document.getElementById('submit-events')
-);*/
+);
 $(document).ready(function(){
    //$('#menu1 .businessSpecifics').remove();
     //$('#menu1 .businessSpecifics').remove();
@@ -361,29 +417,6 @@ $(document).ready(function(){
      else {
          // TODO: User-friendly error message about missing searchResultId
      }
-     $('#save_button').on('click', function(event) {
-         try {
-             if (COMMS && COMMS.length > 0) {
-                 for (var i = 0; i < COMMS.length; i++) {
-                     CADET.results.submitAnnotation(
-                         RESULTS_SERVER_SESSION_ID,
-                         // The .annotationUnitIdentifier field is added by getNextCommunications()
-                         COMMS[i].annotationUnitIdentifier,
-                         COMMS[i]);
-                 }
-             }
-             var annotationUnitIdentifiers = CADET.results.getNextChunk(RESULTS_SERVER_SESSION_ID);
-             COMMS = getNextCommunications(annotationUnitIdentifiers);
-             if (COMMS.length > 0) {
-                 updateDisplayedCommunications(COMMS, false);
-             }
-             else {
-                 location.replace("results.html");
-             }
-         }
-         catch (error) {
-         }
-     });
 
      updateDisplayedCommunications(COMMS, true);
     //});
