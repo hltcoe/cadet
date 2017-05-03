@@ -44,6 +44,7 @@ function getUrlParameter(sParam) {
 var COMMS = [];
 var RESULTS_SERVER_SESSION_ID = null;
 var EVENT_MAP = {};
+var params={};
 
 var funcs = [];
 
@@ -327,10 +328,10 @@ ReactDOM.render(
   document.getElementById('add-event')
 );
 
-ReactDOM.render(
+/*ReactDOM.render(
   <SubmitButton />,
   document.getElementById('submit-events')
-);
+);*/
 $(document).ready(function(){
    //$('#menu1 .businessSpecifics').remove();
     //$('#menu1 .businessSpecifics').remove();
@@ -409,6 +410,17 @@ $(document).ready(function(){
 
      });*/
     //$.getScript('../cadet.js', function() {
+    location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi,function(s,k,v){params[k]=v})
+    //the second part of the check is for debugging purposes
+    if (params["assignmentId"] == "ASSIGNMENT_ID_NOT_AVAILABLE" || !("assignmentId" in params)) {
+       //disable the next sentence button
+       console.log("TODO: disable the next sentence button");
+     } else {
+       ReactDOM.render(
+         <SubmitButton />,
+         document.getElementById('submit-events')
+       );
+     }
      CADET.init();
      var searchResultIdString = getUrlParameter('searchResultId');
      if (searchResultIdString) {
