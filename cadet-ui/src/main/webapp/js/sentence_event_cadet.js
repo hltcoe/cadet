@@ -40,6 +40,19 @@ function getUrlParameter(sParam) {
     }
 }
 
+// Global variables
+var COMMS = [];
+var RESULTS_SERVER_SESSION_ID = null;
+var EVENT_MAP = {};
+
+var funcs = [];
+
+var events = {}
+
+function updateEventMapping(key) {
+  EVENT_MAP[key] = eventTag.state.eventType + ":::" + eventTag.state.ordinalRating;
+}
+
 function updateDisplayedCommunications(comms, sentNum, first) {
   //change_text(comms[0])
   var comm = comms[0];
@@ -68,14 +81,6 @@ function updateDisplayedCommunications(comms, sentNum, first) {
   var tokenizationWidget = $('#tokenization').tokenizationWidget(
     tokenization, {whitespaceTokenization: true});
 }
-
-// Global variables
-var COMMS = [];
-var RESULTS_SERVER_SESSION_ID = null;
-
-var funcs = [];
-
-var events = {}
 
 class CommunicationContainer extends React.Component {
   constructor() {
@@ -218,6 +223,7 @@ class SubmitButton extends React.Component {
     // this is where I should add the data to the communication and then load the next sentence
     // store the data, increment counter, load the next one
     //getNextCommunications(annotationUnitIdentifiers);
+    updateEventMapping(this.state.sentsLabeled);
     updateDisplayedCommunications(COMMS, this.state.sentsLabeled, false);
     this.setState({
       sentsLabeled: this.state.sentsLabeled + 1
@@ -227,8 +233,13 @@ class SubmitButton extends React.Component {
   }
 
   submitSentence() {
+    updateEventMapping(this.state.sentsLabeled);
     //submit the Communcation to the backend
-    alert("Submit the Communication to the backend")
+    var out = "";
+    for(var i in EVENT_MAP) {
+      out += i + " -> " + EVENT_MAP[i] + "\n";
+    }
+    alert("Submit the Communication to the backend\n" + out);
     /*try {
         if (COMMS && COMMS.length > 0) {
             for (var i = 0; i < COMMS.length; i++) {
