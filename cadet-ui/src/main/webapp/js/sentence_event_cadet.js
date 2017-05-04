@@ -241,6 +241,16 @@ class SubmitButton extends React.Component {
       out += i + " -> " + EVENT_MAP[i] + "\n";
     }
     alert("Submit the Communication to the backend\n" + out);
+    //https://www.mturk.com/mturk/externalSubmit
+    var AMAZON_HOST = "https://workersandbox.mturk.com/mturk/externalSubmit?"
+    console.log("submitSentence hit");
+    AMAZON_HOST += "assignmentId="+params["assignmentId"]+"&foo=bar";//+"&workerId="+params["workerId"]+"&hitId="+params["hitId"]
+    for (var i in params) {
+      //AMAZON_HOST += i + "=" + params[i] + "&";
+      console.log(i +"="+params[i]);
+    }
+    console.log(AMAZON_HOST);
+    $("#target").attr('action', AMAZON_HOST).attr('method', 'POST');
     /*try {
         if (COMMS && COMMS.length > 0) {
             for (var i = 0; i < COMMS.length; i++) {
@@ -291,9 +301,12 @@ class SubmitButton extends React.Component {
     if (this.state.sentsLabeled == 4)
     {
       return (
-        <div>
-            <button class="btn btn-primary" id="submit_button" onClick={this.submitSentence}>Submit</button>
-        </div>
+        <form id="target">
+          <div>
+              <button class="btn btn-primary" id="submit_button" onClick={this.submitSentence}>Submit</button>
+          </div>
+        </form>
+
         //<button className="btn btn-default" type="submit" onClick={this.submitSentence}>Submit</button>-->
       )
     }
