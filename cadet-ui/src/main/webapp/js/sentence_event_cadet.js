@@ -172,10 +172,6 @@ class EventTag extends React.Component {
                       onChange={this.handleOrdinalChange}/>Probable</label>
             <label><input type="radio" value="3" name="radioset" checked={this.state.ordinalRating === '3'}
                       onChange={this.handleOrdinalChange}/>Very Likely or Certain</label>
-            /*<label><input type="radio" value="4" name="radioset" checked={this.state.ordinalRating === '4'}
-                      onChange={this.handleOrdinalChange}/>Likely</label>
-            <label><input type="radio" value="5" name="radioset" checked={this.state.ordinalRating === '5'}
-                      onChange={this.handleOrdinalChange}/>Very Likely</label>*/
           </div>
         </div>
     );
@@ -441,15 +437,24 @@ $(document).ready(function(){
        );
      }
      CADET.init();
-     RESULTS_SERVER_SESSION_ID = params["annotationSessionId"];
-     console.log("RESULTS_SERVER_SESSION_ID: " +RESULTS_SERVER_SESSION_ID);
-     try {
-       var annotationUnitIdentifiers = CADET.results.getNextChunk(RESULTS_SERVER_SESSION_ID);
-       COMMS = getNextCommunications(annotationUnitIdentifiers);
+     var searchResultIdString = getUrlParameter('searchResultId')
+
+     var resultsServerIdString = params["annotationSessionId"];
+     if (resultsServerIdString) {
+       RESULTS_SERVER_SESSION_ID = new UUID();
+       RESULTS_SERVER_SESSION_ID.uuidString = resultsServerIdString;
+
+       console.log("RESULTS_SERVER_SESSION_ID: " +RESULTS_SERVER_SESSION_ID);
+       try {
+         var annotationUnitIdentifiers = CADET.results.getNextChunk(RESULTS_SERVER_SESSION_ID);
+         COMMS = getNextCommunications(annotationUnitIdentifiers);
+       }
+       catch (error) {
+        console.log(error);
+       }
+
      }
-     catch (error) {
-      console.log(error);
-     }
+
      /*var searchResultIdString = getUrlParameter('searchResultId');
      if (searchResultIdString) {
          var searchResultId = new UUID();
