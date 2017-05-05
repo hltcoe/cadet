@@ -167,15 +167,15 @@ class EventTag extends React.Component {
           </div>
           <div className="ordinal-group inner">
             <label><input type="radio" value='1' name="radioset" checked={this.state.ordinalRating === '1'}
-                      onChange={this.handleOrdinalChange} />Very Unlikely</label>
+                      onChange={this.handleOrdinalChange} />Possbile</label>
             <label><input type="radio" value='2' name="radioset" checked={this.state.ordinalRating === '2'}
-                      onChange={this.handleOrdinalChange}/>Unlikely</label>
+                      onChange={this.handleOrdinalChange}/>Probable</label>
             <label><input type="radio" value="3" name="radioset" checked={this.state.ordinalRating === '3'}
-                      onChange={this.handleOrdinalChange}/>Possible</label>
-            <label><input type="radio" value="4" name="radioset" checked={this.state.ordinalRating === '4'}
+                      onChange={this.handleOrdinalChange}/>Very Likely or Certain</label>
+            /*<label><input type="radio" value="4" name="radioset" checked={this.state.ordinalRating === '4'}
                       onChange={this.handleOrdinalChange}/>Likely</label>
             <label><input type="radio" value="5" name="radioset" checked={this.state.ordinalRating === '5'}
-                      onChange={this.handleOrdinalChange}/>Very Likely</label>
+                      onChange={this.handleOrdinalChange}/>Very Likely</label>*/
           </div>
         </div>
     );
@@ -236,6 +236,11 @@ class SubmitButton extends React.Component {
   submitSentence() {
     updateEventMapping(this.state.sentsLabeled);
     //submit the Communcation to the backend
+    /*** submit the Communcation to the backend
+       * Get the MTurk metadata from params for assignmentId, workerId, and hitId
+       * Get Event Data from Event_MAP
+     ***/
+
     var out = "";
     for(var i in EVENT_MAP) {
       out += i + " -> " + EVENT_MAP[i] + "\n";
@@ -244,6 +249,7 @@ class SubmitButton extends React.Component {
     //https://www.mturk.com/mturk/externalSubmit
     var AMAZON_HOST = "https://workersandbox.mturk.com/mturk/externalSubmit?"
     console.log("submitSentence hit");
+    //change foo=bar to be list of (Commm, sentence, [(EventType, Liklihood Rating)])
     AMAZON_HOST += "assignmentId="+params["assignmentId"]+"&foo=bar";//+"&workerId="+params["workerId"]+"&hitId="+params["hitId"]
     for (var i in params) {
       //AMAZON_HOST += i + "=" + params[i] + "&";
@@ -427,7 +433,7 @@ $(document).ready(function(){
     //the second part of the check is for debugging purposes
     if (params["assignmentId"] == "ASSIGNMENT_ID_NOT_AVAILABLE" || !("assignmentId" in params)) {
        //disable the next sentence button
-       console.log("TODO: disable the next sentence button");
+       //console.log("TODO: disable the next sentence button");
      } else {
        ReactDOM.render(
          <SubmitButton />,
@@ -435,13 +441,22 @@ $(document).ready(function(){
        );
      }
      CADET.init();
-     var searchResultIdString = getUrlParameter('searchResultId');
+     RESULTS_SERVER_SESSION_ID = params["annotationSessionId"];
+     console.log("RESULTS_SERVER_SESSION_ID: " +RESULTS_SERVER_SESSION_ID);
+     try {
+       var annotationUnitIdentifiers = CADET.results.getNextChunk(RESULTS_SERVER_SESSION_ID);
+       COMMS = getNextCommunications(annotationUnitIdentifiers);
+     }
+     catch (error) {
+      console.log(error);
+     }
+     /*var searchResultIdString = getUrlParameter('searchResultId');
      if (searchResultIdString) {
          var searchResultId = new UUID();
          searchResultId.uuidString = searchResultIdString;
 
          try {
-             RESULTS_SERVER_SESSION_ID = CADET.results.startSession(searchResultId);
+             //RESULTS_SERVER_SESSION_ID = CADET.results.startSession(searchResultId);
              var annotationUnitIdentifiers = CADET.results.getNextChunk(RESULTS_SERVER_SESSION_ID);
              COMMS = getNextCommunications(annotationUnitIdentifiers);
          }
@@ -452,7 +467,7 @@ $(document).ready(function(){
      }
      else {
          // TODO: User-friendly error message about missing searchResultId
-     }
+     }*/
 
      updateDisplayedCommunications(COMMS, 0, true);
     //});
