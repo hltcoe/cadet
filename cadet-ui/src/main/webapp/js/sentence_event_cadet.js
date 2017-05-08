@@ -78,7 +78,7 @@ function updateDisplayedCommunications(comms, sentNum, first) {
     document.getElementById("tokenization").innerHTML = '';
   }
 
-  var tokenization = comm.sectionList[sentNum].sentenceList[0].tokenization;//.tokenList;//tokenizationList[0];//[1];
+  var tokenization = comm.sectionList[0].sentenceList[sentNum].tokenization;//.tokenList;//tokenizationList[0];//[1];
   var tokenizationWidget = $('#tokenization').tokenizationWidget(
     tokenization, {whitespaceTokenization: true});
 }
@@ -126,7 +126,7 @@ class EventTag extends React.Component {
     this.change = this.change.bind(this);
     this.handleOrdinalChange = this.handleOrdinalChange.bind(this);
     this.state = {
-        eventType: "Event 12",
+        eventType: "No Event",
         ordinalRating: '1'
     };
   }
@@ -151,18 +151,18 @@ class EventTag extends React.Component {
         <div className="event">
           <div className="btn-group inner" role="group">
             <select className="text_select btn btn-info" onChange={this.change} value={this.state.eventType} id="field_6" name="field_6">
-              <option value="Event 12">no event</option>
-              <option value="Event 1">med</option>
-              <option value="Event 2">shelter</option>
-              <option value="Event 3">food</option>
-              <option value="Event 4">search</option>
-              <option value="Event 5">terrorism</option>
-              <option value="Event 6">crime_violence</option>
-              <option value="Event 7">infra</option>
-              <option value="Event 8">utils</option>
-              <option value="Event 9">evac</option>
-              <option value="Event 10">water</option>
-              <option value="Event 11">regime_change</option>
+              <option value="No Event">    No Event    </option>
+              <option value="Civil Unrest or Wide-spread Crime">Civil Unrest or Wide-spread Crime</option>
+              <option value="Elections and Politics">Elections and Politics</option>
+              <option value="Evacuation">Evacuation</option>
+              <option value="Food Supply">Food Supply</option>
+              <option value="Infrastructure">Infrastructure</option>
+              <option value="Medical Assistance">Medical Assistance</option>
+              <option value="Search/Rescue">Search/Rescue</option>
+              <option value="Shelter">Shelter</option>
+              <option value="Terrorism or other Extreme Violence">Terrorism or other Extreme Violence</option>
+              <option value="Utilities, Energy, or Sanitation">Utilities, Energy, or Sanitation</option>
+              <option value="Water Supply">Water Supply</option>
             </select>
           </div>
           <div className="ordinal-group inner">
@@ -437,9 +437,7 @@ $(document).ready(function(){
        );
      }
      CADET.init();
-     var searchResultIdString = getUrlParameter('searchResultId')
-
-     var resultsServerIdString = params["annotationSessionId"];
+     var resultsServerIdString = getUrlParameter("annotationSessionId");
      if (resultsServerIdString) {
        RESULTS_SERVER_SESSION_ID = new UUID();
        RESULTS_SERVER_SESSION_ID.uuidString = resultsServerIdString;
@@ -447,6 +445,9 @@ $(document).ready(function(){
        console.log("RESULTS_SERVER_SESSION_ID: " +RESULTS_SERVER_SESSION_ID);
        try {
          var annotationUnitIdentifiers = CADET.results.getNextChunk(RESULTS_SERVER_SESSION_ID);
+         for (var anno in annotationUnitIdentifiers) {
+            console.log("COMM id: " + anno.communicationId + "; sentence: " + anno.sentenceId);
+         }
          COMMS = getNextCommunications(annotationUnitIdentifiers);
        }
        catch (error) {
