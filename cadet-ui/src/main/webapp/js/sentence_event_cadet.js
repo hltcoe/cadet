@@ -86,11 +86,20 @@ function updateDisplayedCommunications(comm, sentNum, first) {
   if (!first) {
     document.getElementById("tokenization").innerHTML = '';
   } else {
-    submitButton.setState({maxSents: getMaxSents()});
+    submitButton.setState({
+        maxSents: getMaxSents(),
+        totalComms: COMMS.length,
+        totalSentsLabeled: 0,
+        currComm: 0,
+        totalSentsInCurrComm: comm.sectionList[0].sentenceList.length,
+        currSentInComm: 0,
+    });
+    console.log("sents in Curr Comm: " + submitButton.state.totalSentsInCurrComm)
     console.log("maxSents: " + submitButton.state.maxSents);
+    console.log("totalComs: " + submitButton.state.totalComms);
   }
 
-  var tokenization = comm.sectionList[0].sentenceList[0].tokenization;//.tokenList;//tokenizationList[0];//[1];
+  var tokenization = comm.sectionList[0].sentenceList[submitButton.state.currSentInComm].tokenization;//.tokenList;//tokenizationList[0];//[1];
   var tokenizationWidget = $('#tokenization').tokenizationWidget(
     tokenization, {whitespaceTokenization: true});
 }
@@ -223,25 +232,24 @@ class SubmitButton extends React.Component {
     super();
     this.submitSentence = this.submitSentence.bind(this);
     this.nextSentence = this.nextSentence.bind(this);
-    this.state = {
-      totalSentsLabeled: 0,
-      totalComms: COMMS.length,
-      currComm: 0,
-      totalSentsInCurrComm: 0,
-      //totalSentsInCurrComm: COMMS[0].sectionList[0].sentenceList.length,
-      currSentInComm: 0,
-      //maxSents: 0
-    };
+    this.state = {};
+    /*maxSents: getMaxSents(),
+    totalComms: COMMS.length,
+    totalSentsLabeled: 0,
+    currComm: 0,
+    totalSentsInCurrComm: comm.sectionList[0].sentenceList.length,
+    currSentInComm: 0,*/
+
     //console.log("Max Sents: " + this.state.maxSents);
     /*this.setState({
       totalSentsInCurrComm: COMMS[0].sectionList[0].sentenceList.length
     });*/
   }
 
-  componentWillMount() {
+  /*componentWillMount() {
     this.setState({maxSents: getMaxSents()});
     console.log("Max Sents: " + this.state.maxSents);
-  }
+  }*/
 
   nextSentence() {
     // this is where I should add the data to the communication and then load the next sentence
@@ -256,12 +264,20 @@ class SubmitButton extends React.Component {
     });
     console.log("Sentence labeled Post: " + this.state.totalSentsLabeled);
 
-    if (this.state.currSentInComm == this.state.totalSentsInCurrComm) {
+    if (this.state.currSentInComm + 1 == this.state.totalSentsInCurrComm) {
       //move the communication to be annotated
+      this.setState({
+        currSentInComm: 0,
+        totalSentsInCurrComm: COMMS[this.state.currComm + 1].sectionList[0].sentenceList.length,
+        currComm: this.state.currComm + 1,
+      });
       console.log("move to next communication")
     }
 
-    updateDisplayedCommunications(COMMS[this.state.totalSentsLabeled], this.state.sentsLabeled, false);
+    console.log("Curr Comm: " + this.state.currComm);
+    console.log("CurrSent: " + this.state.currSentInComm);
+    console.log("total Sents in Curr Comm: " + this.state.totalSentsInCurrComm);
+    updateDisplayedCommunications(COMMS[this.state.currComm], this.state.sentsLabeled, false);
     console.log("Sentence labeled: " + this.state.totalSentsLabeled);
     console.log("Max Sents: " + this.state.maxSents);
 
@@ -338,7 +354,7 @@ class SubmitButton extends React.Component {
     });*/
 
   render() {
-    if (this.state.totalSentsLabeled == 4) //+ 1 == this.state.maxSents)
+    if (this.state.totalSentsLabeled + 1 == this.state.maxSents) //+ 1 == this.state.maxSents)
     { console.log("Max Sents: " + this.state.maxSents);
       return (
         <form id="target">
