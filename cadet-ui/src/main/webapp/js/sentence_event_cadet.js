@@ -40,11 +40,20 @@ function getUrlParameter(sParam) {
     }
 }
 
+function getMaxSents() {
+  var sents = 0;
+  for (var i = 0; i < COMMS.length; i++) {
+    sents += COMMS[i].sectionList[0].sentenceList.length;
+  }
+  return sents;
+}
+
 // Global variables
 var COMMS = [];
 var RESULTS_SERVER_SESSION_ID = null;
 var EVENT_MAP = {};
 var params={};
+var submitButton = null;
 
 var funcs = [];
 
@@ -54,9 +63,9 @@ function updateEventMapping(key) {
   EVENT_MAP[key] = eventTag.state.eventType + ":::" + eventTag.state.ordinalRating;
 }
 
-function updateDisplayedCommunications(comms, sentNum, first) {
+function updateDisplayedCommunications(comm, sentNum, first) {
   //change_text(comms[0])
-  var comm = comms[0];
+  //var comm = comms[0];
   /*var tokenizationList = comm.getTokenizationsAsList();
   while (tokenizationList.length < 500) {
     var tok = Token;
@@ -76,9 +85,12 @@ function updateDisplayedCommunications(comms, sentNum, first) {
 
   if (!first) {
     document.getElementById("tokenization").innerHTML = '';
+  } else {
+    submitButton.setState({maxSents: getMaxSents()});
+    console.log("maxSents: " + submitButton.state.maxSents);
   }
 
-  var tokenization = comm.sectionList[0].sentenceList[sentNum].tokenization;//.tokenList;//tokenizationList[0];//[1];
+  var tokenization = comm.sectionList[0].sentenceList[0].tokenization;//.tokenList;//tokenizationList[0];//[1];
   var tokenizationWidget = $('#tokenization').tokenizationWidget(
     tokenization, {whitespaceTokenization: true});
 }
@@ -212,25 +224,51 @@ class SubmitButton extends React.Component {
     this.submitSentence = this.submitSentence.bind(this);
     this.nextSentence = this.nextSentence.bind(this);
     this.state = {
-      sentsLabeled: 0
-    }
+      totalSentsLabeled: 0,
+      totalComms: COMMS.length,
+      currComm: 0,
+      totalSentsInCurrComm: 0,
+      //totalSentsInCurrComm: COMMS[0].sectionList[0].sentenceList.length,
+      currSentInComm: 0,
+      //maxSents: 0
+    };
+    //console.log("Max Sents: " + this.state.maxSents);
+    /*this.setState({
+      totalSentsInCurrComm: COMMS[0].sectionList[0].sentenceList.length
+    });*/
+  }
+
+  componentWillMount() {
+    this.setState({maxSents: getMaxSents()});
+    console.log("Max Sents: " + this.state.maxSents);
   }
 
   nextSentence() {
     // this is where I should add the data to the communication and then load the next sentence
     // store the data, increment counter, load the next one
     //getNextCommunications(annotationUnitIdentifiers);
-    updateEventMapping(this.state.sentsLabeled);
-    updateDisplayedCommunications(COMMS, this.state.sentsLabeled, false);
+    updateEventMapping(this.state.totalSentsLabeled);
+    console.log("Sentence labeled Pre: " + this.state.totalSentsLabeled);
+
     this.setState({
-      sentsLabeled: this.state.sentsLabeled + 1
+      totalSentsLabeled: this.state.totalSentsLabeled + 1,
+      currSentInComm: this.state.currSentInComm + 1
     });
-    console.log("Sentence labeled: " + this.state.sentsLabeled);
+    console.log("Sentence labeled Post: " + this.state.totalSentsLabeled);
+
+    if (this.state.currSentInComm == this.state.totalSentsInCurrComm) {
+      //move the communication to be annotated
+      console.log("move to next communication")
+    }
+
+    updateDisplayedCommunications(COMMS[this.state.totalSentsLabeled], this.state.sentsLabeled, false);
+    console.log("Sentence labeled: " + this.state.totalSentsLabeled);
+    console.log("Max Sents: " + this.state.maxSents);
 
   }
 
   submitSentence() {
-    updateEventMapping(this.state.sentsLabeled);
+    updateEventMapping(this.state.totalSentsLabeled);
     //submit the Communcation to the backend
     /*** submit the Communcation to the backend
        * Get the MTurk metadata from params for assignmentId, workerId, and hitId
@@ -300,8 +338,8 @@ class SubmitButton extends React.Component {
     });*/
 
   render() {
-    if (this.state.sentsLabeled == 4)
-    {
+    if (this.state.totalSentsLabeled == 4) //+ 1 == this.state.maxSents)
+    { console.log("Max Sents: " + this.state.maxSents);
       return (
         <form id="target">
           <div>
@@ -431,7 +469,7 @@ $(document).ready(function(){
        //disable the next sentence button
        //console.log("TODO: disable the next sentence button");
      } else {
-       ReactDOM.render(
+       submitButton = ReactDOM.render(
          <SubmitButton />,
          document.getElementById('submit-events')
        );
@@ -475,6 +513,6 @@ $(document).ready(function(){
          // TODO: User-friendly error message about missing searchResultId
      }*/
 
-     updateDisplayedCommunications(COMMS, 0, true);
+     updateDisplayedCommunications(COMMS[0], 0, true);
     //});
 });
