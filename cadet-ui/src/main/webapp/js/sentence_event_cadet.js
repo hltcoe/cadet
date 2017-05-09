@@ -48,6 +48,14 @@ function getMaxSents() {
   return sents;
 }
 
+function addEventToComm(comm, sentNum) {
+  for (var i = 0; i < eventTag.state.eventNums - 1; i++) {
+    // add situationMentions
+  }
+  comm.situationMentionSetList[sentNum].mentionList[0].situationKind = eventTag.state.eventType; // + ":::" + eventTag.state.ordinalRating;
+  comm.situationMentionSetList[sentNum].mentionList[0].intensity = parseInt(eventTag.state.ordinalRating) / 3
+}
+
 // Global variables
 var COMMS = [];
 var currSituationMentionSet = null;
@@ -84,13 +92,12 @@ function updateDisplayedCommunications(comm, sentNum, first) {
 
   var tokenizationWidget = $('#tokenization').tokenizationWidget(
     tokenization, {whitespaceTokenization: true}); */
-  currSituationMentionSet = new SituationMentionSet();
-  currSitationMention = new SituationMention();
   var sentToDisplay = 0;
   if (!first) {
     document.getElementById("tokenization").innerHTML = '';
     if (submitButton != null) {
       sentToDisplay = submitButton.state.currSentInComm;
+      eventTag.setState({eventType: "No Event", ordinalRating: '3'});
     }
   } else if (submitButton != null){
       submitButton.setState({
@@ -110,6 +117,8 @@ function updateDisplayedCommunications(comm, sentNum, first) {
   var tokenization = comm.sectionList[0].sentenceList[sentToDisplay].tokenization;//.tokenList;//tokenizationList[0];//[1];
   var tokenizationWidget = $('#tokenization').tokenizationWidget(
     tokenization, {whitespaceTokenization: true});
+  //currSituationMention.tokens = new TokenRefSequence();
+  //currSituationMention.tokens =
 }
 
 class CommunicationContainer extends React.Component {
@@ -119,10 +128,9 @@ class CommunicationContainer extends React.Component {
         fileNumber: 1
     };
     //this.change_text = this.change_text.bind(this);
-
   }
 
-  change_text(i) {
+  /*change_text(i) {
     //$.getJSON('uz_data/uz_'+this.props.fileNumber+'_.concrete.json', function(commJSONData) {
 
       //var comm = new Communication();
@@ -135,7 +143,7 @@ class CommunicationContainer extends React.Component {
       tokenization, {whitespaceTokenization: true});
 
   //});
-  }
+  }*/
 
   render() {
     return (
@@ -156,21 +164,21 @@ class EventTag extends React.Component {
     this.handleOrdinalChange = this.handleOrdinalChange.bind(this);
     this.state = {
         eventType: "No Event",
-        ordinalRating: '1'
+        ordinalRating: '3'
     };
   }
 
 
   change(event) {
     var value = event.target.value;
-    this.state.eventType = value;
+    //this.state.eventType = value;
     this.setState({eventType: value});
     console.log("EventType: " + this.state.eventType)
   }
 
   handleOrdinalChange(event) {
     var value = event.target.value;
-    this.state.ordinalRating = value
+    //this.state.ordinalRating = value
     this.setState({ordinalRating: value});
     console.log("ordinalRating:" + this.state.ordinalRating)
   }
@@ -287,21 +295,22 @@ class SubmitButton extends React.Component {
     updateDisplayedCommunications(COMMS[this.state.currComm], this.state.sentsLabeled, false);
     console.log("Sentence labeled: " + this.state.totalSentsLabeled);
     console.log("Max Sents: " + this.state.maxSents);
-
+    addEventToComm(COMMS[this.state.currComm], this.state.currSentInComm)
   }
 
   submitSentence() {
-    updateEventMapping(this.state.totalSentsLabeled);
+    addEventToComm(COMMS[this.state.currComm], this.state.currSentInComm)
+    //updateEventMapping(this.state.totalSentsLabeled);
     //submit the Communcation to the backend
     /*** submit the Communcation to the backend
        * Get the MTurk metadata from params for assignmentId, workerId, and hitId
        * Get Event Data from Event_MAP
      ***/
 
-    var out = "";
+    /*var out = "";
     for(var i in EVENT_MAP) {
       out += i + " -> " + EVENT_MAP[i] + "\n";
-    }
+    }*/
     alert("Submit the Communication to the backend\n" + out);
     try {
         if (COMMS && COMMS.length > 0) {
