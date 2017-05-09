@@ -50,6 +50,8 @@ function getMaxSents() {
 
 // Global variables
 var COMMS = [];
+var currSituationMentionSet = null;
+var currSitationMention = null;
 var RESULTS_SERVER_SESSION_ID = null;
 var EVENT_MAP = {};
 var params={};
@@ -82,24 +84,27 @@ function updateDisplayedCommunications(comm, sentNum, first) {
 
   var tokenizationWidget = $('#tokenization').tokenizationWidget(
     tokenization, {whitespaceTokenization: true}); */
-
+  currSituationMentionSet = new SituationMentionSet();
+  currSitationMention = new SituationMention();
+  var sentToDisplay = 0;
   if (!first) {
     document.getElementById("tokenization").innerHTML = '';
-  } else {
-    submitButton.setState({
+  } else if (submitButton != null){
+      submitButton.setState({
         maxSents: getMaxSents(),
         totalComms: COMMS.length,
         totalSentsLabeled: 0,
         currComm: 0,
         totalSentsInCurrComm: comm.sectionList[0].sentenceList.length,
         currSentInComm: 0,
-    });
-    console.log("sents in Curr Comm: " + submitButton.state.totalSentsInCurrComm)
-    console.log("maxSents: " + submitButton.state.maxSents);
-    console.log("totalComs: " + submitButton.state.totalComms);
+      });
+      console.log("sents in Curr Comm: " + submitButton.state.totalSentsInCurrComm)
+      console.log("maxSents: " + submitButton.state.maxSents);
+      console.log("totalComs: " + submitButton.state.totalComms);
+      sentToDisplay = submitButton.state.currSentInComm;
   }
 
-  var tokenization = comm.sectionList[0].sentenceList[submitButton.state.currSentInComm].tokenization;//.tokenList;//tokenizationList[0];//[1];
+  var tokenization = comm.sectionList[0].sentenceList[sentToDisplay].tokenization;//.tokenList;//tokenizationList[0];//[1];
   var tokenizationWidget = $('#tokenization').tokenizationWidget(
     tokenization, {whitespaceTokenization: true});
 }
@@ -254,7 +259,6 @@ class SubmitButton extends React.Component {
   nextSentence() {
     // this is where I should add the data to the communication and then load the next sentence
     // store the data, increment counter, load the next one
-    //getNextCommunications(annotationUnitIdentifiers);
     updateEventMapping(this.state.totalSentsLabeled);
     console.log("Sentence labeled Pre: " + this.state.totalSentsLabeled);
 
@@ -296,6 +300,19 @@ class SubmitButton extends React.Component {
       out += i + " -> " + EVENT_MAP[i] + "\n";
     }
     alert("Submit the Communication to the backend\n" + out);
+    try {
+        if (COMMS && COMMS.length > 0) {
+            for (var i = 0; i < COMMS.length; i++) {
+                COMMS.results.submitAnnotation(
+                    RESULTS_SERVER_SESSION_ID,
+                    // The .annotationUnitIdentifier field is added by getNextCommunications()
+                    COMMS[i].annotationUnitIdentifier,
+                    COMMS[i]);
+            }
+        }
+    }
+    catch (error) {
+    }
     //https://www.mturk.com/mturk/externalSubmit
     var AMAZON_HOST = "https://workersandbox.mturk.com/mturk/externalSubmit?"
     console.log("submitSentence hit");
@@ -307,28 +324,6 @@ class SubmitButton extends React.Component {
     }
     console.log(AMAZON_HOST);
     $("#target").attr('action', AMAZON_HOST).attr('method', 'POST');
-    /*try {
-        if (COMMS && COMMS.length > 0) {
-            for (var i = 0; i < COMMS.length; i++) {
-                CADET.results.submitAnnotation(
-                    RESULTS_SERVER_SESSION_ID,
-                    // The .annotationUnitIdentifier field is added by getNextCommunications()
-                    COMMS[i].annotationUnitIdentifier,
-                    COMMS[i]);
-            }
-        }
-        var annotationUnitIdentifiers = CADET.results.getNextChunk(RESULTS_SERVER_SESSION_ID);
-        COMMS = getNextCommunications(annotationUnitIdentifiers);
-        if (COMMS.length > 0) {
-            updateDisplayedCommunications(COMMS, false);
-        }
-        else {
-            location.replace("results.html");
-        }
-    }
-    catch (error) {
-    }*/
-
   }
     /*var urls = window.location.href.split(window.location.origin)
     fetch(window.location.origin+"/next?"+urls[1], {
