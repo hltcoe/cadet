@@ -19,32 +19,42 @@
   display: inline-block;
   margin: 0 auto;
   float: left;
-  margin-left: 10px;
+  margin-left: 45px;
 }
 
 .btn-group
 {
-  padding-top: 10px;
+  padding-top: 5px;
 }
 
 input[type=radio]
 {
   display: block;
-  padding-right: 15px;
+  _padding-right: 15px;
+  vertical-align: middle;
+  display: inline-block;
+  _margin: 5px;
+  margin-right: 15px;
+  _font-size: 20px;
+}
+
+label {
+  _margin: 15px;
 }
 
 .ordinal-group {
   display: block;
-  font-size: 0.575em;
   clear: both;
   float: left;
 }
 
-label
-{
-  display: inline-block;
-  margin: 5px;
+.outer {
+  width: 800px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
+
 .dropbtn {
     background-color: #4CAF50;
     color: white;
@@ -87,10 +97,19 @@ label
   clear: both;
 }
 
-.add_event
+.event
 {
-  float: left
-  clear: both;
+  float: left;
+  padding-top: 1em;
+}
+
+#add-event
+{
+  _padding-left: 15em;
+  padding-top: 1em;
+  _clear: both;
+  display: inline-block;
+  float: left;
 }
 
 #content-events
@@ -100,8 +119,9 @@ label
 
 #submit-events
 {
-  padding-top: 4em;
+  padding-top: 2em;
   padding-left: 25em;
+  display: inline-block;
 }
 
 .options
