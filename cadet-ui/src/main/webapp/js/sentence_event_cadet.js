@@ -89,6 +89,9 @@ function updateDisplayedCommunications(comm, sentNum, first) {
   var sentToDisplay = 0;
   if (!first) {
     document.getElementById("tokenization").innerHTML = '';
+    if (submitButton != null) {
+      sentToDisplay = submitButton.state.currSentInComm;
+    }
   } else if (submitButton != null){
       submitButton.setState({
         maxSents: getMaxSents(),
