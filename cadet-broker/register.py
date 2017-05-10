@@ -55,7 +55,7 @@ def main():
     search_result = SearchResult()
     search_result.uuid = generate_UUID()
     search_result.searchQuery = query
-    search_result.searchResultItems = items[:5]
+    search_result.searchResultItems = items#[:5]
     search_result.lang = "ara"
 
 

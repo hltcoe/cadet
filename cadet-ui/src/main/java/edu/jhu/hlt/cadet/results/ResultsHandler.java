@@ -28,7 +28,7 @@ import edu.jhu.hlt.concrete.util.ConcreteException;
 public class ResultsHandler implements ResultsServerService.Iface, SortReceiverCallback {
     private static Logger logger = LoggerFactory.getLogger(ResultsHandler.class);
 
-    private final int chunkSize = 10;
+    private final int chunkSize = 5;
     private ResultsStore resultsStore;
     private SessionStore sessionStore;
     private StoreProvider storeProvider;

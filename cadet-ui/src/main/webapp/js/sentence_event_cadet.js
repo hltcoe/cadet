@@ -10,6 +10,7 @@ function getNextCommunications(annotationUnitIdentifiers) {
     }
 
     var communicationIdToAUI = {};
+    //add sentenceId as well
     var fetchRequest = new FetchRequest({'communicationIds': []});
     for (var i = 0; i < annotationUnitIdentifiers.length; i++) {
         fetchRequest.communicationIds.push(annotationUnitIdentifiers[i].communicationId)
@@ -49,6 +50,7 @@ function getMaxSents() {
 }
 
 function addEventToComm(comm, sentNum) {
+  //**Use getTokenizationWithUUID to determine which situationMention to use**/
   for (var i = 1; i < eventTags.length; i++) {//eventTag.state.eventNums - 1; i++) {
     // add situationMentions
     if (i != 1) {
@@ -122,6 +124,7 @@ function updateDisplayedCommunications(comm, sentNum, first) {
       sentToDisplay = submitButton.state.currSentInComm;
   }
 
+  //** Change this to use getSentenceWithUUID from concrete.js**/
   var tokenization = comm.sectionList[0].sentenceList[sentToDisplay].tokenization;//.tokenList;//tokenizationList[0];//[1];
   var tokenizationWidget = $('#tokenization').tokenizationWidget(
     tokenization, {whitespaceTokenization: true});
@@ -329,6 +332,7 @@ class SubmitButton extends React.Component {
     for (var i = 2; i < eventTags.length+1; i++) {
       ReactDOM.unmountComponentAtNode(document.getElementById("content-events-"+i))//eventTags[i].unmount
     }
+    eventTags = [eventTags[1]];
   }
 
   submitSentence() {
@@ -543,8 +547,8 @@ $(document).ready(function(){
        console.log("RESULTS_SERVER_SESSION_ID: " +RESULTS_SERVER_SESSION_ID);
        try {
          var annotationUnitIdentifiers = CADET.results.getNextChunk(RESULTS_SERVER_SESSION_ID);
-         for (var anno in annotationUnitIdentifiers) {
-            console.log("COMM id: " + anno.communicationId + "; sentence: " + anno.sentenceId);
+         for (var i = 0; i < annotationUnitIdentifiers.length; i++) {
+            console.log("COMM id: " + annotationUnitIdentifiers[i].communicationId + "; sentence: " + annotationUnitIdentifiers[i].sentenceId.uuidString);
          }
          COMMS = getNextCommunications(annotationUnitIdentifiers);
        }
