@@ -227,6 +227,9 @@ class AddEvent extends React.Component {
   addEvent() {
     if (this.state.numChildren < 13) {
       var event_tags = document.querySelectorAll('#content-events');
+      var allEvents = document.querySelectorAll('.event');
+      var lastEvent = allEvents[allEvents.length - 1];
+      $(lastEvent).clone().appendTo(event_tags);
       this.setState({
         numChildren: this.state.numChildren + 1
       });
@@ -393,11 +396,13 @@ var commContainer = ReactDOM.render(
   document.getElementById('content-sentence')
 );
 
+var eventTags = [];
 var eventTag = ReactDOM.render(
   <EventTag />,
   //React.createElement(new EventTag, null),
   document.getElementById('content-events')
 );
+eventTags[0] = eventTag;
 
 ReactDOM.render(
   <AddEvent />,
