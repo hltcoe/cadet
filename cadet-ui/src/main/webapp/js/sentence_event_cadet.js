@@ -219,17 +219,30 @@ class AddEvent extends React.Component {
   constructor() {
     super();
     this.state = {
-        numChildren: 1
+        numChildren: 0
     };
     this.addEvent = this.addEvent.bind(this);
   }
 
   addEvent() {
-    if (this.state.numChildren < 13) {
-      var event_tags = document.querySelectorAll('#content-events');
-      var allEvents = document.querySelectorAll('.event');
+    if (this.state.numChildren < 12) {
+      var event_tags = document.querySelectorAll('.content-events');//'#content-events-'+this.state.numChildren);
+      var last_event = event_tags[0];
+      var new_event = $(last_event).clone().attr('id', 'content-events-'+this.state.numChildren + 1);
+      //new_event.appendTo(event_tags);
+      new_event.insertBefore(document.querySelectorAll('#add-event')[0]);
+      new_event.innerHTML= '';
+      var currEventTag = ReactDOM.render(
+        <EventTag />,
+        //React.createElement(new EventTag, null),
+        document.getElementById('content-events-'+this.state.numChildren + 1)
+      );
+      eventTags[this.state.numChildren+1] = currEventTag;
+
+      /*var allEvents = document.querySelectorAll('.event');
       var lastEvent = allEvents[allEvents.length - 1];
-      $(lastEvent).clone().appendTo(event_tags);
+      $(lastEvent).clone().appendTo(event_tags);*/
+      //var clone = React.cloneElement(EventTag);
       this.setState({
         numChildren: this.state.numChildren + 1
       });
@@ -400,7 +413,7 @@ var eventTags = [];
 var eventTag = ReactDOM.render(
   <EventTag />,
   //React.createElement(new EventTag, null),
-  document.getElementById('content-events')
+  document.getElementById('content-events-0')
 );
 eventTags[0] = eventTag;
 

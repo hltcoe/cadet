@@ -33,19 +33,21 @@ input[type=radio]
   _padding-right: 15px;
   vertical-align: middle;
   display: inline-block;
-  _margin: 5px;
+  _margin: 0px;
   margin-right: 15px;
   _font-size: 20px;
 }
 
 label {
-  _margin: 15px;
+  margin: 15px;
+  font-size: 20px;
 }
 
 .ordinal-group {
   display: block;
   clear: both;
   float: left;
+  padding-bottom: 25px;
 }
 
 .outer {
@@ -112,10 +114,10 @@ label {
   float: left;
 }
 
-#content-events
+.content-events
 {
-  padding-left: 15em;
-  width: 700px;
+  padding-left: 10em;
+  width: 750px;
 }
 
 #submit-events
