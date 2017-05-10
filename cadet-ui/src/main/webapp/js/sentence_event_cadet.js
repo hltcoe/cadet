@@ -64,6 +64,7 @@ var RESULTS_SERVER_SESSION_ID = null;
 var EVENT_MAP = {};
 var params={};
 var submitButton = null;
+var NUMBER_EVENT_TAGS = 1;
 
 var funcs = [];
 
@@ -164,7 +165,8 @@ class EventTag extends React.Component {
     this.handleOrdinalChange = this.handleOrdinalChange.bind(this);
     this.state = {
         eventType: "No Event",
-        ordinalRating: '3'
+        ordinalRating: '3',
+        eventNum: NUMBER_EVENT_TAGS
     };
   }
 
@@ -180,7 +182,7 @@ class EventTag extends React.Component {
     var value = event.target.value;
     //this.state.ordinalRating = value
     this.setState({ordinalRating: value});
-    console.log("ordinalRating:" + this.state.ordinalRating)
+    console.log("eventNUM: " + NUMBER_EVENT_TAGS + "  ordinalRating:" + this.state.ordinalRating)
   }
 
   render() {
@@ -203,12 +205,14 @@ class EventTag extends React.Component {
             </select>
           </div>
           <div className="ordinal-group inner">
-            <label><input type="radio" value='1' name="radioset" checked={this.state.ordinalRating === '1'}
-                      onChange={this.handleOrdinalChange} />Possbile</label>
-            <label><input type="radio" value='2' name="radioset" checked={this.state.ordinalRating === '2'}
-                      onChange={this.handleOrdinalChange}/>Probable</label>
-            <label><input type="radio" value="3" name="radioset" checked={this.state.ordinalRating === '3'}
-                      onChange={this.handleOrdinalChange}/>Very Likely or Certain</label>
+            <fieldset id={"group"+this.state.eventNum}>
+              <label><input type="radio" value='1' name={"radioset-"+this.state.eventNum} checked={this.state.ordinalRating === '1'}
+                        onChange={this.handleOrdinalChange} />Possbile</label>
+              <label><input type="radio" value='2' name={"radioset-"+this.state.eventNum} checked={this.state.ordinalRating === '2'}
+                        onChange={this.handleOrdinalChange}/>Probable</label>
+              <label><input type="radio" value="3" name={"radioset-"+this.state.eventNum} checked={this.state.ordinalRating === '3'}
+                        onChange={this.handleOrdinalChange}/>Very Likely or Certain</label>
+            </fieldset>
           </div>
         </div>
     );
@@ -228,24 +232,26 @@ class AddEvent extends React.Component {
     if (this.state.numChildren < 12) {
       var event_tags = document.querySelectorAll('.content-events');//'#content-events-'+this.state.numChildren);
       var last_event = event_tags[0];
-      var new_event = $(last_event).clone().attr('id', 'content-events-'+this.state.numChildren + 1);
+      NUMBER_EVENT_TAGS = NUMBER_EVENT_TAGS + 1;
+      console.log("NUMBER_EVENT_TAGS: " + NUMBER_EVENT_TAGS);
+      //currEventTag.setState({eventNum: this.state.numChildren+1});
+      var new_event = $(last_event).clone().attr('id', 'content-events-'+NUMBER_EVENT_TAGS);// + 1);
       //new_event.appendTo(event_tags);
-      new_event.insertBefore(document.querySelectorAll('#add-event')[0]);
       new_event.innerHTML= '';
+      new_event.insertBefore(document.querySelectorAll('#add-event')[0]);
       var currEventTag = ReactDOM.render(
         <EventTag />,
         //React.createElement(new EventTag, null),
-        document.getElementById('content-events-'+this.state.numChildren + 1)
+        document.getElementById('content-events-'+NUMBER_EVENT_TAGS)// + 1)
       );
-      eventTags[this.state.numChildren+1] = currEventTag;
-
+      eventTags[NUMBER_EVENT_TAGS] = currEventTag;
+      /*this.setState({
+        numChildren: this.state.numChildren + 1
+      });*/
       /*var allEvents = document.querySelectorAll('.event');
       var lastEvent = allEvents[allEvents.length - 1];
       $(lastEvent).clone().appendTo(event_tags);*/
       //var clone = React.cloneElement(EventTag);
-      this.setState({
-        numChildren: this.state.numChildren + 1
-      });
     }
     console.log(this.state.numChildren);
   }
@@ -409,18 +415,20 @@ var commContainer = ReactDOM.render(
   document.getElementById('content-sentence')
 );
 
+
+var addEventComponent = ReactDOM.render(
+  <AddEvent />,
+  document.getElementById('add-event')
+);
+
+//These are 1 indexed
 var eventTags = [];
 var eventTag = ReactDOM.render(
   <EventTag />,
   //React.createElement(new EventTag, null),
-  document.getElementById('content-events-0')
+  document.getElementById('content-events-1')
 );
-eventTags[0] = eventTag;
-
-ReactDOM.render(
-  <AddEvent />,
-  document.getElementById('add-event')
-);
+eventTags[1] = eventTag;
 
 /*ReactDOM.render(
   <SubmitButton />,
