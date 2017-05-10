@@ -325,6 +325,10 @@ class SubmitButton extends React.Component {
     console.log("Sentence labeled: " + this.state.totalSentsLabeled);
     console.log("Max Sents: " + this.state.maxSents);
     addEventToComm(COMMS[this.state.currComm], this.state.currSentInComm)
+
+    for (var i = 2; i < eventTags.length+1; i++) {
+      ReactDOM.unmountComponentAtNode(document.getElementById("content-events-"+i))//eventTags[i].unmount
+    }
   }
 
   submitSentence() {
