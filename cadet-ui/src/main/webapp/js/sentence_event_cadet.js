@@ -49,11 +49,18 @@ function getMaxSents() {
 }
 
 function addEventToComm(comm, sentNum) {
-  for (var i = 0; i < eventTag.state.eventNums - 1; i++) {
+  for (var i = 1; i < eventTags.length; i++) {//eventTag.state.eventNums - 1; i++) {
     // add situationMentions
+    if (i != 1) {
+      comm.situationMentionSetList[sentNum].mentionList[i-1] = new SituationMention();
+      comm.situationMentionSetList[sentNum].mentionList[i-1].argumentList = comm.situationMentionSetList[sentNum].mentionList[0].argumentList;
+      comm.situationMentionSetList[sentNum].mentionList[i-1].text = comm.situationMentionSetList[sentNum].mentionList[0].text;
+      comm.situationMentionSetList[sentNum].mentionList[i-1].tokens = comm.situationMentionSetList[sentNum].mentionList[0].tokens;
+      comm.situationMentionSetList[sentNum].mentionList[i-1].uuid = generateUUID();
+    }
+    comm.situationMentionSetList[sentNum].mentionList[i-1].situationKind = eventTags[i].state.eventType//eventTag.state.eventType; // + ":::" + eventTag.state.ordinalRating;
+    comm.situationMentionSetList[sentNum].mentionList[i-1].intensity = parseInt(eventTags[i].state.ordinalRating) / 3//parseInt(eventTag.state.ordinalRating) / 3
   }
-  comm.situationMentionSetList[sentNum].mentionList[0].situationKind = eventTag.state.eventType; // + ":::" + eventTag.state.ordinalRating;
-  comm.situationMentionSetList[sentNum].mentionList[0].intensity = parseInt(eventTag.state.ordinalRating) / 3
 }
 
 // Global variables
