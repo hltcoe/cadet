@@ -14,6 +14,7 @@ function getNextCommunications(annotationUnitIdentifiers) {
     var fetchRequest = new FetchRequest({'communicationIds': []});
     for (var i = 0; i < annotationUnitIdentifiers.length; i++) {
         fetchRequest.communicationIds.push(annotationUnitIdentifiers[i].communicationId)
+        SENTENCEIDS[i] = annotationUnitIdentifiers[i].sentenceId
         communicationIdToAUI[annotationUnitIdentifiers[i].communicationId] = annotationUnitIdentifiers[i];
     }
     var fetchResults = CADET.fetch.fetch(fetchRequest);
@@ -51,7 +52,7 @@ function getMaxSents() {
 
 function addEventToComm(comm, sentNum) {
   //**Use getTokenizationWithUUID to determine which situationMention to use**/
-  for (var i = 1; i < eventTags.length; i++) {//eventTag.state.eventNums - 1; i++) {
+  /*for (var i = 1; i < eventTags.length; i++) {//eventTag.state.eventNums - 1; i++) {
     // add situationMentions
     if (i != 1) {
       comm.situationMentionSetList[sentNum].mentionList[i-1] = new SituationMention();
@@ -62,11 +63,12 @@ function addEventToComm(comm, sentNum) {
     }
     comm.situationMentionSetList[sentNum].mentionList[i-1].situationKind = eventTags[i].state.eventType//eventTag.state.eventType; // + ":::" + eventTag.state.ordinalRating;
     comm.situationMentionSetList[sentNum].mentionList[i-1].intensity = parseInt(eventTags[i].state.ordinalRating) / 3//parseInt(eventTag.state.ordinalRating) / 3
-  }
+  }*/
 }
 
 // Global variables
 var COMMS = [];
+var SENTENCEIDS = [];
 var currSituationMentionSet = null;
 var currSitationMention = null;
 var RESULTS_SERVER_SESSION_ID = null;
@@ -102,6 +104,9 @@ function updateDisplayedCommunications(comm, sentNum, first) {
 
   var tokenizationWidget = $('#tokenization').tokenizationWidget(
     tokenization, {whitespaceTokenization: true}); */
+  var currSentUUID = SENTENCEIDS[sentNum];
+  //comm.getSentenceWithUUID(currSentUUID);
+  //debugger;
   var sentToDisplay = 0;
   if (!first) {
     document.getElementById("tokenization").innerHTML = '';
@@ -111,11 +116,11 @@ function updateDisplayedCommunications(comm, sentNum, first) {
     }
   } else if (submitButton != null){
       submitButton.setState({
-        maxSents: getMaxSents(),
+        maxSents: SENTENCEIDS.length,//getMaxSents(),
         totalComms: COMMS.length,
         totalSentsLabeled: 0,
         currComm: 0,
-        totalSentsInCurrComm: comm.sectionList[0].sentenceList.length,
+        totalSentsInCurrComm: 1,//comm.sectionList[0].sentenceList.length,
         currSentInComm: 0,
       });
       console.log("sents in Curr Comm: " + submitButton.state.totalSentsInCurrComm)
@@ -125,7 +130,8 @@ function updateDisplayedCommunications(comm, sentNum, first) {
   }
 
   //** Change this to use getSentenceWithUUID from concrete.js**/
-  var tokenization = comm.sectionList[0].sentenceList[sentToDisplay].tokenization;//.tokenList;//tokenizationList[0];//[1];
+  //sentToDisplay
+  var tokenization = comm.getSentenceWithUUID(SENTENCEIDS[sentNum]).tokenization; //comm.sectionList[0].sentenceList[sentToDisplay].tokenization;//.tokenList;//tokenizationList[0];//[1];
   var tokenizationWidget = $('#tokenization').tokenizationWidget(
     tokenization, {whitespaceTokenization: true});
   //currSituationMention.tokens = new TokenRefSequence();
@@ -219,9 +225,9 @@ class EventTag extends React.Component {
               <label><input type="radio" value='1' name={"radioset-"+this.state.eventNum} checked={this.state.ordinalRating === '1'}
                         onChange={this.handleOrdinalChange} />Possbile</label>
               <label><input type="radio" value='2' name={"radioset-"+this.state.eventNum} checked={this.state.ordinalRating === '2'}
-                        onChange={this.handleOrdinalChange}/>Probable</label>
+                        onChange={this.handleOrdinalChange}/>Likely</label>
               <label><input type="radio" value="3" name={"radioset-"+this.state.eventNum} checked={this.state.ordinalRating === '3'}
-                        onChange={this.handleOrdinalChange}/>Very Likely or Certain</label>
+                        onChange={this.handleOrdinalChange}/>Highly Likely</label>
             </fieldset>
           </div>
         </div>
@@ -302,7 +308,7 @@ class SubmitButton extends React.Component {
   nextSentence() {
     // this is where I should add the data to the communication and then load the next sentence
     // store the data, increment counter, load the next one
-    updateEventMapping(this.state.totalSentsLabeled);
+    //updateEventMapping(this.state.totalSentsLabeled);
     console.log("Sentence labeled Pre: " + this.state.totalSentsLabeled);
 
     this.setState({
@@ -311,7 +317,7 @@ class SubmitButton extends React.Component {
     });
     console.log("Sentence labeled Post: " + this.state.totalSentsLabeled);
 
-    if (this.state.currSentInComm + 1 == this.state.totalSentsInCurrComm) {
+    /*if (this.state.currSentInComm == 1) {//+ 1 == this.state.totalSentsInCurrComm) {
       //move the communication to be annotated
       this.setState({
         currSentInComm: 0,
@@ -319,15 +325,15 @@ class SubmitButton extends React.Component {
         currComm: this.state.currComm + 1,
       });
       console.log("move to next communication")
-    }
+    }*/
 
-    console.log("Curr Comm: " + this.state.currComm);
-    console.log("CurrSent: " + this.state.currSentInComm);
-    console.log("total Sents in Curr Comm: " + this.state.totalSentsInCurrComm);
-    updateDisplayedCommunications(COMMS[this.state.currComm], this.state.sentsLabeled, false);
-    console.log("Sentence labeled: " + this.state.totalSentsLabeled);
-    console.log("Max Sents: " + this.state.maxSents);
-    addEventToComm(COMMS[this.state.currComm], this.state.currSentInComm)
+    addEventToComm(COMMS[this.state.currComm], this.state.totalSentsLabeled)
+    this.setState({
+      currComm: this.state.currComm + 1,
+      sentsLabeled: this.sentsLabeled + 1
+    });
+
+    updateDisplayedCommunications(COMMS[this.state.currComm], this.state.totalSentsLabeled, false);
 
     for (var i = 2; i < eventTags.length+1; i++) {
       ReactDOM.unmountComponentAtNode(document.getElementById("content-events-"+i))//eventTags[i].unmount
@@ -336,7 +342,7 @@ class SubmitButton extends React.Component {
   }
 
   submitSentence() {
-    addEventToComm(COMMS[this.state.currComm], this.state.currSentInComm)
+    addEventToComm(COMMS[this.state.currComm], this.state.sentsLabeled)
     //updateEventMapping(this.state.totalSentsLabeled);
     //submit the Communcation to the backend
     /*** submit the Communcation to the backend
@@ -398,7 +404,7 @@ class SubmitButton extends React.Component {
     });*/
 
   render() {
-    if (this.state.totalSentsLabeled + 1 == this.state.maxSents) //+ 1 == this.state.maxSents)
+    if (this.state.totalSentsLabeled == SENTENCEIDS.length) //+ 1 == this.state.maxSents)
     { console.log("Max Sents: " + this.state.maxSents);
       return (
         <form id="target">
