@@ -48,7 +48,7 @@ def main():
         # TODO no sentence ID - only way to get that is retrieve from fetch service
         comm_id = line.split('\t')[0]
         sentence_id = generate_UUID()
-        sentence_id.uuidString = line.split('\t')[1]
+        sentence_id.uuidString = line.split('\t')[1].split('\n')[0]
         item = SearchResultItem(comm_id, sentenceId=sentence_id, score=0.5)
         items.append(item)
 
