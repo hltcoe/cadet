@@ -51,9 +51,13 @@ function getMaxSents() {
 }
 
 function addEventToComm(comm, sentNum) {
+  var workerId = params["workerId"];
+  var assignmentId = params["assignmentId"];
   var currSent = comm.getSentenceWithUUID(SENTENCEIDS[sentNum]);
   var tokenization = currSent.tokenization;
   var situationMentionSet = new SituationMentionSet();
+  situationMentionSet.metadata = new AnnotationMetadata();
+  situationMentionSet.metadata = "BBN Data assignmentId:::"+assignmentId+" workerId:::"+workerId;
   situationMentionSet.uuid = generateUUID();
   situationMentionSet.mentionList = []
   for (var i = 1; i < eventTags.length; i++) {
