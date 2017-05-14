@@ -23,6 +23,7 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.24/browser.min.js"></script>
 
+
   <!--<script src="js/jquery-1.11.1.js"></script>
   <script src="js/bootstrap.js"></script>
   <script type="text/jsx" src="js/thrift.js"></script>
@@ -62,9 +63,57 @@
 <h1>Instructions <a href="javascript:toggle();" id="displaytext" style="font-size: 50%;">(<b>hide</b>)</a></h1>
 
 <div class="panel panel-primary" id="instructions">
-<p style="text-align:justify;">In this task you are being asked to verify the results of an automatic text processing tool. In technical terms, the goal of our tool is to identify what we will call <i>complex predicates</i>, and their <i>arguments</i>. More loosely, we are concerned with finding individual statements that are contained within larger sentences.</p>
+<p style="text-align:justify;">In this task you are being asked to determine whether an event occured in a sentence and if so, which
+type of event(s) occured in the sentence. There are 11 types of events that can occur:</p>
 
-<p style="text-align:justify;">Consider the following sentence:</p>
+<ol>
+  <li>Civil Unrest or Wide-spread Crime</li>
+  <li>Elections and Politics</li>
+  <li>Evacuation</li>
+  <li>Food Supply</li>
+  <li>Infrastructure</li>
+  <li>Medical Assistance</li>
+  <li>Search/Rescue</li>
+  <li>Shelter</li>
+  <li>Terrorism or other Extreme Violence</li>
+  <li>Utilities, Energy, or Sanitation</li>
+  <li>Water Supply</li>
+</ol>
+
+<p style="text-align:justify;"> If none of these events occured in a given sentence, please choose "No Event"
+from the list below. If more than 1 event occured in the text, please press the "+" button below to choose
+which other events occured in the sentence. </p>
+
+<h3> Confidence of Answers </h3>
+
+<p style="text-align:justify;"> Additionally, please check at least one box below to determine whether
+it is <b>Possible</b>, <b>Likely</b>, or <b>Highly Likely</b> that a specific event occured. </p>
+<p style="text-align:justify;"> If you are less than
+<b>50%</b> certain that an event happened, please consider it as if that event did not occur. </p>
+<p style="text-align:justify;"> If you are between <b>50%</b> and <b>70%</b>
+certain that an event happened, please consider it as if it is <b>Possible</b> that that event occured. </p>
+
+<p id="example" style="text-align:center;"><i>EXAMPLE SENTENCE FOR POSSIBLE TAG</i></p>
+
+
+<p style="text-align:justify;"> If you are between <b>70%</b> and <b>85%</b>
+certain that an event happened, please consider it as if it is <b>Likely</b> that that event occured.</p>
+
+<p id="example" style="text-align:center;"><i>EXAMPLE SENTENCE FOR LIKELY TAG</i></p>
+
+
+<p style="text-align:justify;"> If you more than <b>85%</b>
+certain that an event happened, please consider it as if it is <b>Highly Likely</b> that that event occured.</p>
+
+<p id="example" style="text-align:center;"><i>EXAMPLE SENTENCE FOR VERY LIKELY TAG</i></p>
+
+
+<p style="text-align:justify;"> If you are uncertain about any of these, you may click more than one
+option if you are between any of the choices. </p>
+
+<h3> Payment</h3>
+<p style="text-align:justify;"> Lastly, you will be paid 25 cents for each set of 5 sentences that you label.</p>
+<!--<p style="text-align:justify;">Consider the following sentence:</p>
 
 <p id="example" style="text-align:center;">John , the manager of Acme , bought a car .</p>
 
@@ -108,7 +157,7 @@
 
 <p id="example" style="text-align:center;"><span id="rcorner" style="background-color:#fb8072;">John</span> <span id="rcorner" style="background-color:#f0f0ff;">has/have</span> <span id="rcorner" style="background-color:#ffffb3;">car</span></p>
 
-<p style="text-align:justify;">This is a correct statement. It is not a grammatical sentence, but it does capture something correctly from the original sentence: <i>John</i> has a <i>car</i>. Since the original sentence contained only <i>car</i> and not <i>a car</i>, then the automatically generated statement also does not contain <i>a car</i>. This is not an error, we would want you to judge this as correct. The purpose of the task is to verify that we are highlighting the predicates and the arguments as best as possible, not leaving things out that are there in the initial sentence.</p>
+<p style="text-align:justify;">This is a correct statement. It is not a grammatical sentence, but it does capture something correctly from the original sentence: <i>John</i> has a <i>car</i>. Since the original sentence contained only <i>car</i> and not <i>a car</i>, then the automatically generated statement also does not contain <i>a car</i>. This is not an error, we would want you to judge this as correct. The purpose of the task is to verify that we are highlighting the predicates and the arguments as best as Possible, not leaving things out that are there in the initial sentence.</p>-->
 </div>
     <!--<h4>
         <a href="index.html">Search</a> |
