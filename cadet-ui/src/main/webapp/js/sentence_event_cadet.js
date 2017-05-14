@@ -50,6 +50,15 @@ function getMaxSents() {
   return sents;
 }
 
+/*function calculate_intensity(first, second, third) {
+  if (first) {
+    if (second) {
+      if
+    }
+  }
+  parseInt(eventTags[i].state.ordinalRating) / 3;
+}*/
+
 function addEventToComm(comm, sentNum) {
   var workerId = params["workerId"];
   var assignmentId = params["assignmentId"];
@@ -63,7 +72,7 @@ function addEventToComm(comm, sentNum) {
   for (var i = 1; i < eventTags.length; i++) {
     var situationMention = new SituationMention();
     situationMention.situationKind = eventTags[i].state.eventType;
-    situationMention.intensity = parseInt(eventTags[i].state.ordinalRating) / 3;
+    situationMention.intensity = calculate_intensity(eventTags[i].state.ordinalRating1, eventTags[i].state.ordinalRating2, eventTags[i].state.ordinalRating3);
     situationMention.uuid = generateUUID();
     situationMention.tokens = new TokenRefSequence();
     situationMention.tokens.uuid = tokenization.uuid;
@@ -202,10 +211,14 @@ class EventTag extends React.Component {
   constructor() {
     super();
     this.change = this.change.bind(this);
-    this.handleOrdinalChange = this.handleOrdinalChange.bind(this);
+    this.handleOrdinalChange1 = this.handleOrdinalChange1.bind(this);
+    this.handleOrdinalChange2 = this.handleOrdinalChange2.bind(this);
+    this.handleOrdinalChange3 = this.handleOrdinalChange3.bind(this);
     this.state = {
         eventType: "No Event",
-        ordinalRating: '3',
+        ordinalRating1: false,
+        ordinalRating2: false,
+        ordinalRating3: true,
         eventNum: NUMBER_EVENT_TAGS
     };
   }
@@ -218,11 +231,26 @@ class EventTag extends React.Component {
     console.log("EventType: " + this.state.eventType)
   }
 
-  handleOrdinalChange(event) {
-    var value = event.target.value;
+  handleOrdinalChange1(event) {
+    //var value = event.target.value;
     //this.state.ordinalRating = value
-    this.setState({ordinalRating: value});
-    console.log("eventNUM: " + NUMBER_EVENT_TAGS + "  ordinalRating:" + this.state.ordinalRating)
+    //this.setState({ordinalRating: value});
+    this.setState({ordinalRating1: !this.state.ordinalRating1});
+    console.log("eventNUM: " + NUMBER_EVENT_TAGS + "  ordinalRating1:" + this.state.ordinalRating1)
+  }
+  handleOrdinalChange2(event) {
+    //var value = event.target.value;
+    //this.state.ordinalRating = value
+    //this.setState({ordinalRating: value});
+    this.setState({ordinalRating2: !this.state.ordinalRating2});
+    console.log("eventNUM: " + NUMBER_EVENT_TAGS + "  ordinalRating2:" + this.state.ordinalRating2)
+  }
+  handleOrdinalChange3(event) {
+    //var value = event.target.value;
+    //this.state.ordinalRating = value
+    //this.setState({ordinalRating: value});
+    this.setState({ordinalRating3: !this.state.ordinalRating3});
+    console.log("eventNUM: " + NUMBER_EVENT_TAGS + "  ordinalRating3:" + this.state.ordinalRating3)
   }
 
   render() {
@@ -246,12 +274,12 @@ class EventTag extends React.Component {
           </div>
           <div className="ordinal-group inner">
             <fieldset id={"group"+this.state.eventNum}>
-              <label><input type="radio" value='1' name={"radioset-"+this.state.eventNum} checked={this.state.ordinalRating === '1'}
-                        onChange={this.handleOrdinalChange} />Possbile</label>
-              <label><input type="radio" value='2' name={"radioset-"+this.state.eventNum} checked={this.state.ordinalRating === '2'}
-                        onChange={this.handleOrdinalChange}/>Likely</label>
-              <label><input type="radio" value="3" name={"radioset-"+this.state.eventNum} checked={this.state.ordinalRating === '3'}
-                        onChange={this.handleOrdinalChange}/>Highly Likely</label>
+              <label><input type="checkbox" value='1' name={"checkbox-"+this.state.eventNum+"-1"} checked={this.state.ordinalRating1}
+                        onChange={this.handleOrdinalChange1} />Possbile</label>
+              <label><input type="checkbox" value='2' name={"checkbox-"+this.state.eventNum+"-2"} checked={this.state.ordinalRating2}
+                        onChange={this.handleOrdinalChange2}/>Likely</label>
+              <label><input type="checkbox" value="3" name={"checkbox-"+this.state.eventNum+"-3"} checked={this.state.ordinalRating3}
+                        onChange={this.handleOrdinalChange3}/>Highly Likely</label>
             </fieldset>
           </div>
         </div>
