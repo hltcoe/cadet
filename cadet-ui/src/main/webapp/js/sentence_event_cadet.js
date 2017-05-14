@@ -51,6 +51,24 @@ function getMaxSents() {
 }
 
 function addEventToComm(comm, sentNum) {
+  var currSent = comm.getSentenceWithUUID(SENTENCEIDS[sentNum]);
+  var tokenization = currSent.tokenization;
+  var situationMentionSet = new SituationMentionSet();
+  situationMentionSet.uuid = generateUUID();
+  situationMentionSet.mentionList = []
+  for (var i = 1; i < eventTags.length; i++) {
+    var situationMention = new SituationMention();
+    situationMention.situationKind = eventTags[i].state.eventType;
+    situationMention.intensity = parseInt(eventTags[i].state.ordinalRating) / 3;
+    situationMention.uuid = generateUUID();
+    situationMention.tokens = new TokenRefSequence();
+    situationMention.tokens.uuid = tokenization.uuid;
+    situationMentionSet.mentionList[situationMentionSet.mentionList.length] = situationMention;
+  }
+  //comm.situationMentionSetList = situationMentionSetList;
+  comm.situationMentionSetList[comm.situationMentionSetList.length] = situationMentionSet;
+
+
   //**Use getTokenizationWithUUID to determine which situationMention to use**/
   /*for (var i = 1; i < eventTags.length; i++) {//eventTag.state.eventNums - 1; i++) {
     // add situationMentions
@@ -69,6 +87,8 @@ function addEventToComm(comm, sentNum) {
 // Global variables
 var COMMS = [];
 var SENTENCEIDS = [];
+//var TOTALSENTSLABELED = 0;
+//var CURRCOMM = 0;
 var currSituationMentionSet = null;
 var currSitationMention = null;
 var RESULTS_SERVER_SESSION_ID = null;
@@ -124,7 +144,7 @@ function updateDisplayedCommunications(comm, sentNum, first) {
         currSentInComm: 0,
       });
       console.log("sents in Curr Comm: " + submitButton.state.totalSentsInCurrComm)
-      console.log("maxSents: " + submitButton.state.maxSents);
+      console.log("maxSents: " + SENTENCEIDS.length);
       console.log("totalComs: " + submitButton.state.totalComms);
       sentToDisplay = submitButton.state.currSentInComm;
   }
@@ -287,7 +307,8 @@ class SubmitButton extends React.Component {
     this.submitSentence = this.submitSentence.bind(this);
     this.nextSentence = this.nextSentence.bind(this);
     this.state = {};
-    /*maxSents: getMaxSents(),
+    /*currComm: 0,
+    maxSents: getMaxSents(),
     totalComms: COMMS.length,
     totalSentsLabeled: 0,
     currComm: 0,
@@ -309,13 +330,13 @@ class SubmitButton extends React.Component {
     // this is where I should add the data to the communication and then load the next sentence
     // store the data, increment counter, load the next one
     //updateEventMapping(this.state.totalSentsLabeled);
-    console.log("Sentence labeled Pre: " + this.state.totalSentsLabeled);
+    // console.log("Sentence labeled Pre: " + this.state.totalSentsLabeled);
 
-    this.setState({
+    /*this.setState({
       totalSentsLabeled: this.state.totalSentsLabeled + 1,
       currSentInComm: this.state.currSentInComm + 1
-    });
-    console.log("Sentence labeled Post: " + this.state.totalSentsLabeled);
+    });*/
+    //console.log("Sentence labeled Post: " + this.state.totalSentsLabeled);
 
     /*if (this.state.currSentInComm == 1) {//+ 1 == this.state.totalSentsInCurrComm) {
       //move the communication to be annotated
@@ -327,12 +348,18 @@ class SubmitButton extends React.Component {
       console.log("move to next communication")
     }*/
 
-    addEventToComm(COMMS[this.state.currComm], this.state.totalSentsLabeled)
+    console.log("Sentence labeled Pre: " + this.state.totalSentsLabeled);
+
+    addEventToComm(COMMS[this.state.currComm], this.state.totalSentsLabeled);
     this.setState({
       currComm: this.state.currComm + 1,
-      sentsLabeled: this.sentsLabeled + 1
+      totalSentsLabeled: this.state.totalSentsLabeled + 1
     });
+    //TOTALSENTSLABELED += 1;
+    //CURRCOMM += 1;
+    console.log("Sentence labeled Post: " + this.state.totalSentsLabeled);
 
+    //updateDisplayedCommunications(COMMS[CURRCOMM], TOTALSENTSLABELED, false);
     updateDisplayedCommunications(COMMS[this.state.currComm], this.state.totalSentsLabeled, false);
 
     for (var i = 2; i < eventTags.length+1; i++) {
@@ -342,7 +369,8 @@ class SubmitButton extends React.Component {
   }
 
   submitSentence() {
-    addEventToComm(COMMS[this.state.currComm], this.state.sentsLabeled)
+    debugger;
+    addEventToComm(COMMS[this.state.currComm], this.state.totalSentsLabeled);
     //updateEventMapping(this.state.totalSentsLabeled);
     //submit the Communcation to the backend
     /*** submit the Communcation to the backend
@@ -358,16 +386,20 @@ class SubmitButton extends React.Component {
     try {
         if (COMMS && COMMS.length > 0) {
             for (var i = 0; i < COMMS.length; i++) {
-                COMMS.results.submitAnnotation(
+                CADET.results.submitAnnotation(
                     RESULTS_SERVER_SESSION_ID,
                     // The .annotationUnitIdentifier field is added by getNextCommunications()
                     COMMS[i].annotationUnitIdentifier,
                     COMMS[i]);
             }
         }
+        debugger;
     }
     catch (error) {
+      debugger;
+      console.log(error);
     }
+    debugger;
     //https://www.mturk.com/mturk/externalSubmit
     var AMAZON_HOST = "https://workersandbox.mturk.com/mturk/externalSubmit?"
     console.log("submitSentence hit");
@@ -404,7 +436,7 @@ class SubmitButton extends React.Component {
     });*/
 
   render() {
-    if (this.state.totalSentsLabeled == SENTENCEIDS.length) //+ 1 == this.state.maxSents)
+    if (this.state.totalSentsLabeled == this.state.maxSents - 1) //+ 1 == this.state.maxSents)
     { console.log("Max Sents: " + this.state.maxSents);
       return (
         <form id="target">
