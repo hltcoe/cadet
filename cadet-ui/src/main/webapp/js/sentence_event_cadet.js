@@ -350,7 +350,6 @@ class AddEvent extends React.Component {
 function check_probability_clicked() {
   for (var i = 1; i < eventTags.length; i++) {
     if (!eventTags[i].state.ordinalRating1 && !eventTags[i].state.ordinalRating2 && !eventTags[i].state.ordinalRating3) {
-      alert("You must click at least 1 option for how certain you are!");
       return false;
     }
   }
@@ -404,7 +403,9 @@ class SubmitButton extends React.Component {
       console.log("move to next communication")
     }*/
     if (!check_probability_clicked()) {
-      return;
+      document.getElementById("myDialog").showModal();
+      //alert("You must click at least 1 option for how certain you are before moving to the next sentence!");
+      return false;
     }
 
     console.log("Sentence labeled Pre: " + this.state.totalSentsLabeled);
@@ -429,50 +430,53 @@ class SubmitButton extends React.Component {
 
   submitSentence() {
     if (!check_probability_clicked()) {
-      return;
-    }
+      document.getElementById("myDialog").showModal();
+      //alert("You must click at least 1 option for how certain you are before submitting your annotations!");
+      return false;
+    } else {
 
-    addEventToComm(COMMS[this.state.currComm], this.state.totalSentsLabeled);
-    //updateEventMapping(this.state.totalSentsLabeled);
-    //submit the Communcation to the backend
-    /*** submit the Communcation to the backend
-       * Get the MTurk metadata from params for assignmentId, workerId, and hitId
-       * Get Event Data from Event_MAP
-     ***/
+      addEventToComm(COMMS[this.state.currComm], this.state.totalSentsLabeled);
+      //updateEventMapping(this.state.totalSentsLabeled);
+      //submit the Communcation to the backend
+      /*** submit the Communcation to the backend
+         * Get the MTurk metadata from params for assignmentId, workerId, and hitId
+         * Get Event Data from Event_MAP
+       ***/
 
-    /*var out = "";
-    for(var i in EVENT_MAP) {
-      out += i + " -> " + EVENT_MAP[i] + "\n";
-    }*/
-    alert("Submit the Communication to the backend\n" + out);
-    try {
-        if (COMMS && COMMS.length > 0) {
-            for (var i = 0; i < COMMS.length; i++) {
-                CADET.results.submitAnnotation(
-                    RESULTS_SERVER_SESSION_ID,
-                    // The .annotationUnitIdentifier field is added by getNextCommunications()
-                    COMMS[i].annotationUnitIdentifier,
-                    COMMS[i]);
-            }
-        }
+      /*var out = "";
+      for(var i in EVENT_MAP) {
+        out += i + " -> " + EVENT_MAP[i] + "\n";
+      }*/
+      alert("Submit the Communication to the backend\n" + out);
+      try {
+          if (COMMS && COMMS.length > 0) {
+              for (var i = 0; i < COMMS.length; i++) {
+                  CADET.results.submitAnnotation(
+                      RESULTS_SERVER_SESSION_ID,
+                      // The .annotationUnitIdentifier field is added by getNextCommunications()
+                      COMMS[i].annotationUnitIdentifier,
+                      COMMS[i]);
+              }
+          }
+          debugger;
+      }
+      catch (error) {
         debugger;
-    }
-    catch (error) {
+        console.log(error);
+      }
       debugger;
-      console.log(error);
+      //https://www.mturk.com/mturk/externalSubmit
+      var AMAZON_HOST = "https://workersandbox.mturk.com/mturk/externalSubmit?"
+      console.log("submitSentence hit");
+      //change foo=bar to be list of (Commm, sentence, [(EventType, Liklihood Rating)])
+      AMAZON_HOST += "assignmentId="+params["assignmentId"]+"&foo=bar";//+"&workerId="+params["workerId"]+"&hitId="+params["hitId"]
+      for (var i in params) {
+        //AMAZON_HOST += i + "=" + params[i] + "&";
+        console.log(i +"="+params[i]);
+      }
+      console.log(AMAZON_HOST);
+      $("#target").attr('action', AMAZON_HOST).attr('method', 'POST');
     }
-    debugger;
-    //https://www.mturk.com/mturk/externalSubmit
-    var AMAZON_HOST = "https://workersandbox.mturk.com/mturk/externalSubmit?"
-    console.log("submitSentence hit");
-    //change foo=bar to be list of (Commm, sentence, [(EventType, Liklihood Rating)])
-    AMAZON_HOST += "assignmentId="+params["assignmentId"]+"&foo=bar";//+"&workerId="+params["workerId"]+"&hitId="+params["hitId"]
-    for (var i in params) {
-      //AMAZON_HOST += i + "=" + params[i] + "&";
-      console.log(i +"="+params[i]);
-    }
-    console.log(AMAZON_HOST);
-    $("#target").attr('action', AMAZON_HOST).attr('method', 'POST');
   }
     /*var urls = window.location.href.split(window.location.origin)
     fetch(window.location.origin+"/next?"+urls[1], {
@@ -501,19 +505,28 @@ class SubmitButton extends React.Component {
     if (this.state.totalSentsLabeled == this.state.maxSents - 1) //+ 1 == this.state.maxSents)
     { console.log("Max Sents: " + this.state.maxSents);
       return (
-        <form id="target">
-          <div>
-              <button class="btn btn-primary" id="submit_button" onClick={this.submitSentence}>Submit</button>
-          </div>
-        </form>
+        <div>
+          <form id="target">
+            <div>
+                <button class="btn btn-primary" id="submit_button" onClick={this.submitSentence}>Submit</button>
+            </div>
+          </form>
+          <dialog id="myDialog">You must click at least 1 option for how certain you are before submitting your answers!<br></br><br></br>
+  Press the 'ESC' button to return</dialog>
+        </div>
 
         //<button className="btn btn-default" type="submit" onClick={this.submitSentence}>Submit</button>-->
       )
     }
     return (
       <div>
-          <button class="btn btn-primary" id="next_button" onClick={this.nextSentence}>Next</button>
+        <div>
+            <button class="btn btn-primary" id="next_button" onClick={this.nextSentence}>Next</button>
+        </div>
+        <dialog id="myDialog">You must click at least 1 option for how certain you are before moving to the next sentence!<br></br><br></br>
+Press the 'ESC' button to return.</dialog>
       </div>
+
       //<button className="btn btn-default" type="submit" onClick={this.submitSentence}>Submit</button>-->
     )
   }
@@ -627,6 +640,7 @@ $(document).ready(function(){
 
      });*/
     //$.getScript('../cadet.js', function() {
+
     location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi,function(s,k,v){params[k]=v})
     //the second part of the check is for debugging purposes
     if (params["assignmentId"] == "ASSIGNMENT_ID_NOT_AVAILABLE" || !("assignmentId" in params)) {
