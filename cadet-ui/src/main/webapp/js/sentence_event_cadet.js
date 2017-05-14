@@ -50,14 +50,28 @@ function getMaxSents() {
   return sents;
 }
 
-/*function calculate_intensity(first, second, third) {
-  if (first) {
-    if (second) {
-      if
-    }
+function calculate_intensity(first, second, third) {
+  if (first && seconds && third) {
+    console.log("Intensity: " + 0.0);
+    return 0.0
   }
-  parseInt(eventTags[i].state.ordinalRating) / 3;
-}*/
+  var numerator = 0.0;
+  var denom = 0.0;
+  if (first) {
+    numerator += 1;
+    denom += 3;
+  }
+  if (second) {
+    numerator += 2;
+    denom += 3;
+  }
+  if (third) {
+    numerator += 3;
+    denom += 3;
+  }
+  console.log("Intensity: " + numerator / denom);
+  return numerator / denom;
+}
 
 function addEventToComm(comm, sentNum) {
   var workerId = params["workerId"];
@@ -333,6 +347,16 @@ class AddEvent extends React.Component {
   }
 }
 
+function check_probability_clicked() {
+  for (var i = 1; i < eventTags.length; i++) {
+    if (!eventTags[i].state.ordinalRating1 && !eventTags[i].state.ordinalRating2 && !eventTags[i].state.ordinalRating3) {
+      alert("You must click at least 1 option for how certain you are!");
+      return false;
+    }
+  }
+  return true;
+}
+
 class SubmitButton extends React.Component {
   constructor() {
     super();
@@ -379,6 +403,9 @@ class SubmitButton extends React.Component {
       });
       console.log("move to next communication")
     }*/
+    if (!check_probability_clicked()) {
+      return;
+    }
 
     console.log("Sentence labeled Pre: " + this.state.totalSentsLabeled);
 
@@ -401,7 +428,10 @@ class SubmitButton extends React.Component {
   }
 
   submitSentence() {
-    debugger;
+    if (!check_probability_clicked()) {
+      return;
+    }
+
     addEventToComm(COMMS[this.state.currComm], this.state.totalSentsLabeled);
     //updateEventMapping(this.state.totalSentsLabeled);
     //submit the Communcation to the backend
