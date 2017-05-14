@@ -165,8 +165,8 @@ function updateDisplayedCommunications(comm, sentNum, first) {
       submitButton.setState({
         maxSents: SENTENCEIDS.length,//getMaxSents(),
         totalComms: COMMS.length,
-        totalSentsLabeled: 0,
-        currComm: 0,
+        totalSentsLabeled: 1,
+        currComm: 1,
         totalSentsInCurrComm: 1,//comm.sectionList[0].sentenceList.length,
         currSentInComm: 0,
       });
@@ -502,7 +502,7 @@ class SubmitButton extends React.Component {
     });*/
 
   render() {
-    if (this.state.totalSentsLabeled == this.state.maxSents - 1) //+ 1 == this.state.maxSents)
+    if (this.state.totalSentsLabeled == this.state.maxSents) //+ 1 == this.state.maxSents)
     { console.log("Max Sents: " + this.state.maxSents);
       return (
         <div>
