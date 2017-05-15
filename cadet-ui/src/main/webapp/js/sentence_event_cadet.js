@@ -86,13 +86,17 @@ function addEventToComm(commNum, sentNum) {
   situationMentionSet.metadata.kbest = 1;
   situationMentionSet.uuid = generateUUID();
   situationMentionSet.mentionList = []
+  var text = "";
+  for (var i = 0; i < tokenization.tokenList.tokenList.length; i++) {
+    text += " " + tokenization.tokenList.tokenList[i].text;
+  }
   for (var i = 1; i < eventTags.length; i++) {
     var situationMention = new SituationMention();
     situationMention.situationKind = eventTags[i].state.eventType;
     situationMention.intensity = calculate_intensity(eventTags[i].state.ordinalRating1, eventTags[i].state.ordinalRating2, eventTags[i].state.ordinalRating3);
     situationMention.uuid = generateUUID();
     situationMention.argumentList = [];
-    //situationMention.text = tokenization.tokenList.join();
+    situationMention.text = text.substring(1);
     situationMention.tokens = new TokenRefSequence();
     situationMention.tokens.tokenizationId = tokenization.uuid;
     situationMention.tokens.tokenIndexList = [];
