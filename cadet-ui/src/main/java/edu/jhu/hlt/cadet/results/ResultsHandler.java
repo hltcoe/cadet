@@ -41,16 +41,32 @@ public class ResultsHandler implements ResultsServerService.Iface, SortReceiverC
         resultsStore = store;
     }
 
+    public ResultsStore getResultsStore() {
+        return resultsStore;
+    }
+
     public void setSessionStore(SessionStore store) {
         sessionStore = store;
+    }
+
+    public SessionStore getSessionStore() {
+        return sessionStore;
     }
 
     public void setStoreProvider(StoreProvider provider) {
         storeProvider = provider;
     }
 
+    public StoreProvider getStoreProvider() {
+        return storeProvider;
+    }
+
     public void setActiveLearningClient(ActiveLearningClient provider) {
         client = provider;
+    }
+
+    public ActiveLearningClient getActiveLearningClient() {
+        return client;
     }
 
     public void addPlugin(ResultsPlugin plugin) {
