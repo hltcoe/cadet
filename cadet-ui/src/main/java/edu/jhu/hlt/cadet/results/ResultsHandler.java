@@ -160,6 +160,9 @@ public class ResultsHandler implements ResultsServerService.Iface, SortReceiverC
     public List<AnnotationUnitIdentifier> getNextChunk(UUID sessionId) throws ServicesException, TException {
         logger.info("Results server: getting next chunk of data for session " + sessionId.getUuidString());
         AnnotationSession session = sessionStore.get(sessionId);
+        if (session == null) {
+            throw new ServicesException("Unknown session for getNextChunk()");
+        }
         return session.getNext(chunkSize);
     }
 
@@ -168,6 +171,10 @@ public class ResultsHandler implements ResultsServerService.Iface, SortReceiverC
                     Communication communication) throws ServicesException, TException {
         logger.info("Results server: received annotation on session " + sessionId.getUuidString());
         AnnotationSession session = sessionStore.get(sessionId);
+        if (session == null) {
+            throw new ServicesException("Unknown session for submitAnnotation()");
+        }
+
         session.addAnnotation(unitId, communication);
 
         if (client != null) {
