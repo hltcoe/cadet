@@ -51,7 +51,7 @@ function getMaxSents() {
 }
 
 function calculate_intensity(first, second, third) {
-  if (first && seconds && third) {
+  if (first && second && third) {
     console.log("Intensity: " + 0.0);
     return 0.0
   }
