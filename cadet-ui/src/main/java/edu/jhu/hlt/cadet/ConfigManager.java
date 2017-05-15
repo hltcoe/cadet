@@ -63,6 +63,7 @@ public class ConfigManager {
     private Set<Provider> providers = new HashSet<>();
     private SearchProxyHandler searchProxyHandler;
     private FetchHandler fetchHandler;
+    private FetchProvider fetchProvider;
     private ResultsHandler resultsHandler;
     private FeedbackHandler feedbackHandler;
     private StoreHandler storeHandler;
@@ -149,8 +150,8 @@ public class ConfigManager {
     private void createDependencies() {
         fetchHandler = new FetchHandler();
         String fpName = config.getString(CadetConfig.FETCH_PROVIDER);
-        FetchProvider fp = (FetchProvider)constructProvider(fpName);
-        fetchHandler.init(fp);
+        fetchProvider = (FetchProvider)constructProvider(fpName);
+        fetchHandler.init(fetchProvider);
 
         String fbStoreName = config.getString(CadetConfig.FEEDBACK_STORE);
         FeedbackStore fbStore = (FeedbackStore)constructProvider(fbStoreName);
@@ -183,7 +184,9 @@ public class ConfigManager {
         if (config.hasPath(CadetConfig.RESULTS_PLUGINS)) {
             List<String> pluginNames = config.getStringList(CadetConfig.RESULTS_PLUGINS);
             for (String pluginName : pluginNames) {
-                resultsHandler.addPlugin((ResultsPlugin)constructProvider(pluginName));
+                ResultsPlugin plugin = (ResultsPlugin)constructProvider(pluginName);
+                plugin.setFetchProvider(fetchProvider);
+                resultsHandler.addPlugin(plugin);
             }
         }
 

@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import com.typesafe.config.Config;
 
+import edu.jhu.hlt.cadet.fetch.FetchProvider;
 import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.search.SearchQuery;
 import edu.jhu.hlt.concrete.search.SearchResult;
@@ -118,6 +119,9 @@ public class ResultsHandlerTest {
 
         @Override
         public void close() {}
+
+        @Override
+        public void setFetchProvider(FetchProvider provider) {}
 
         @Override
         public boolean process(SearchResult results) {
