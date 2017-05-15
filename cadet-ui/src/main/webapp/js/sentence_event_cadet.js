@@ -73,14 +73,17 @@ function calculate_intensity(first, second, third) {
   return numerator / denom;
 }
 
-function addEventToComm(comm, sentNum) {
+function addEventToComm(commNum, sentNum) {
+  console.log("addEventToComm: commNum: " + commNum);
   var workerId = params["workerId"];
   var assignmentId = params["assignmentId"];
-  var currSent = comm.getSentenceWithUUID(SENTENCEIDS[sentNum]);
+  var currSent = COMMS[commNum].getSentenceWithUUID(SENTENCEIDS[sentNum]);
   var tokenization = currSent.tokenization;
   var situationMentionSet = new SituationMentionSet();
   situationMentionSet.metadata = new AnnotationMetadata();
-  situationMentionSet.metadata = "BBN Data assignmentId:::"+assignmentId+" workerId:::"+workerId;
+  situationMentionSet.metadata.tool = "BBN Data assignmentId:::"+assignmentId+" workerId:::"+workerId;
+  situationMentionSet.metadata.timestamp = Math.floor(Date.now()/1000);
+  situationMentionSet.metadata.kbest = 1;
   situationMentionSet.uuid = generateUUID();
   situationMentionSet.mentionList = []
   for (var i = 1; i < eventTags.length; i++) {
@@ -88,12 +91,15 @@ function addEventToComm(comm, sentNum) {
     situationMention.situationKind = eventTags[i].state.eventType;
     situationMention.intensity = calculate_intensity(eventTags[i].state.ordinalRating1, eventTags[i].state.ordinalRating2, eventTags[i].state.ordinalRating3);
     situationMention.uuid = generateUUID();
+    situationMention.argumentList = [];
+    //situationMention.text = tokenization.tokenList.join();
     situationMention.tokens = new TokenRefSequence();
-    situationMention.tokens.uuid = tokenization.uuid;
-    situationMentionSet.mentionList[situationMentionSet.mentionList.length] = situationMention;
+    situationMention.tokens.tokenizationId = tokenization.uuid;
+    situationMention.tokens.tokenIndexList = [];
+    situationMentionSet.mentionList.push(situationMention);
   }
   //comm.situationMentionSetList = situationMentionSetList;
-  comm.situationMentionSetList[comm.situationMentionSetList.length] = situationMentionSet;
+  COMMS[commNum].situationMentionSetList.push(situationMentionSet); //[comm.situationMentionSetList.length] =
 
 
   //**Use getTokenizationWithUUID to determine which situationMention to use**/
@@ -382,6 +388,7 @@ class SubmitButton extends React.Component {
   }*/
 
   nextSentence() {
+    console.log("Results Server: " + CADET.results.alive());
     // this is where I should add the data to the communication and then load the next sentence
     // store the data, increment counter, load the next one
     //updateEventMapping(this.state.totalSentsLabeled);
@@ -410,7 +417,7 @@ class SubmitButton extends React.Component {
 
     console.log("Sentence labeled Pre: " + this.state.totalSentsLabeled);
 
-    addEventToComm(COMMS[this.state.currComm], this.state.totalSentsLabeled);
+    addEventToComm(this.state.currComm - 1, this.state.totalSentsLabeled - 1);
     this.setState({
       currComm: this.state.currComm + 1,
       totalSentsLabeled: this.state.totalSentsLabeled + 1
@@ -429,13 +436,17 @@ class SubmitButton extends React.Component {
   }
 
   submitSentence() {
+    console.log("Results Server: " + CADET.results.alive());
+    if (!CADET.results.alive()) {
+      document.getElementById("myDialog").showModal();
+    }
     if (!check_probability_clicked()) {
       document.getElementById("myDialog").showModal();
       //alert("You must click at least 1 option for how certain you are before submitting your annotations!");
       return false;
     } else {
 
-      addEventToComm(COMMS[this.state.currComm], this.state.totalSentsLabeled);
+      addEventToComm(this.state.currComm - 1, this.state.totalSentsLabeled - 1);
       //updateEventMapping(this.state.totalSentsLabeled);
       //submit the Communcation to the backend
       /*** submit the Communcation to the backend
@@ -447,15 +458,21 @@ class SubmitButton extends React.Component {
       for(var i in EVENT_MAP) {
         out += i + " -> " + EVENT_MAP[i] + "\n";
       }*/
-      alert("Submit the Communication to the backend\n" + out);
+      //alert("Submit the Communication to the backend\n")//; + out);
       try {
           if (COMMS && COMMS.length > 0) {
               for (var i = 0; i < COMMS.length; i++) {
+                try {
                   CADET.results.submitAnnotation(
                       RESULTS_SERVER_SESSION_ID,
                       // The .annotationUnitIdentifier field is added by getNextCommunications()
                       COMMS[i].annotationUnitIdentifier,
                       COMMS[i]);
+                }
+                catch (error) {
+                  console.log(i + "-th Comm tried to send");
+                  console.log(error);
+                }
               }
           }
           debugger;
