@@ -148,6 +148,32 @@ public class ResultsHandler implements ResultsServerService.Iface, SortReceiverC
     }
 
     @Override
+    public UUID startSession(UUID searchResultsId, AnnotationTaskType taskType) throws ServicesException, TException {
+      SearchResult searchResults = getSearchResult(searchResultsId);
+      if (searchResults == null) {
+          throw new ServicesException("Unknown search result in startSession()");
+      }
+      AnnotationSession session = new AnnotationSession(searchResults);
+      sessionStore.add(session);
+
+      logger.info("Results server: starting annotation session on "
+                      + searchResultsId.getUuidString() + " with session id " + session.getId().getUuidString());
+
+      if (client != null) {
+          // TODO hardcoded to NER and Chinese
+          taskType = AnnotationTaskType.NER;
+          AnnotationUnitType annType = convert(searchResults.getSearchQuery().getType());
+          List<AnnotationUnitIdentifier> list = createList(
+                          searchResults.getSearchResultItems(), annType == AnnotationUnitType.SENTENCE);
+          AnnotationTask task = new AnnotationTask(taskType, annType, list);
+          task.setLanguage("zho");
+          client.start(session.getId(), task);
+      }
+
+      return session.getId();
+    }
+
+    @Override
     public void stopSession(UUID sessionId) throws ServicesException, TException {
         logger.info("Results server: stopping session " + sessionId.getUuidString());
         sessionStore.remove(sessionId);
@@ -220,26 +246,4 @@ public class ResultsHandler implements ResultsServerService.Iface, SortReceiverC
         return storeAlive;
     }
 
-    @Override
-    public UUID startSession(UUID searchResultsId, AnnotationTaskType arg1) throws ServicesException, TException {
-      SearchResult searchResults = getSearchResult(searchResultsId);
-      AnnotationSession session = new AnnotationSession(searchResults);
-      sessionStore.add(session);
-
-      logger.info("Results server: starting annotation session on "
-                      + searchResultsId.getUuidString() + " with session id " + session.getId().getUuidString());
-
-      if (client != null) {
-          // TODO hardcoded to NER and Chinese
-          AnnotationTaskType taskType = AnnotationTaskType.NER;
-          AnnotationUnitType annType = convert(searchResults.getSearchQuery().getType());
-          List<AnnotationUnitIdentifier> list = createList(
-                          searchResults.getSearchResultItems(), annType == AnnotationUnitType.SENTENCE);
-          AnnotationTask task = new AnnotationTask(taskType, annType, list);
-          task.setLanguage("zho");
-          client.start(session.getId(), task);
-      }
-
-      return session.getId();
-    }
 }
