@@ -317,7 +317,7 @@ class AddEvent extends React.Component {
   }
 
   addEvent() {
-    if (this.state.numChildren < 12) {
+    if (NUMBER_EVENT_TAGS < 12) {
       var event_tags = document.querySelectorAll('.content-events');//'#content-events-'+this.state.numChildren);
       var last_event = event_tags[0];
       NUMBER_EVENT_TAGS = NUMBER_EVENT_TAGS + 1;
@@ -332,7 +332,7 @@ class AddEvent extends React.Component {
         //React.createElement(new EventTag, null),
         document.getElementById('content-events-'+NUMBER_EVENT_TAGS)// + 1)
       );
-      eventTags[NUMBER_EVENT_TAGS] = currEventTag;
+      eventTags.push(currEventTag);//[NUMBER_EVENT_TAGS] = currEventTag;
       /*this.setState({
         numChildren: this.state.numChildren + 1
       });*/
@@ -429,10 +429,13 @@ class SubmitButton extends React.Component {
     //updateDisplayedCommunications(COMMS[CURRCOMM], TOTALSENTSLABELED, false);
     updateDisplayedCommunications(COMMS[this.state.currComm], this.state.totalSentsLabeled, false);
 
-    for (var i = 2; i < eventTags.length+1; i++) {
+    for (var i = 2; i < NUMBER_EVENT_TAGS+1; i++) {
       ReactDOM.unmountComponentAtNode(document.getElementById("content-events-"+i))//eventTags[i].unmount
+      document.getElementById("content-events-"+i).remove();
+      eventTags.pop();
     }
-    eventTags = [eventTags[1]];
+    NUMBER_EVENT_TAGS = 1;
+    //eventTags = [eventTags[1]];
   }
 
   submitSentence() {
