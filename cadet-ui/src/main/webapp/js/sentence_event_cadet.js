@@ -242,7 +242,7 @@ class EventTag extends React.Component {
         eventType: "No Event",
         ordinalRating1: false,
         ordinalRating2: false,
-        ordinalRating3: true,
+        ordinalRating3: false,
         eventNum: NUMBER_EVENT_TAGS
     };
   }
@@ -298,7 +298,7 @@ class EventTag extends React.Component {
           </div>
           <div className="ordinal-group inner">
             <fieldset id={"group"+this.state.eventNum}>
-              <label><input type="checkbox" value='1' name={"checkbox-"+this.state.eventNum+"-1"} checked={this.state.ordinalRating1}
+              <label><input type="checkbox" value='1' name={"checkbox-"+this.state.eventNum+"-1"} checked={this.state.ordinalRating1}//{true==false}//
                         onChange={this.handleOrdinalChange1} />Possbile</label>
               <label><input type="checkbox" value='2' name={"checkbox-"+this.state.eventNum+"-2"} checked={this.state.ordinalRating2}
                         onChange={this.handleOrdinalChange2}/>Likely</label>
@@ -438,6 +438,10 @@ class SubmitButton extends React.Component {
       document.getElementById("content-events-"+i).remove();
       eventTags.pop();
     }
+    eventTags[1].setState({
+      ordinalRating1: false,
+      ordinalRating2: false,
+      ordinalRating3: false })
     NUMBER_EVENT_TAGS = 1;
     //eventTags = [eventTags[1]];
   }
