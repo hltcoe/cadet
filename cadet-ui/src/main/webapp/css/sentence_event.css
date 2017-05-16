@@ -116,14 +116,21 @@ label {
 
 .content-events
 {
-  padding-left: 10em;
+  padding-left: 13em;
   width: 750px;
+  _margin: auto;
+}
+
+#content-sentence
+{
+  margin: auto;
+  width: 70%;
 }
 
 #submit-events
 {
   padding-top: 2em;
-  padding-left: 25em;
+  padding-left: 27em;
   display: inline-block;
 }
 
