@@ -30,7 +30,6 @@
 
   <modules>
     <module>cadet-broker</module>
-    <module>scion-fetch</module>
     <module>cadet-tools</module>
     <module>cadet-ui</module>
   </modules>
