@@ -1,5 +1,5 @@
 ## Master Build Status
-[![build status](https://gitlab.hltcoe.jhu.edu/CADET/cadet/badges/master/build.svg)](https://gitlab.hltcoe.jhu.edu/CADET/cadet/commits/master)
+[![build status](https://gitlab.hltcoe.jhu.edu/research/cadet/badges/master/build.svg)](https://gitlab.hltcoe.jhu.edu/research/cadet/commits/master)
 
 CADET
 ============================
