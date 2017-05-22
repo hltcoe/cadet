@@ -1,6 +1,9 @@
 package edu.jhu.hlt.cadet.results;
 
+import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.search.SearchResult;
@@ -19,20 +22,20 @@ public interface ResultsStore {
     void add(SearchResult results, AnnotationTaskType taskType) throws ServicesException;
 
     /**
-     * Get a specific search result using its ID
+     * Get a specific search result and its information using its ID
      *
      * @param id  identifier of the search result
-     * @return search object or null
+     * @return results item object or null
      */
-    SearchResult getByID(UUID id);
+    Item getByID(UUID id);
 
     /**
-     * Get the latest search result for a user
+     * Get the latest search result and its information for a user
      *
      * @param userId  user identifier
-     * @return search result or null
+     * @return results item object or null
      */
-    SearchResult getLatest(String userId);
+    Item getLatest(String userId);
 
     /**
      * Get a list of search results filtered by annotation task ordered by latest to oldest
@@ -52,4 +55,29 @@ public interface ResultsStore {
      * @return list of search results (empty if no matching search results)
      */
     List<SearchResult> getByUser(AnnotationTaskType taskType, String userId, int limit);
+
+    public static class Item implements Comparable<Item> {
+        public SearchResult results;
+        public Set<AnnotationTaskType> tasks;
+        public Instant timestamp;
+        public String userId;
+
+        public Item(SearchResult results, AnnotationTaskType taskType) {
+            this.results = results;
+            this.tasks = new HashSet<AnnotationTaskType>();
+            this.tasks.add(taskType);
+            this.timestamp = Instant.now();
+            this.userId = results.getSearchQuery().getUserId();
+        }
+
+        public void addTask(AnnotationTaskType taskType) {
+            tasks.add(taskType);
+        }
+
+        @Override
+        public int compareTo(Item otherItem) {
+            // newest first
+            return otherItem.timestamp.compareTo(timestamp);
+        }
+    }
 }

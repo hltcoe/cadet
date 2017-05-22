@@ -1,12 +1,9 @@
 package edu.jhu.hlt.cadet.results;
 
-import java.time.Instant;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import edu.jhu.hlt.concrete.UUID;
@@ -32,11 +29,11 @@ public class MemoryResultsStore implements ResultsStore {
     }
 
     @Override
-    public SearchResult getByID(UUID id) {
+    public Item getByID(UUID id) {
         synchronized(dataLock) {
             Item item = data.get(id);
             if (item != null) {
-                return item.results;
+                return item;
             } else {
                 return null;
             }
@@ -44,7 +41,7 @@ public class MemoryResultsStore implements ResultsStore {
     }
 
     @Override
-    public SearchResult getLatest(String userId) {
+    public Item getLatest(String userId) {
         Entry<UUID, Item> item = null;
         synchronized(dataLock) {
             item = data.entrySet().stream()
@@ -53,7 +50,7 @@ public class MemoryResultsStore implements ResultsStore {
                         .findFirst().orElse(null);
         }
         if (item != null) {
-            return item.getValue().results;
+            return item.getValue();
         }
 
         return null;
@@ -94,28 +91,4 @@ public class MemoryResultsStore implements ResultsStore {
         return results;
     }
 
-    private class Item implements Comparable<Item> {
-        public SearchResult results;
-        public Set<AnnotationTaskType> tasks;
-        public Instant timestamp;
-        public String userId;
-
-        public Item(SearchResult results, AnnotationTaskType taskType) {
-            this.results = results;
-            this.tasks = new HashSet<AnnotationTaskType>();
-            this.tasks.add(taskType);
-            this.timestamp = Instant.now();
-            this.userId = results.getSearchQuery().getUserId();
-        }
-
-        public void addTask(AnnotationTaskType taskType) {
-            tasks.add(taskType);
-        }
-
-        @Override
-        public int compareTo(Item otherItem) {
-            // newest first
-            return otherItem.timestamp.compareTo(timestamp);
-        }
-    }
 }

@@ -76,7 +76,7 @@ public class ResultsHandlerTest {
 
         handler.registerSearchResult(r, AnnotationTaskType.NER);
 
-        assertEquals("what time is it ?", store.getByID(new UUID("test")).getSearchQuery().getName());
+        assertEquals("what time is it ?", store.getByID(new UUID("test")).results.getSearchQuery().getName());
     }
 
     @Test
@@ -93,7 +93,7 @@ public class ResultsHandlerTest {
 
         handler.registerSearchResult(r, AnnotationTaskType.NER);
 
-        assertEquals("time", store.getByID(new UUID("test")).getSearchQuery().getName());
+        assertEquals("time", store.getByID(new UUID("test")).results.getSearchQuery().getName());
     }
 
     @Test

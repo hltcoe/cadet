@@ -9,6 +9,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import edu.jhu.hlt.cadet.results.ResultsStore.Item;
 import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.search.SearchQuery;
 import edu.jhu.hlt.concrete.search.SearchResult;
@@ -52,7 +53,8 @@ public class MemoryResultsStoreTest {
 
     @Test
     public void testGetById() {
-        SearchResult r = store.getByID(new UUID("test1"));
+        Item item = store.getByID(new UUID("test1"));
+        SearchResult r = item.results;
         assertEquals("where is dc?", r.getSearchQuery().getRawQuery());
 
         assertNull(store.getByID(new UUID("nothing")));
@@ -60,10 +62,12 @@ public class MemoryResultsStoreTest {
 
     @Test
     public void testGetLatest() {
-        SearchResult r1 = store.getLatest("ed");
+        Item item = store.getLatest("ed");
+        SearchResult r1 = item.results;
         assertEquals(new UUID("test4"), r1.getUuid());
 
-        SearchResult r2 = store.getLatest("bob");
+        item = store.getLatest("bob");
+        SearchResult r2 = item.results;
         assertEquals(new UUID("test2"), r2.getUuid());
 
         assertNull(store.getLatest("kevin"));
