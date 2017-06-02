@@ -274,3 +274,46 @@ Each file in the tar.gz archive contains a serialized SearchResults object.
 The files are named based on the SearchResults.uuid
 (e.g. `2e4bf446-0977-e78f-86d0-000004a2c4b2.concrete`).
 
+
+Adding SSL
+------------------
+SSL is not only an important thing for security but is required to deploy a [Mechanical Turk ExternalQuestion](http://docs.aws.amazon.com/AWSMechTurk/latest/AWSMturkAPI/ApiReference_ExternalQuestionArticle.html). The steps below will deploy a fake SSL certificate that is good enough to fake out MTurk. If you want to provide real SSL use a certificate that has been signed by a CA. Here we use a self signed certificate. These instructions come from this [site](https://dzone.com/articles/setting-ssl-tomcat-5-minutes) but are specific to `cadet-ui`. After following all the of these instructions, you should be able to access CADET on port `8443` and with an insecure SSL.
+
+#### Open Ports on the Host (AWS Instance)
+In order to use SSL on the traditional ports, ports `8443` or `433`, you must make sure that the host server has those ports open. To open a port on a AWS instance, make sure that the instance has a security group where those ports are open.
+
+#### Changes in cadet-ui
+
+1. In `docker-conf/server.xml`, make sure that the following lines are uncommented:
+```
+  <Connector port="8443" protocol="org.apache.coyote.http11.Http11Protocol"
+               maxThreads="150" SSLEnabled="true" redirectPort="8443" scheme="https" secure="true"
+               keystoreFile="/certs/.keystore" keystorePass="changeit"
+              clientAuth="false" sslProtocol="TLS" />
+              ```
+2. In ```src/main/webapp/WEB-INF/web.xml```, add the following to the end of the file:
+\<security-constraint\>
+
+<web-resource-collection>
+
+<web-resource-name>YourAppsName</web-resource-name>
+
+<url-pattern>/\*sentence_events\*</url-pattern>
+
+</web-resource-collection>
+
+<user-data-constraint>
+
+<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+
+</user-data-constraint>
+
+</security-constraint>
+
+Above the `url-pattern` means that any url that includes "sentence_events" will use SSL
+
+
+#### Changes on Host (AWS Instance) and docker container
+1. **Storing the keyStoreFile on Host Instance:**
+In `server.xml`, we specified that the keystoreFile is stored at `/certs/.keystore`. Therefore, the host instance must have the `.keystore` file stored at `/certs`. Therefore, generate the a keystore file ([this site has instructions](site](https://dzone.com/articles/setting-ssl-tomcat-5-minutes)) and use the password `changeit` to encrypt it. If you use a different password, then change the password in `server.xml`
+1. **Storing the keyStoreFile in the Docker Container:** Since the war file is deployed on tomcat on the front_end container, the front_end container also needs to have the `.keystore` file stored at `/certs`. To accomplish this automatically, you should `scp` the `.keystore` file to whereever your cadet-ui is developed and dockerized from (typically locally or on the COE). To move this to the docker container, the cadet-ui `Dockerfile` contains the new command: ```COPY docker-conf/certs/ /certs/```
