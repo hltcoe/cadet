@@ -299,7 +299,7 @@ class EventTag extends React.Component {
           <div className="ordinal-group inner">
             <fieldset id={"group"+this.state.eventNum}>
               <label><input type="checkbox" value='1' name={"checkbox-"+this.state.eventNum+"-1"} checked={this.state.ordinalRating1}//{true==false}//
-                        onChange={this.handleOrdinalChange1} />Possbile</label>
+                        onChange={this.handleOrdinalChange1} />Possible</label>
               <label><input type="checkbox" value='2' name={"checkbox-"+this.state.eventNum+"-2"} checked={this.state.ordinalRating2}
                         onChange={this.handleOrdinalChange2}/>Likely</label>
               <label><input type="checkbox" value="3" name={"checkbox-"+this.state.eventNum+"-3"} checked={this.state.ordinalRating3}
@@ -486,18 +486,18 @@ class SubmitButton extends React.Component {
                 }
               }
           }
-          debugger;
       }
       catch (error) {
-        debugger;
         console.log(error);
       }
-      debugger;
       //https://www.mturk.com/mturk/externalSubmit
       var AMAZON_HOST = "https://workersandbox.mturk.com/mturk/externalSubmit?"
       console.log("submitSentence hit");
       //change foo=bar to be list of (Commm, sentence, [(EventType, Liklihood Rating)])
-      AMAZON_HOST += "assignmentId="+params["assignmentId"]+"&foo=bar";//+"&workerId="+params["workerId"]+"&hitId="+params["hitId"]
+      AMAZON_HOST += "assignmentId="+params["assignmentId"];
+      for (var i = 0; i < COMMS.length; i++) { //+"&foo=bar";//+"&workerId="+params["workerId"]+"&hitId="+params["hitId"]
+        AMAZON_HOST += "&sentence"+i+"="+COMMS[i].id + ":::" + SENTENCEIDS[i].uuidString;
+      }
       for (var i in params) {
         //AMAZON_HOST += i + "=" + params[i] + "&";
         console.log(i +"="+params[i]);
