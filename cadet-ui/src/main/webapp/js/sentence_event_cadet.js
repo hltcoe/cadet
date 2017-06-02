@@ -674,51 +674,75 @@ $(document).ready(function(){
     if (params["assignmentId"] == "ASSIGNMENT_ID_NOT_AVAILABLE" || !("assignmentId" in params)) {
        //disable the next sentence button
        //console.log("TODO: disable the next sentence button");
+
+    //$('#content-sentence').load('dummy_comm.json') , function(commJSONData) {
+
+     $.getJSON('dummy_comm.json', function(commJSONData) {
+
+     var comm = new Communication();
+     comm.initFromTJSONProtocolObject(commJSONData);
+
+     var tokenizationList = comm.getTokenizationsAsList();
+     while (tokenizationList.length < 500) {
+       var tok = Token;
+       tok.text = "\t ";
+       tokenizationList.push(tok);
+     }
+     var tokenization = tokenizationList[6];//[1];
+     //document.getElementById("tokenization").innerHTML = ''
+     var tokenizationWidget = $('#tokenization').tokenizationWidget(
+       tokenization, {whitespaceTokenization: true});
+      });
+
+      eventTags[1].setState({
+      eventType: "Terrorism or other Extreme Violence",
+      ordinalRating2: true
+      });
      } else {
        submitButton = ReactDOM.render(
          <SubmitButton />,
          document.getElementById('submit-events')
        );
-     }
-     CADET.init();
-     var resultsServerIdString = getUrlParameter("annotationSessionId");
-     if (resultsServerIdString) {
-       RESULTS_SERVER_SESSION_ID = new UUID();
-       RESULTS_SERVER_SESSION_ID.uuidString = resultsServerIdString;
+       CADET.init();
+       var resultsServerIdString = getUrlParameter("annotationSessionId");
+       if (resultsServerIdString) {
+         RESULTS_SERVER_SESSION_ID = new UUID();
+         RESULTS_SERVER_SESSION_ID.uuidString = resultsServerIdString;
 
-       console.log("RESULTS_SERVER_SESSION_ID: " +RESULTS_SERVER_SESSION_ID);
-       try {
-         var annotationUnitIdentifiers = CADET.results.getNextChunk(RESULTS_SERVER_SESSION_ID);
-         for (var i = 0; i < annotationUnitIdentifiers.length; i++) {
-            console.log("COMM id: " + annotationUnitIdentifiers[i].communicationId + "; sentence: " + annotationUnitIdentifiers[i].sentenceId.uuidString);
-         }
-         COMMS = getNextCommunications(annotationUnitIdentifiers);
-       }
-       catch (error) {
-        console.log(error);
-       }
-
-     }
-
-     /*var searchResultIdString = getUrlParameter('searchResultId');
-     if (searchResultIdString) {
-         var searchResultId = new UUID();
-         searchResultId.uuidString = searchResultIdString;
-
+         console.log("RESULTS_SERVER_SESSION_ID: " +RESULTS_SERVER_SESSION_ID);
          try {
-             //RESULTS_SERVER_SESSION_ID = CADET.results.startSession(searchResultId);
-             var annotationUnitIdentifiers = CADET.results.getNextChunk(RESULTS_SERVER_SESSION_ID);
-             COMMS = getNextCommunications(annotationUnitIdentifiers);
+           var annotationUnitIdentifiers = CADET.results.getNextChunk(RESULTS_SERVER_SESSION_ID);
+           for (var i = 0; i < annotationUnitIdentifiers.length; i++) {
+              console.log("COMM id: " + annotationUnitIdentifiers[i].communicationId + "; sentence: " + annotationUnitIdentifiers[i].sentenceId.uuidString);
+           }
+           COMMS = getNextCommunications(annotationUnitIdentifiers);
          }
          catch (error) {
-             // TODO: Error handling
-             throw error;
+          console.log(error);
          }
-     }
-     else {
-         // TODO: User-friendly error message about missing searchResultId
-     }*/
 
-     updateDisplayedCommunications(COMMS[0], 0, true);
-    //});
+       }
+
+       /*var searchResultIdString = getUrlParameter('searchResultId');
+       if (searchResultIdString) {
+           var searchResultId = new UUID();
+           searchResultId.uuidString = searchResultIdString;
+
+           try {
+               //RESULTS_SERVER_SESSION_ID = CADET.results.startSession(searchResultId);
+               var annotationUnitIdentifiers = CADET.results.getNextChunk(RESULTS_SERVER_SESSION_ID);
+               COMMS = getNextCommunications(annotationUnitIdentifiers);
+           }
+           catch (error) {
+               // TODO: Error handling
+               throw error;
+           }
+       }
+       else {
+           // TODO: User-friendly error message about missing searchResultId
+       }*/
+
+       updateDisplayedCommunications(COMMS[0], 0, true);
+      //});
+     }
 });
