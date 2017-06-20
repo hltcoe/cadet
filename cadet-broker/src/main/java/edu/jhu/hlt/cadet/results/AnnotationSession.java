@@ -20,27 +20,41 @@ import edu.jhu.hlt.concrete.uuid.UUIDFactory;
 public class AnnotationSession {
     private final UUID id;
     private final SearchResult searchResults;
-    private List<AnnotationUnitIdentifier> orderedResults;
-    private Set<AnnotationUnitIdentifier> processedResults;
+    private List<AnnotationUnitIdentifier> orderedItems;
+    private Set<AnnotationUnitIdentifier> availableItems;
+    private Set<AnnotationUnitIdentifier> outForAnnotationItems;
+    private Set<AnnotationUnitIdentifier> completedItems;
     private Set<Annotation> annotations;
     private Object resultsLock = new Object();
     private Object annotationLock = new Object();
+    private long timeToLive;
 
-    public AnnotationSession(SearchResult results) {
+    /**
+     * Create an annotations session
+     *
+     * @param results  a search result with documents/sentences to be annotated
+     * @param timeToLive  how long before incomplete items should be returned to the queue
+     */
+    public AnnotationSession(SearchResult results, long timeToLive) {
         id = UUIDFactory.newUUID();
         searchResults = results;
-        processedResults = new HashSet<AnnotationUnitIdentifier>();
+        this.timeToLive = timeToLive;
+
+        availableItems = new HashSet<AnnotationUnitIdentifier>();
+        outForAnnotationItems = new HashSet<AnnotationUnitIdentifier>();
+        completedItems = new HashSet<AnnotationUnitIdentifier>();
         annotations = new HashSet<Annotation>();
 
         if (searchResults.getSearchResultItemsIterator().next().isSetSentenceId()) {
-            orderedResults = searchResults.getSearchResultItems().stream()
+            orderedItems = searchResults.getSearchResultItems().stream()
                                 .map(entry -> createAUI(entry.getCommunicationId(), entry.getSentenceId()))
                                 .collect(Collectors.toList());
         } else {
-            orderedResults = searchResults.getSearchResultItems().stream()
+            orderedItems = searchResults.getSearchResultItems().stream()
                                 .map(entry -> new AnnotationUnitIdentifier(entry.getCommunicationId()))
                                 .collect(Collectors.toList());
         }
+        orderedItems.stream().forEach(item -> availableItems.add(item));
     }
 
     /**
@@ -58,9 +72,9 @@ public class AnnotationSession {
      * @return true if the update succeeded
      */
     public boolean updateSort(List<AnnotationUnitIdentifier> list) {
-        if (list.size() == orderedResults.size()) {
+        if (list.size() == orderedItems.size()) {
             synchronized(resultsLock) {
-                orderedResults = list;
+                orderedItems = list;
             }
             return true;
         } else {
@@ -77,12 +91,16 @@ public class AnnotationSession {
     public List<AnnotationUnitIdentifier> getNext(int chunkSize) {
         List<AnnotationUnitIdentifier> chunk = null;
         synchronized(resultsLock) {
-            chunk =  orderedResults.stream()
-                        .filter(entry -> !processedResults.contains(entry))
+            chunk =  orderedItems.stream()
+                        .filter(entry -> availableItems.contains(entry))
                         .limit(chunkSize)
                         .collect(Collectors.toList());
         }
-        chunk.stream().forEach(entry -> processedResults.add(entry));
+
+        chunk.stream().forEach(entry -> {
+            outForAnnotationItems.add(entry);
+            availableItems.remove(entry);
+        });
         return chunk;
     }
 
@@ -94,6 +112,8 @@ public class AnnotationSession {
      */
     public void addAnnotation(AnnotationUnitIdentifier unitId, Communication communication) {
         synchronized(annotationLock) {
+            completedItems.add(unitId);
+            outForAnnotationItems.remove(unitId);
             annotations.add(new Annotation(unitId, communication));
         }
     }

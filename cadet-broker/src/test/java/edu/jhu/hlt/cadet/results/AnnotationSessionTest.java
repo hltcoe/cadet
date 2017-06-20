@@ -29,7 +29,7 @@ public class AnnotationSessionTest {
         results.addToSearchResultItems(createItem("5"));
         results.addToSearchResultItems(createItem("6"));
         results.addToSearchResultItems(createItem("7"));
-        session = new AnnotationSession(results);
+        session = new AnnotationSession(results, 1000);
     }
 
     private SearchResultItem createItem(String id) {
