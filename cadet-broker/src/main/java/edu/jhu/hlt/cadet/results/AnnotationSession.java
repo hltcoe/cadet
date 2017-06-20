@@ -1,8 +1,11 @@
 package edu.jhu.hlt.cadet.results;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.stream.Collectors;
 
 import edu.jhu.hlt.concrete.Communication;
@@ -22,28 +25,30 @@ public class AnnotationSession {
     private final SearchResult searchResults;
     private List<AnnotationUnitIdentifier> orderedItems;
     private Set<AnnotationUnitIdentifier> availableItems;
-    private Set<AnnotationUnitIdentifier> outForAnnotationItems;
+    private ExpiringSet outForAnnotationItems;
     private Set<AnnotationUnitIdentifier> completedItems;
     private Set<Annotation> annotations;
-    private Object resultsLock = new Object();
+    private Object orderedItemsLock = new Object();
     private Object annotationLock = new Object();
+    private Object bookkeepingLock = new Object();
     private long timeToLive;
+    private GarbageCollector gc = new GarbageCollector();
 
     /**
      * Create an annotations session
      *
      * @param results  a search result with documents/sentences to be annotated
-     * @param timeToLive  how long before incomplete items should be returned to the queue
+     * @param deadline  time until incomplete items are returned to the queue in milliseconds
      */
-    public AnnotationSession(SearchResult results, long timeToLive) {
+    public AnnotationSession(SearchResult results, long deadline) {
         id = UUIDFactory.newUUID();
         searchResults = results;
-        this.timeToLive = timeToLive;
+        deadline = timeToLive;
+        annotations = new HashSet<Annotation>();
 
         availableItems = new HashSet<AnnotationUnitIdentifier>();
-        outForAnnotationItems = new HashSet<AnnotationUnitIdentifier>();
+        outForAnnotationItems = new ExpiringSet(timeToLive);
         completedItems = new HashSet<AnnotationUnitIdentifier>();
-        annotations = new HashSet<Annotation>();
 
         if (searchResults.getSearchResultItemsIterator().next().isSetSentenceId()) {
             orderedItems = searchResults.getSearchResultItems().stream()
@@ -55,6 +60,11 @@ public class AnnotationSession {
                                 .collect(Collectors.toList());
         }
         orderedItems.stream().forEach(item -> availableItems.add(item));
+        gc.start();
+    }
+
+    public void close() {
+        gc.stop();
     }
 
     /**
@@ -73,7 +83,7 @@ public class AnnotationSession {
      */
     public boolean updateSort(List<AnnotationUnitIdentifier> list) {
         if (list.size() == orderedItems.size()) {
-            synchronized(resultsLock) {
+            synchronized(orderedItemsLock) {
                 orderedItems = list;
             }
             return true;
@@ -90,17 +100,19 @@ public class AnnotationSession {
      */
     public List<AnnotationUnitIdentifier> getNext(int chunkSize) {
         List<AnnotationUnitIdentifier> chunk = null;
-        synchronized(resultsLock) {
-            chunk =  orderedItems.stream()
-                        .filter(entry -> availableItems.contains(entry))
-                        .limit(chunkSize)
-                        .collect(Collectors.toList());
-        }
+        synchronized(bookkeepingLock) {
+            synchronized(orderedItemsLock) {
+                chunk =  orderedItems.stream()
+                            .filter(entry -> availableItems.contains(entry))
+                            .limit(chunkSize)
+                            .collect(Collectors.toList());
+            }
 
-        chunk.stream().forEach(entry -> {
-            outForAnnotationItems.add(entry);
-            availableItems.remove(entry);
-        });
+            chunk.stream().forEach(entry -> {
+                outForAnnotationItems.add(entry);
+                availableItems.remove(entry);
+            });
+        }
         return chunk;
     }
 
@@ -111,9 +123,14 @@ public class AnnotationSession {
      * @param communication  communication object that holds the annotation
      */
     public void addAnnotation(AnnotationUnitIdentifier unitId, Communication communication) {
-        synchronized(annotationLock) {
+        synchronized(bookkeepingLock) {
             completedItems.add(unitId);
-            outForAnnotationItems.remove(unitId);
+            outForAnnotationItems.remove(unitId);            
+            // just in case the annotation came in after the item was made 
+            // available again due to a timeout
+            availableItems.remove(unitId);
+        }
+        synchronized(annotationLock) {
             annotations.add(new Annotation(unitId, communication));
         }
     }
@@ -139,5 +156,28 @@ public class AnnotationSession {
         AnnotationUnitIdentifier aui = new AnnotationUnitIdentifier(commId);
         aui.setSentenceId(sentId);
         return aui;
+    }
+
+    private class GarbageCollector extends TimerTask {
+
+        private static final long TEN_SECONDS = 10 * 1000L;
+        private Timer timer = new Timer();
+
+        public void start() {
+            timer.scheduleAtFixedRate(this, new Date(), TEN_SECONDS);
+        }
+
+        public void stop() {
+            timer.cancel();
+        }
+
+        @Override
+        public void run() {
+            synchronized(bookkeepingLock) {
+                Set<AnnotationUnitIdentifier> expired = outForAnnotationItems.expire();
+                expired.stream().forEach(item -> availableItems.add(item));
+            }
+        }
+        
     }
 }

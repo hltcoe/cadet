@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,6 +31,11 @@ public class AnnotationSessionTest {
         results.addToSearchResultItems(createItem("6"));
         results.addToSearchResultItems(createItem("7"));
         session = new AnnotationSession(results, 1000);
+    }
+
+    @After
+    public void tearDown() {
+        session.close();
     }
 
     private SearchResultItem createItem(String id) {
