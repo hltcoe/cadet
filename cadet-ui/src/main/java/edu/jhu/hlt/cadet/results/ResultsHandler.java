@@ -30,6 +30,7 @@ public class ResultsHandler implements ResultsServerService.Iface, SortReceiverC
     private static Logger logger = LoggerFactory.getLogger(ResultsHandler.class);
 
     private final int chunkSize = 10;
+    private final long deadline = 10 * 60 * 1000L;
     private ResultsStore resultsStore;
     private SessionStore sessionStore;
     private StoreProvider storeProvider;
@@ -180,7 +181,7 @@ public class ResultsHandler implements ResultsServerService.Iface, SortReceiverC
         }
 
         SearchResult searchResult = item.results;
-        AnnotationSession session = new AnnotationSession(searchResult);
+        AnnotationSession session = new AnnotationSession(searchResult, deadline);
         sessionStore.add(session);
 
         logger.info("Results server: starting annotation session on "
