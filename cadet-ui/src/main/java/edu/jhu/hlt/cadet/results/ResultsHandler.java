@@ -227,6 +227,9 @@ public class ResultsHandler implements ResultsServerService.Iface, SortReceiverC
     public List<AnnotationUnitIdentifier> getNextChunk(UUID sessionId) throws ServicesException, TException {
         logger.info("Results server: getting next chunk of data for session " + sessionId.getUuidString());
         AnnotationSession session = sessionStore.get(sessionId);
+        if (session == null) {
+            throw new ServicesException("Unknown session: " + sessionId.getUuidString());
+        }
         return session.getNext(chunkSize);
     }
 

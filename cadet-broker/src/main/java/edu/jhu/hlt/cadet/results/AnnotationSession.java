@@ -8,6 +8,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.jhu.hlt.concrete.Communication;
 import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.learn.Annotation;
@@ -21,6 +24,8 @@ import edu.jhu.hlt.concrete.uuid.UUIDFactory;
  * Stores the list of items to be annotated and new annotations.
  */
 public class AnnotationSession {
+    private static Logger logger = LoggerFactory.getLogger(AnnotationSession.class);
+
     private final UUID id;
     private final SearchResult searchResults;
     private List<AnnotationUnitIdentifier> orderedItems;
@@ -43,7 +48,7 @@ public class AnnotationSession {
     public AnnotationSession(SearchResult results, long deadline) {
         id = UUIDFactory.newUUID();
         searchResults = results;
-        deadline = timeToLive;
+        timeToLive = deadline;
         annotations = new HashSet<Annotation>();
 
         availableItems = new HashSet<AnnotationUnitIdentifier>();
@@ -178,6 +183,6 @@ public class AnnotationSession {
                 expired.stream().forEach(item -> availableItems.add(item));
             }
         }
-        
+
     }
 }
