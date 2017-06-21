@@ -59,6 +59,9 @@ public class CadetConfig {
     public static final String RESULTS_STORE = "cadet.results.store";
     public static final String RESULTS_SESSION = "cadet.results.session";
     public static final String RESULTS_PLUGINS = "cadet.results.plugins";
+    public static final String RESULTS_BASE = "cadet.results";
+    public static final String RESULTS_CHUNK_SIZE = "chunk_size";
+    public static final String RESULTS_ANNOTATION_DEADLINE = "deadline";
 
     /**
      * File based system (rather than accumulo based)

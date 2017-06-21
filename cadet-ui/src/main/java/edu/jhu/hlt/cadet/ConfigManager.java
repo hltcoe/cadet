@@ -167,7 +167,7 @@ public class ConfigManager {
                 isLearningOn = true;
             }
         }
-        resultsHandler = new ResultsHandler();
+        resultsHandler = new ResultsHandler(config.getConfig(CadetConfig.RESULTS_BASE));
         storeHandler = new StoreHandler();
         String spName = config.getString(CadetConfig.STORE_PROVIDER);
         StoreProvider storeProvider = (StoreProvider) constructProvider(spName);

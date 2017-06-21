@@ -10,6 +10,7 @@ import org.apache.thrift.TException;
 import org.junit.Test;
 
 import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
 
 import edu.jhu.hlt.cadet.fetch.FetchProvider;
 import edu.jhu.hlt.concrete.UUID;
@@ -26,7 +27,7 @@ public class ResultsHandlerTest {
         SearchQuery q = new SearchQuery();
         SearchResult r = new SearchResult();
         r.setUuid(new UUID("test"));
-        ResultsHandler handler = new ResultsHandler();
+        ResultsHandler handler = new ResultsHandler(ConfigFactory.empty());
 
         // must have a search query
         try {
@@ -65,7 +66,7 @@ public class ResultsHandlerTest {
 
     @Test
     public void testRegisteringSearchResultWithNoName() throws ServicesException, TException {
-        ResultsHandler handler = new ResultsHandler();
+        ResultsHandler handler = new ResultsHandler(ConfigFactory.empty());
         ResultsStore store = new MemoryResultsStore();
         handler.setResultsStore(store);
 
@@ -81,7 +82,7 @@ public class ResultsHandlerTest {
 
     @Test
     public void testRegisteringSearchResultWithName() throws ServicesException, TException {
-        ResultsHandler handler = new ResultsHandler();
+        ResultsHandler handler = new ResultsHandler(ConfigFactory.empty());
         ResultsStore store = new MemoryResultsStore();
         handler.setResultsStore(store);
 
@@ -98,7 +99,7 @@ public class ResultsHandlerTest {
 
     @Test
     public void testPluginFiltering() throws ServicesException, TException {
-        ResultsHandler handler = new ResultsHandler();
+        ResultsHandler handler = new ResultsHandler(ConfigFactory.empty());
         ResultsStore store = new MemoryResultsStore();
         handler.setResultsStore(store);
         handler.addPlugin(new NoFilter());

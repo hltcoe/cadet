@@ -7,6 +7,9 @@ import org.apache.thrift.TException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.typesafe.config.Config;
+
+import edu.jhu.hlt.cadet.CadetConfig;
 import edu.jhu.hlt.cadet.learn.ActiveLearningClient;
 import edu.jhu.hlt.cadet.learn.SortReceiverCallback;
 import edu.jhu.hlt.cadet.results.ResultsStore.Item;
@@ -29,15 +32,27 @@ import edu.jhu.hlt.concrete.util.ConcreteException;
 public class ResultsHandler implements ResultsServerService.Iface, SortReceiverCallback {
     private static Logger logger = LoggerFactory.getLogger(ResultsHandler.class);
 
-    private final int chunkSize = 10;
-    private final long deadline = 10 * 60 * 1000L;
+    private int chunkSize = 10;
+    private long deadline = 10 * 60 * 1000L;
     private ResultsStore resultsStore;
     private SessionStore sessionStore;
     private StoreProvider storeProvider;
     private ActiveLearningClient client;
     private List<ResultsPlugin> plugins = new ArrayList<ResultsPlugin>();
 
-    public ResultsHandler() {}
+    public ResultsHandler(Config config) {
+        if (config.hasPath(CadetConfig.RESULTS_CHUNK_SIZE)) {
+            chunkSize = config.getInt(CadetConfig.RESULTS_CHUNK_SIZE);
+        }
+        if (config.hasPath(CadetConfig.RESULTS_ANNOTATION_DEADLINE)) {
+            deadline = config.getInt(CadetConfig.RESULTS_ANNOTATION_DEADLINE);
+            if (deadline < (60 * 1000)) {
+                // you couldn't possibly want a deadline less than 1 minute
+                deadline = 60 * 1000;
+                logger.warn("Overriding annotation deadline as being too small");
+            }
+        }
+    }
 
     public void setResultsStore(ResultsStore store) {
         resultsStore = store;
