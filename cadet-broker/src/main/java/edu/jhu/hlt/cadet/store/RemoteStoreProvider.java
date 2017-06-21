@@ -50,24 +50,27 @@ public class RemoteStoreProvider implements StoreProvider {
     @Override
     public void store(Communication communication) throws TException {
         logger.info("Storing Comm Id: " + communication.getId());
-        transport.open();
+        if (!transport.isOpen()) {
+            transport.open();
+        }
         client.store(communication);
-        transport.close();
     }
 
     @Override
     public boolean alive() throws TException {
-        transport.open();
+        if (!transport.isOpen()) {
+            transport.open();
+        }
         boolean result = client.alive();
-        transport.close();
         return result;
     }
 
     @Override
     public ServiceInfo about() throws TException {
-        transport.open();
+        if (!transport.isOpen()) {
+            transport.open();
+        }
         ServiceInfo info = client.about();
-        transport.close();
         return info;
     }
 

@@ -55,42 +55,48 @@ public class RemoteFetchProvider implements FetchProvider {
 
     @Override
     public FetchResult fetch(FetchRequest request) throws ServicesException, TException {
-        transport.open();
+        if (!transport.isOpen()) {
+            transport.open();
+        }
+
         FetchResult results = client.fetch(request);
-        transport.close();
 
         return results;
     }
 
     @Override
     public long getCommunicationCount() throws NotImplementedException, TException {
-        transport.open();
+        if (!transport.isOpen()) {
+            transport.open();
+        }
         long count = client.getCommunicationCount();
-        transport.close();
         return count;
     }
 
     @Override
     public List<String> getCommunicationIDs(long offset, long count) throws NotImplementedException, TException {
-        transport.open();
+        if (!transport.isOpen()) {
+            transport.open();
+        }
         List<String> ids = client.getCommunicationIDs(offset, count);
-        transport.close();
         return ids;
     }
 
     @Override
     public boolean alive() throws TException {
-        transport.open();
+        if (!transport.isOpen()) {
+            transport.open();
+        }
         boolean result = client.alive();
-        transport.close();
         return result;
     }
 
     @Override
     public ServiceInfo about() throws TException {
-        transport.open();
+        if (!transport.isOpen()) {
+            transport.open();
+        }
         ServiceInfo info = client.about();
-        transport.close();
         return info;
     }
 

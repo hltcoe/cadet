@@ -63,9 +63,10 @@ public class RemoteSearchProvider implements SearchProvider {
     public SearchResult search(SearchQuery searchQuery) throws ServicesException, TException {
         SearchResult results = null;
 
-        transport.open();
+        if (!transport.isOpen()) {
+            transport.open();
+        }
         results = client.search(searchQuery);
-        transport.close();
 
         if (results == null) {
             throw new ServicesException("Invalid results from search provider");
@@ -76,33 +77,37 @@ public class RemoteSearchProvider implements SearchProvider {
 
     @Override
     public boolean alive() throws TException {
-        transport.open();
+        if (!transport.isOpen()) {
+            transport.open();
+        }
         boolean result = client.alive();
-        transport.close();
         return result;
     }
 
     @Override
     public ServiceInfo about() throws TException {
-        transport.open();
+        if (!transport.isOpen()) {
+            transport.open();
+        }
         ServiceInfo info = client.about();
-        transport.close();
         return info;
     }
 
     @Override
     public List<SearchCapability> getCapabilities() throws ServicesException, TException {
-        transport.open();
+        if (!transport.isOpen()) {
+            transport.open();
+        }
         List<SearchCapability> capabilities = client.getCapabilities();
-        transport.close();
         return capabilities;
     }
 
     @Override
     public List<String> getCorpora() throws ServicesException, TException {
-        transport.open();
+        if (!transport.isOpen()) {
+            transport.open();
+        }
         List<String> corpora = client.getCorpora();
-        transport.close();
         return corpora;
     }
 }
