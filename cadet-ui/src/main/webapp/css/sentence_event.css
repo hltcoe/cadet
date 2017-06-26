@@ -1,0 +1,182 @@
+<style>
+.argument {
+  /* Use color of Bootstrap 'btn-warning' buttons */
+  background-color: #ec961d;
+}
+.predicate {
+  /* Use color of Bootstrap 'btn-info' buttons */
+  background-color: #2babd2;
+}
+
+.token {
+  cursor: pointer;
+  display: inline-block;
+  min-width: 1em;
+}
+
+.btn-group, .communication_container
+{
+  display: inline-block;
+  margin: 0 auto;
+  float: left;
+  margin-left: 45px;
+}
+
+.btn-group
+{
+  padding-top: 5px;
+}
+
+input[type=radio]
+{
+  display: block;
+  _padding-right: 15px;
+  vertical-align: middle;
+  display: inline-block;
+  _margin: 0px;
+  margin-right: 15px;
+  _font-size: 20px;
+}
+
+label {
+  margin: 15px;
+  font-size: 20px;
+}
+
+.ordinal-group {
+  display: block;
+  clear: both;
+  float: left;
+  padding-bottom: 25px;
+}
+
+.outer {
+  width: 800px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.dropbtn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+.dropbtn:hover, .dropbtn:focus {
+    background-color: #3e8e41;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    overflow: auto;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.sentence
+{
+  padding-bottom: 10px;
+  padding-left: : 30em;
+  clear: both;
+}
+
+.event
+{
+  float: left;
+  padding-top: 1em;
+}
+
+#add-event
+{
+  _padding-left: 15em;
+  padding-top: 1em;
+  _clear: both;
+  display: inline-block;
+  float: left;
+}
+
+.content-events
+{
+  padding-left: 13em;
+  width: 750px;
+  _margin: auto;
+}
+
+#content-sentence
+{
+  margin: auto;
+  width: 70%;
+}
+
+#submit-events
+{
+  padding-top: 2em;
+  padding-left: 27em;
+  display: inline-block;
+}
+
+.options
+{
+  padding-left: 15em;
+}
+
+
+.dropdown a:hover {background-color: #f1f1f1}
+
+.show {display:block;}
+#sent-line {
+  margin: 20px 0;
+  border: 1px solid #f00;
+  position: absolute;
+  float: left;
+}
+
+body {
+    padding-bottom: 5em;
+}
+
+.communication .sentence {
+    display: inline;
+}
+.communication .tokenization {
+    display: inline;
+}
+.communication .tokenization_container {
+    display: inline;
+}
+.section + .section {
+    padding-bottom: 1em;
+}
+
+.selected_entity {
+    background-color: yellow;
+    border-top: 1px solid #DDDDDD;
+}
+
+.communication_container {
+    border: 2px solid #CCCCCC;
+    padding: 1em;
+    margin-top: 1em;
+    margin-left: 3em;
+    margin-right: 3em;
+}
+</style>

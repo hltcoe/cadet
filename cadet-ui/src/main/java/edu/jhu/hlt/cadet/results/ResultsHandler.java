@@ -32,8 +32,8 @@ import edu.jhu.hlt.concrete.util.ConcreteException;
 public class ResultsHandler implements ResultsServerService.Iface, SortReceiverCallback {
     private static Logger logger = LoggerFactory.getLogger(ResultsHandler.class);
 
-    private int chunkSize = 10;
-    private long deadline = 10 * 60 * 1000L;
+    private int chunkSize = 5;
+    private long deadline = 20 * 60 * 1000L;
     private ResultsStore resultsStore;
     private SessionStore sessionStore;
     private StoreProvider storeProvider;
@@ -253,6 +253,10 @@ public class ResultsHandler implements ResultsServerService.Iface, SortReceiverC
                     Communication communication) throws ServicesException, TException {
         logger.info("Results server: received annotation on session " + sessionId.getUuidString());
         AnnotationSession session = sessionStore.get(sessionId);
+        if (session == null) {
+            throw new ServicesException("Unknown session for submitAnnotation()");
+        }
+
         session.addAnnotation(unitId, communication);
 
         if (client != null) {

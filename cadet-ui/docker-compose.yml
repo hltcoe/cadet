@@ -1,0 +1,104 @@
+version: "2.1"
+
+volumes:
+  cadet-vol:
+  #index_volume:
+  #sparql_volume:
+
+services:
+
+  # Servers
+
+  fetch:
+    #image: hltcoe/concrete
+    image: azpoliak/cadet-fetch-store
+    ports:
+      - "9090:9090"
+      #- "9091:9091"
+    #command: fetch-server.py /data/concrete.zip
+    command: python /usr/local/bin/serve fetch -P /data/storage_data/ -H fetch -p 9090
+    #command: bash /usr/local/bin/scripts/serve fetch -P /data/storage_data/ -H fetch -p 9090
+    #command: bash /usr/local/bin/scripts/launch ./launch --path /data/storage_data/ 
+    volumes:
+      #- ./data.zip:/data/concrete.zip
+      - ../../data/storage_data:/data/storage_data/
+
+  store:
+    image: azpoliak/cadet-fetch-store
+    ports:
+    #  - "9090:9090"
+      - "9091:9091"
+    command: python /usr/local/bin/serve store -P /data/storage_data/ -H store -p 9091
+    volumes:
+      #- ./data.zip:/data/concrete.zip
+      - ../../data/storage_data:/data/storage_data/
+
+  #keyword-search.server:
+    #image: hltcoe/cadet-search-lucene
+    #image: azpoliak/cadet-search-lucene
+    #ports:
+    #  - "8888:8888"
+    #command: -p 8888 --fh fetch --fp 9090 -d /data/index --run-search
+    #volumes:
+    #  - ../../data/index:/data/index
+
+  #question-search.server:
+  #  image: ctongfei/ars-service
+  #  ports:
+  #    - "9093:9090"
+
+  #sparql.server:
+  #  image: charman/kelvin-sparql
+  #  ports:
+  #    - "8084:9090"
+  #  volumes:
+  #    - sparql_volume:/mnt/sparql_data 
+
+  kelvin-search.server:
+    image: azpoliak/cadet-search-lucene
+    #image: charman/kelvin
+    ports:
+      - "8888:8888"
+    #  - "9092:9090"
+    depends_on:
+      - fetch
+  #    - sparql.server
+  #  command: /tmp/fanny/pipeline/kelvin_search_socket_server.py --port 9090 --fetch-host fetch --fetch-port 9090 --sparql-endpoint http://sparql.server:9090/demo/sparql
+    #command: -p 8888 --fh fetch --fp 9090 -d /data/index --run-search
+    command: -p 8888 --fh fetch --fp 9090 -d /data/index
+    volumes:
+      - ../../data/index:/data/index
+
+  #browser.server:
+  #  image: hltcoe/quicklime
+  #  depends_on:
+  #    - fetch
+  #  ports:
+  #    - "${BROWSER_PORT:-8081}:8080"
+  #  command: python /tmp/qlook.py --fetch-host fetch --fetch-port 9090 --host 0.0.0.0
+
+  frontend.server:
+    image: azpoliak/sf-client
+    depends_on:
+      - fetch
+      - store
+      #- keyword-search.server
+      #- browser.server
+      #- kelvin-search.server
+      #- question-search.server
+    ports:
+      - "${FRONTEND_PORT:-8080}:8080"
+  
+  # Commands
+
+  ingest.cmd:
+   image: azpoliak/docker-ingest
+   #command: -p 8888 --fh fetch --fp 9090 -d /data/index --build-index
+   #command: bash start.sh --port 8888 --fh localhost --fp 9090 -d ../index/ 
+   command: python /opt/scripts/communications --host 0.0.0.0 --port 9091 #< /data/input_data/bbn_data_concrete.tar
+   #command: python /opt/scripts/communications --host 0.0.0.0 --port 9090 #< /data/input_data/bbn_data_concrete.tar
+   depends_on:
+     - fetch
+   volumes:
+     #- index_volume:/data/index
+     - ../../data/input_data/:/data/input_data/

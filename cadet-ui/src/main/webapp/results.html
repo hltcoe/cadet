@@ -50,6 +50,8 @@
                             .append(
                                 $('<th>').text('# Results'))
                             .append(
+                                $('<th>'))
+                            .append(
                                 $('<th>'))));
             var resultsTableBody = $('<tbody>');
 
@@ -88,6 +90,13 @@
             resultsTable.dataTable();
 
             $('#search_results').append(resultsTable);
+        }
+        for (var i = 0; i < searchResultList.length; i++) {
+          if (searchResultList[i].searchResultItems.length == 0) {
+            console.log('sf-btn_'+i);
+            $('#sf-btn_'+i).empty();
+            $('#ner-btn_'+i).empty();
+          }
         }
     });
     </script>

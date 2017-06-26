@@ -1,0 +1,242 @@
+<html lang="en">
+<head>
+  <title>concrete-js examples</title>
+  <meta charset='UTF-8'>
+
+  <link rel="stylesheet" href="css/bootstrap.min.css"/>
+  <!--<link rel="stylesheet" href="css/bootstrap-3.2.0/css/bootstrap-theme.css"/>
+  <link rel="stylesheet" href="css/examples.css"/>-->
+  <link rel="stylesheet" href="css/sentence_event.css">
+
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap-theme.min.css">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.1.0/react.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.1.0/react-dom.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js"></script>
+  <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/instantsearch.js/1/instantsearch.min.css">
+  <script src="//cdn.jsdelivr.net/instantsearch.js/1/instantsearch.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-bootstrap/0.30.8/react-bootstrap.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.24/browser.min.js"></script>
+
+
+  <!--<script src="js/jquery-1.11.1.js"></script>
+  <script src="js/bootstrap.js"></script>
+  <script type="text/jsx" src="js/thrift.js"></script>
+  <script type="text/jsx" src="js/concrete.js"></script>
+  <script type="text/jsx" src="js/cadet.js"></script>-->
+
+  <script src="js/jquery-1.11.1.js"></script>
+  <script src="js/bootstrap.js"></script>
+  <script src="js/thrift.js"></script>
+  <script src="js/concrete.js"></script>
+  <!--<script src="js/components.js" type = "text/babel"></script>-->
+  <script src="js/cadet.js"></script>
+  <script src="js/sentence_event_cadet.js" type = "text/babel"></script>
+  <script>
+  function toggle() {
+
+      var ele = document.getElementById("instructions");
+      var text = document.getElementById("displaytext");
+
+      if (ele.style.display == "block") {
+          ele.style.display = "none";
+          text.innerHTML = "show";
+      } else {
+          ele.style.display = "block";
+          text.innerHTML = "hide";
+      }
+  }
+  </script>
+  <!--<script src="index.js"></script>-->
+  <!--<script type="text/jsx" src="js/components.js"></script>-->
+
+
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="row col-xs-12 col-md-12"><!-- Instructions -->
+<h1>Instructions <a href="javascript:toggle();" id="displaytext" style="font-size: 50%;">(<b>hide</b>)</a></h1>
+
+<div class="panel panel-primary" id="instructions">
+<p style="text-align:justify;">In this task you are being asked to determine whether an event occured in a sentence and if so, which
+type of event(s) occured in the sentence. <b>Each HIT contains 5 sentences</b>. </p>
+<p style="text-align:justify;">
+There are 11 types of events that can occur. Each of the 11 types are followed by
+an example sentence.</p>
+
+<ol>
+  <li><b>Civil Unrest or Wide-spread Crime</b>
+  <br>&nbsp&nbsp&nbsp&nbsp<i>It was also the ninth fatal attack on a teenager in the capital this week</i></br></li>
+    <!-- source http://metro.co.uk/2017/05/08/roll-call-of-death-map-shows-how-widespread-knife-crime-is-across-london-6623074/ -->
+  <li><b>Elections and Politics</b>
+  <br>&nbsp&nbsp&nbsp&nbsp<i>It marks the first time in modern French history that no major-party candidate has advanced</i></li>
+    <!-- source: http://www.newser.com/story/241716/polls-close-in-france-and-2-leaders-seem-clear.html -->
+  <li><b>Evacuation</b>
+  <br>&nbsp&nbsp&nbsp&nbsp<i>Thousands of Americans head inland to escape Hurricane Matthew</i></li>
+    <!-- source http://www.nbcnews.com/news/weather/hurricane-matthew-fleeing-residents-find-empty-shelves-lines-gas-n660116?cid=sm_tw-->
+  <li><b>Food Supply</b>
+  <br>&nbsp&nbsp&nbsp&nbsp<i>The Arctic Doomsday vault opened that stores millions of seeds from crops around the world</i></li>
+    <!-- source: http://www.komando.com/happening-now/400202/step-inside-the-arctic-world-vault -->
+  <li>I<b>nfrastructure</b>
+  <br>&nbsp&nbsp&nbsp&nbsp<i>The 10-year campus redevelopment project included the opening of new buildings</i></li>
+    <!-- source http://www.hopkinsmedicine.org/news/articles/end-of-construction-the-meyer-building-reopens -->
+  <li><b>Medical Assistance</b>
+  <br>&nbsp&nbsp&nbsp&nbsp<i>A dispatcher instructed the couple to give birth on the side of the road</i></li>
+    <!--source http://www.your4state.com/news/news/dispatcher-instructs-couple-forced-to-give-birth-on-the-side-of-the-road/636694333 -->
+  <li><b>Search/Rescue</b>
+  <br>&nbsp&nbsp&nbsp&nbsp<i>We basically determined all the possible scenarios about the incident and establish what it is that that we’re looking for</i></li>
+    <!-- source: https://www.scientificamerican.com/article/people-lost-at-sea-found/ -->
+  <li><b>Shelter</b>
+  <br>&nbsp&nbsp&nbsp&nbsp<i>Using only his hands and materials found entirely on-site, this man built a sturdy four-walled, tile-roofed hut complete with a heated floor</i></li>
+    <!-- source: http://www.wideopenspaces.com/man-builds-tile-roofed-hut-entirely-hand-deep-forest-video/-->
+  <li><b>Terrorism or other Extreme Violence</b>
+  <br>&nbsp&nbsp&nbsp&nbsp<i>Thursday’s attack appeared to have been carried out by a single gunman, and the ISIS claim of responsibility was unusually swift in coming</i></li>
+    <!-- source: https://www.theatlantic.com/international/archive/2017/04/france-attack/523812/-->
+  <li><b>Utilities, Energy, or Sanitation</b>
+  <br>&nbsp&nbsp&nbsp&nbsp<i>A power outage forced the closure of the busy station</i></li>
+    <!-- source: http://newyork.cbslocal.com/2017/04/21/nyc-sf-outages-infrastructure/ -->
+  <li><b>Water Supply</b>
+  <br>&nbsp&nbsp&nbsp&nbsp<i>India is facing the worst drought it has seen in the last 150 years, affecting the lives of millions of people across the subcontinent</i></li>
+    <!-- source: http://www.firstpost.com/india/drought-in-india-conserving-forests-effective-use-of-floodplains-can-quell-water-shortage-says-prof-vikram-soni-3448708.html-->
+</ol>
+
+<p style="text-align:justify;"> If none of these events occured in a given sentence, please choose <b>No Event</b>
+from the list below. If more than 1 event occured in the text, please press the
+<a class="btn btn-info">
+    <small><span class="glyphicon glyphicon-plus"></span></small>
+</a> button bellow to choose
+which other events occured in the sentence. </p>
+
+<h3> Confidence of Answers </h3>
+
+<p style="text-align:justify;"> In general, any of these events are "possible", even
+if very unlikely: most sentences
+do not give any evidence to change our assumption about whether any event happened. </p>
+
+<p style="text-align:justify;"> We are concerned with finding sentences that would make us think that a given situation is
+more likely than our usual, background, assumptions. </p>
+
+<p style="text-align:justify;">So if you read a sentence and you think that maybe it is possible that this somehow
+is related to a given situation type, then select that situation, and click the <b>possible</b> button. </p>
+
+<p style="text-align:justify;">If you are more certain, but still not 100% sure,
+then choose the <b>likely</b> option
+and if you think the sentence clearly is indicative of the situation type, then
+choose <b>highly likely</b>
+
+<!--<p style="text-align:justify;"> Additionally, please check at least one box below to determine whether
+it is <b>Possible</b>, <b>Likely</b>, or <b>Highly Likely</b> that a specific event occured. </p>
+<p style="text-align:justify;"> If you are
+<b>50%</b> or less certain that an event happened, please consider it as if that event did not occur. </p>
+<p style="text-align:justify;"> If you are between <b>50%</b> and <b>70%</b>
+certain that an event happened, please consider it as if it is <b>Possible</b> that that event occured. </p>
+
+<p id="example">&nbsp&nbsp&nbsp&nbsp Example sentence for <b>Food Supply</b>: <i>The price of the rice company's stock greatly improved</i></p>
+
+
+<p style="text-align:justify;"> If you are between <b>70%</b> and <b>85%</b>
+certain that an event happened, please consider it as if it is <b>Likely</b> that that event occured.</p>
+
+<p id="example">&nbsp&nbsp&nbsp&nbsp Example sentence for <b>Infrastructure</b><i>The devastating hurricane made landfall last night.</i></p>
+
+
+<p style="text-align:justify;"> If are you more than <b>85%</b>
+certain that an event happened, please consider it as if it is <b>Highly Likely</b> that that event occured.</p>
+
+<p id="example">&nbsp&nbsp&nbsp&nbsp Example sentence for <b>Water Supply</b>: <i>The water shortage was extreme.</i></p>
+
+
+<p style="text-align:justify;"> If you are uncertain about any of these, <b>you may click more than one
+option</b> if you are between any of the choices. </p>
+
+<!--<h3> Payment</h3>
+<p style="text-align:justify;"> Lastly, you will be paid 25 cents for each set of 5 sentences that you label.</p>-->
+<!--<p style="text-align:justify;">Consider the following sentence:</p>
+
+<p id="example" style="text-align:center;">John , the manager of Acme , bought a car .</p>
+
+<p style="text-align:justify;">This sentence has various statements contained within it, such as:</p>
+
+<p id="example" style="text-align:center;"><span id="rcorner" style="background-color:#fb8072;">John</span> <span id="rcorner" style="background-color:#f0f0ff;">is/are</span> <span id="rcorner" style="background-color:#ffffb3;">the manager of Acme</span></p>
+
+<p id="example" style="text-align:center;"><span id="rcorner" style="background-color:#fb8072;">John</span> <span id="rcorner" style="background-color:#dab3ff;">bought</span> <span id="rcorner" style="background-color:#ffffb3;">a car</span></p>
+
+<p style="text-align:justify;">We want to be able to automatically identify statements such as those, but sometimes the underlying tools make mistakes. For example, the following example would be judged as incorrect, based on that same initial sentence:</p>
+
+<p id="example" style="text-align:center;"><span id="rcorner" style="background-color:#fb8072;">John</span> <span id="rcorner" style="background-color:#dab3ff;">bought</span></p>
+
+<p style="text-align:justify;">That is an example of a statement that is missing an argument. The following are examples where the <i>bracketing</i> is wrong: certain words are missing or incorrectly included in the statement:</p>
+
+<p id="example" style="text-align:center;"><span id="rcorner" style="background-color:#fb8072;">John, the manager</span> <span id="rcorner" style="background-color:#dab3ff;">bought</span> <span id="rcorner" style="background-color:#ffffb3;">a car</span></p>
+
+<p id="example" style="text-align:center;"><span id="rcorner" style="background-color:#fb8072;">the manager of Acme</span> <span id="rcorner" style="background-color:#dab3ff;">bought</span> <span id="rcorner" style="background-color:#ffffb3;">a car</span></p>
+
+<p style="text-align:justify;">Please note that we are not concerned with whether an extracted statement is <q>true</q> or <q>supported</q> by the initial sentence. For example:</p>
+
+<p id="example" style="text-align:center;">If John bought a car then Mary would too .</p>
+
+<p style="text-align:justify;">We would like to extract the statement:</p>
+
+<p id="example" style="text-align:center;"><span id="rcorner" style="background-color:#fb8072;">John</span> <span id="rcorner" style="background-color:#dab3ff;">bought</span> <span id="rcorner" style="background-color:#ffffb3;">a car</span></p>
+
+<p style="text-align:justify;">Similarly, in the sentence:</p>
+
+<p id="example" style="text-align:center;">Mary wished that John bought a car .</p>
+
+<p style="text-align:justify;">We would again like to extract the statement:</p>
+
+<p id="example" style="text-align:center;"><span id="rcorner" style="background-color:#fb8072;">John</span> <span id="rcorner" style="background-color:#dab3ff;">bought</span> <span id="rcorner" style="background-color:#ffffb3;">a car</span></p>
+
+<p style="text-align:justify;">Some statements that we present contain text that is partially generated, for example:</p>
+
+<p id="example" style="text-align:center;">John &#39;s car is red .</p>
+
+<p style="text-align:justify;">Would lead to the statement:</p>
+
+<p id="example" style="text-align:center;"><span id="rcorner" style="background-color:#fb8072;">John</span> <span id="rcorner" style="background-color:#f0f0ff;">has/have</span> <span id="rcorner" style="background-color:#ffffb3;">car</span></p>
+
+<p style="text-align:justify;">This is a correct statement. It is not a grammatical sentence, but it does capture something correctly from the original sentence: <i>John</i> has a <i>car</i>. Since the original sentence contained only <i>car</i> and not <i>a car</i>, then the automatically generated statement also does not contain <i>a car</i>. This is not an error, we would want you to judge this as correct. The purpose of the task is to verify that we are highlighting the predicates and the arguments as best as Possible, not leaving things out that are there in the initial sentence.</p>-->
+</div>
+    <!--<h4>
+        <a href="index.html">Search</a> |
+        <a href="results.html">Results</a>
+    </h4>-->
+
+    <hr />
+
+
+    <!--<div style="padding-top: 2em;"></div>-->
+
+    <!--<div>-->
+      <!--<h2>Sentence Event Classification</h2>
+      <hr />-->
+
+    <div class="outer" style="float:left">
+
+        <div id="content-sentence"></div>
+        <br><br><br><br>
+
+        <div class="content-events" id="content-events-1"></div>
+
+        <div id="add-event"></div>
+
+
+
+        <div id="submit-events"></div>
+        <!--<div>
+            <button class="btn btn-primary" id="save_button">Next</button>
+        </div>-->
+
+      <!--</div>-->
+
+    </div>
+
+  </div>
+  </div>
+</body>
+</html>

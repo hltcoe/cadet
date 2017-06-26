@@ -17,10 +17,18 @@ import edu.jhu.hlt.concrete.UUID;
 import edu.jhu.hlt.concrete.search.SearchQuery;
 import edu.jhu.hlt.concrete.search.SearchResult;
 import edu.jhu.hlt.concrete.services.AnnotationTaskType;
+import edu.jhu.hlt.concrete.services.AnnotationUnitIdentifier;
 import edu.jhu.hlt.concrete.services.ServicesException;
 import edu.jhu.hlt.concrete.util.ConcreteException;
 
 public class ResultsHandlerTest {
+
+    protected ResultsHandler getHandler() {
+        ResultsHandler handler = new ResultsHandler();
+        handler.setResultsStore(new MemoryResultsStore());
+        handler.setSessionStore(new MemorySessionStore());
+        return handler;
+    }
 
     @Test
     public void testValidation() {
@@ -95,6 +103,28 @@ public class ResultsHandlerTest {
         handler.registerSearchResult(r, AnnotationTaskType.NER);
 
         assertEquals("time", store.getByID(new UUID("test")).results.getSearchQuery().getName());
+    }
+
+    @Test(expected=ServicesException.class)
+    public void testStartSessionWithBadSearchResults() throws ServicesException, TException {
+        ResultsHandler handler = getHandler();
+
+        handler.startSession(new UUID("does not exist"), AnnotationTaskType.NER);
+    }
+
+    @Test(expected=ServicesException.class)
+    public void testGetNextChunkWithBadSession() throws ServicesException, TException {
+        ResultsHandler handler = getHandler();
+
+        handler.getNextChunk(new UUID("does not exist"));
+    }
+
+    @Test(expected=ServicesException.class)
+    public void testSubmitAnnotationWithBadSession() throws ServicesException, TException {
+        ResultsHandler handler = getHandler();
+
+        handler.submitAnnotation(new UUID("does not exist"),
+                        new AnnotationUnitIdentifier(), new Communication());
     }
 
     @Test
