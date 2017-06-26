@@ -84,19 +84,21 @@ services:
       - store
       #- keyword-search.server
       #- browser.server
-      - kelvin-search.server
+      #- kelvin-search.server
       #- question-search.server
     ports:
       - "${FRONTEND_PORT:-8080}:8080"
   
   # Commands
 
-  index.cmd:
-   image: azpoliak/cadet-search-lucene
-   command: -p 8888 --fh fetch --fp 9090 -d /data/index --build-index
+  ingest.cmd:
+   image: azpoliak/docker-ingest
+   #command: -p 8888 --fh fetch --fp 9090 -d /data/index --build-index
    #command: bash start.sh --port 8888 --fh localhost --fp 9090 -d ../index/ 
+   command: python /opt/scripts/communications --host 0.0.0.0 --port 9091 #< /data/input_data/bbn_data_concrete.tar
+   #command: python /opt/scripts/communications --host 0.0.0.0 --port 9090 #< /data/input_data/bbn_data_concrete.tar
    depends_on:
      - fetch
    volumes:
      #- index_volume:/data/index
-     - cadet-vol:/data/index
+     - ../../data/input_data/:/data/input_data/

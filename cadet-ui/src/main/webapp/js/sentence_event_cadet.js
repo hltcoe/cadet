@@ -81,7 +81,7 @@ function addEventToComm(commNum, sentNum) {
   var tokenization = currSent.tokenization;
   var situationMentionSet = new SituationMentionSet();
   situationMentionSet.metadata = new AnnotationMetadata();
-  situationMentionSet.metadata.tool = "BBN Data assignmentId:::"+assignmentId+" workerId:::"+workerId;
+  situationMentionSet.metadata.tool = "BBN_Data_Pilot_3 assignmentId:::"+assignmentId+" workerId:::"+workerId;
   situationMentionSet.metadata.timestamp = Math.floor(Date.now()/1000);
   situationMentionSet.metadata.kbest = 1;
   situationMentionSet.uuid = generateUUID();
@@ -490,8 +490,9 @@ class SubmitButton extends React.Component {
       catch (error) {
         console.log(error);
       }
-      //https://www.mturk.com/mturk/externalSubmit
-      var AMAZON_HOST = "https://workersandbox.mturk.com/mturk/externalSubmit?"
+
+      var AMAZON_HOST = "https://www.mturk.com/mturk/externalSubmit?"
+      //var AMAZON_HOST = "https://workersandbox.mturk.com/mturk/externalSubmit?"
       console.log("submitSentence hit");
       //change foo=bar to be list of (Commm, sentence, [(EventType, Liklihood Rating)])
       AMAZON_HOST += "assignmentId="+params["assignmentId"];

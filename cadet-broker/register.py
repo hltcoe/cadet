@@ -13,7 +13,8 @@ import pdb
 def main():
 
     # get list of comms from fetch service
-    socket = factory.createSocket("localhost", 9090)
+    socket = factory.createSocket("0.0.0.0", 9090)
+    #socket = factory.createSocket("localhost", 9090)
     transport = factory.createTransport(socket)
     protocol = factory.createProtocol(transport)
     fetch_client = FetchCommunicationService.Client(protocol)
@@ -60,7 +61,8 @@ def main():
 
 
     # register the search result with the broker
-    transport = THttpClient.THttpClient("localhost", 8080, "/CadetSearch/ResultsServer")
+    #transport = THttpClient.THttpClient("localhost", 8080, "/CadetSearch/ResultsServer")
+    transport = THttpClient.THttpClient("0.0.0.0", 8080, "/ResultsServer")
     protocol = TJSONProtocol.TJSONProtocol(transport)
     broker_client = ResultsServerService.Client(protocol)
     transport.open()
