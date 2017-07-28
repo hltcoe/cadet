@@ -33,6 +33,8 @@ public class RemoteFetchProvider implements FetchProvider {
     private TCompactProtocol protocol;
     private FetchCommunicationService.Client client;
 
+    private Object clientLock = new Object();
+
     @Override
     public void init(Config config) {
         host = config.getString(CadetConfig.FETCH_HOST);
@@ -59,7 +61,10 @@ public class RemoteFetchProvider implements FetchProvider {
             transport.open();
         }
 
-        FetchResult results = client.fetch(request);
+        FetchResult results = null;
+        synchronized(clientLock) {
+            results = client.fetch(request);
+        }
 
         return results;
     }
