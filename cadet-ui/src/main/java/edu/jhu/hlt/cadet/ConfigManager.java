@@ -15,6 +15,8 @@ import edu.jhu.hlt.cadet.search.SearchProvider;
 import edu.jhu.hlt.cadet.search.SearchProxyHandler;
 import edu.jhu.hlt.cadet.store.StoreProvider;
 import edu.jhu.hlt.cadet.store.StoreHandler;
+import edu.jhu.hlt.cadet.summarization.SummarizationProvider;
+import edu.jhu.hlt.cadet.summarization.SummarizationHandler;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -68,6 +70,8 @@ public class ConfigManager {
     private FeedbackHandler feedbackHandler;
     private StoreHandler storeHandler;
     private SortReceiverServer sortServer;
+    private SummarizationHandler summarizationHandler;
+    private SummarizationProvider summarizationProvider;
     private boolean isLearningOn = false;
 
     private ConfigManager() {}
@@ -156,6 +160,11 @@ public class ConfigManager {
         String fbStoreName = config.getString(CadetConfig.FEEDBACK_STORE);
         FeedbackStore fbStore = (FeedbackStore)constructProvider(fbStoreName);
         feedbackHandler = new FeedbackHandler(fbStore);
+
+        summarizationHandler = new SummarizationHandler();
+        String spName = config.getString(CadetConfig.SUMMARIZATION_PROVIDER);
+        summarizationProvider = (SummarizationProvider)constructProvider(spName);
+        summarizationHandler.init(summarizationProvider);
 
         createResultsServer();
         createSearchProxyHandler();
@@ -324,5 +333,15 @@ public class ConfigManager {
             throw new RuntimeException("ConfigManager used before initialized");
         }
         return sortServer;
+    }
+
+    /**
+     * Get the summarization server
+     */
+    public SummarizationHandler getSummarizationHandler() {
+        if (!initialized) {
+            throw new RuntimeException("ConfigManager used before initialized");
+        }
+        return summarizationHandler;
     }
 }

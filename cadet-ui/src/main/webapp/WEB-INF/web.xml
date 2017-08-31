@@ -59,6 +59,12 @@
 	</servlet>
 
 	<servlet>
+		<display-name>Summarization</display-name>
+		<servlet-name>SummarizationServlet</servlet-name>
+		<servlet-class>edu.jhu.hlt.cadet.summarization.SummarizationServlet</servlet-class>
+	</servlet>
+
+	<servlet>
 		<display-name>ViewSessions</display-name>
 		<servlet-name>ViewSessionsServlet</servlet-name>
 		<servlet-class>edu.jhu.hlt.cadet.results.ViewSessionsServlet</servlet-class>
@@ -102,6 +108,11 @@
 	<servlet-mapping>
 		<servlet-name>StoreServlet</servlet-name>
 		<url-pattern>/StoreServlet</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>SummarizationServlet</servlet-name>
+		<url-pattern>/SummarizationServlet</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
