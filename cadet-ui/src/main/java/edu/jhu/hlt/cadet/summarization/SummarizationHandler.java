@@ -23,7 +23,7 @@ import edu.jhu.hlt.concrete.summarization.SummaryConcept;
 public class SummarizationHandler implements SummarizationService.Iface {
     private static Logger logger = LoggerFactory.getLogger(SummarizationHandler.class);
 
-    private SummarizationProvider summarizationProvider;
+    private SummarizationProvider summarizationProvider = null;
 
     public SummarizationHandler() {}
 
@@ -51,12 +51,20 @@ public class SummarizationHandler implements SummarizationService.Iface {
     @Override
     public ServiceInfo about() throws TException {
         logger.info("summarizationHandler.about()");
-        return summarizationProvider.about();
+        if (summarizationProvider != null) {
+            return summarizationProvider.about();
+        } else {
+            return new ServiceInfo("N/A", "0");
+        }
     }
 
     @Override
     public boolean alive() throws TException {
         logger.info("summarizationHandler.alive()");
-        return summarizationProvider.alive();
+        if (summarizationProvider != null) {
+            return summarizationProvider.alive();
+        } else {
+            return false;
+        }
     }
 }

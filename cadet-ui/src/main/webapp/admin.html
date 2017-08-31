@@ -32,7 +32,7 @@
     var SEARCH_PROVIDER_TABLE;
 
     function getProviderString(serviceConfig) {
-        if (serviceConfig.hasOwnProperty('provider')) {
+        if (serviceConfig && serviceConfig.hasOwnProperty('provider')) {
             return serviceConfig.provider;
         }
         else {
@@ -41,7 +41,7 @@
     }
 
     function getProviderInfoString(serviceConfig) {
-        if (serviceConfig.hasOwnProperty('provider')) {
+        if (serviceConfig && serviceConfig.hasOwnProperty('provider')) {
             if (serviceConfig.provider.includes('Remote') &&
                 serviceConfig.hasOwnProperty('host') &&
                 serviceConfig.hasOwnProperty('port'))
@@ -65,8 +65,8 @@
                 {
                     title: 'Status',
                     data: 'status',
-                    render: function(data, type, aliveStatus) {
-                        if (aliveStatus) {
+                    render: function(data, type, rowFields) {
+                        if (rowFields.status) {
                             return '<span class="glyphicon glyphicon-ok" />';
                         }
                         else {
@@ -101,8 +101,7 @@
             for (var i = 0; i < services.length; i++) {
                 var serviceAlive;
                 try {
-                    CADET[services[i]].alive();
-                    serviceAlive = true;
+                    serviceAlive = CADET[services[i]].alive();
                 }
                 catch (error) {
                     serviceAlive = false;

@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.typesafe.config.Config;
+import com.typesafe.config.ConfigException.Missing;
 import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigObject;
 
@@ -162,9 +163,14 @@ public class ConfigManager {
         feedbackHandler = new FeedbackHandler(fbStore);
 
         summarizationHandler = new SummarizationHandler();
-        String spName = config.getString(CadetConfig.SUMMARIZATION_PROVIDER);
-        summarizationProvider = (SummarizationProvider)constructProvider(spName);
-        summarizationHandler.init(summarizationProvider);
+        try {
+            String spName = config.getString(CadetConfig.SUMMARIZATION_PROVIDER);
+            summarizationProvider = (SummarizationProvider)constructProvider(spName);
+            summarizationHandler.init(summarizationProvider);
+        } catch (com.typesafe.config.ConfigException.Missing e) {
+            logger.warn("Missing CADET configuration settings for '" +
+                        CadetConfig.SUMMARIZATION_PROVIDER + "'");
+        }
 
         createResultsServer();
         createSearchProxyHandler();
