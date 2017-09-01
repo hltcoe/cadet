@@ -7,12 +7,13 @@ import org.slf4j.LoggerFactory;
 
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TCompactProtocol;
-import org.apache.thrift.transport.TSocket;
-import org.apache.thrift.transport.TFramedTransport;
 
 import com.typesafe.config.Config;
 
 import edu.jhu.hlt.cadet.CadetConfig;
+import edu.jhu.hlt.cadet.pool.ClientPool;
+import edu.jhu.hlt.cadet.pool.PoolConfig;
+import edu.jhu.hlt.cadet.pool.ServiceConfig;
 import edu.jhu.hlt.concrete.search.SearchCapability;
 import edu.jhu.hlt.concrete.search.SearchService;
 import edu.jhu.hlt.concrete.search.SearchQuery;
@@ -26,12 +27,7 @@ import edu.jhu.hlt.concrete.services.ServicesException;
 public class RemoteSearchProvider implements SearchProvider {
     private static Logger logger = LoggerFactory.getLogger(RemoteSearchProvider.class);
 
-    private String host;
-    private int port;
-
-    private TFramedTransport transport;
-    private TCompactProtocol protocol;
-    private SearchService.Client client;
+    private ClientPool<SearchService.Client> clientPool;
 
     @Override
     public void init(Config config) {
@@ -41,32 +37,34 @@ public class RemoteSearchProvider implements SearchProvider {
     }
 
     public void init(String h, int p) {
-        host = h;
-        port = p;
+        logger.info("SearchHandler HOST: " + h);
+        logger.info("SearcheHandler PORT: " + p);
 
-        logger.info("SearchHandler HOST: " + host);
-        logger.info("SearcheHandler PORT: " + port);
-
-        transport = new TFramedTransport(new TSocket(host, port), Integer.MAX_VALUE);
-        protocol = new TCompactProtocol(transport);
-        client = new SearchService.Client(protocol);
+        // default to 10 clients and wait up to 1 second
+        PoolConfig pc = new PoolConfig(10, 1000L);
+        ServiceConfig sc = new ServiceConfig(h, p);
+        clientPool = new ClientPool<SearchService.Client>(pc, sc,
+                        transport -> new SearchService.Client(new TCompactProtocol(transport)));
     }
 
     @Override
     public void close() {
-        if (transport.isOpen()) {
-            transport.close();
-        }
+        clientPool.close();
     }
 
     @Override
     public SearchResult search(SearchQuery searchQuery) throws ServicesException, TException {
         SearchResult results = null;
 
-        if (!transport.isOpen()) {
-            transport.open();
+        SearchService.Client client = getClient();
+        try {
+            results = client.search(searchQuery);
+            clientPool.returnClient(client);
+        } catch (TException ex) {
+            logger.warn("client failed for search");
+            clientPool.invalidateClient(client);
+            throw ex;
         }
-        results = client.search(searchQuery);
 
         if (results == null) {
             throw new ServicesException("Invalid results from search provider");
@@ -77,37 +75,66 @@ public class RemoteSearchProvider implements SearchProvider {
 
     @Override
     public boolean alive() throws TException {
-        if (!transport.isOpen()) {
-            transport.open();
+        boolean result;
+        SearchService.Client client = getClient();
+        try {
+            result = client.alive();
+            clientPool.returnClient(client);
+        } catch (TException ex) {
+            clientPool.invalidateClient(client);
+            throw ex;
         }
-        boolean result = client.alive();
         return result;
     }
 
     @Override
     public ServiceInfo about() throws TException {
-        if (!transport.isOpen()) {
-            transport.open();
+        ServiceInfo info;
+        SearchService.Client client = getClient();
+        try {
+            info = client.about();
+            clientPool.returnClient(client);
+        } catch (TException ex) {
+            clientPool.invalidateClient(client);
+            throw ex;
         }
-        ServiceInfo info = client.about();
         return info;
     }
 
     @Override
     public List<SearchCapability> getCapabilities() throws ServicesException, TException {
-        if (!transport.isOpen()) {
-            transport.open();
+        List<SearchCapability> capabilities;
+        SearchService.Client client = getClient();
+        try {
+            capabilities = client.getCapabilities();
+            clientPool.returnClient(client);
+        } catch (TException ex) {
+            clientPool.invalidateClient(client);
+            throw ex;
         }
-        List<SearchCapability> capabilities = client.getCapabilities();
         return capabilities;
     }
 
     @Override
     public List<String> getCorpora() throws ServicesException, TException {
-        if (!transport.isOpen()) {
-            transport.open();
+        List<String> corpora;
+        SearchService.Client client = getClient();
+        try {
+            corpora = client.getCorpora();
+            clientPool.returnClient(client);
+        } catch (TException ex) {
+            clientPool.invalidateClient(client);
+            throw ex;
         }
-        List<String> corpora = client.getCorpora();
         return corpora;
     }
+
+    private SearchService.Client getClient() throws ServicesException{
+        SearchService.Client client = clientPool.borrowClient();
+        if (client == null) {
+            throw new ServicesException("No thrift clients available for search");
+        }
+        return client;
+    }
+
 }

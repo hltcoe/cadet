@@ -7,15 +7,16 @@ import java.util.List;
 
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TCompactProtocol;
-import org.apache.thrift.transport.TFramedTransport;
-import org.apache.thrift.transport.TSocket;
 
 import com.typesafe.config.Config;
 
 import edu.jhu.hlt.cadet.CadetConfig;
+import edu.jhu.hlt.cadet.pool.ClientPool;
+import edu.jhu.hlt.cadet.pool.PoolConfig;
+import edu.jhu.hlt.cadet.pool.ServiceConfig;
 import edu.jhu.hlt.concrete.access.FetchRequest;
 import edu.jhu.hlt.concrete.access.FetchResult;
-import edu.jhu.hlt.concrete.access.FetchCommunicationService;
+import edu.jhu.hlt.concrete.access.FetchCommunicationService.Client;
 import edu.jhu.hlt.concrete.services.NotImplementedException;
 import edu.jhu.hlt.concrete.services.ServiceInfo;
 import edu.jhu.hlt.concrete.services.ServicesException;
@@ -29,10 +30,7 @@ public class RemoteFetchProvider implements FetchProvider {
     private String host;
     private int port;
 
-    private TFramedTransport transport;
-    private TCompactProtocol protocol;
-    private FetchCommunicationService.Client client;
-
+    private ClientPool<Client> clientPool;
     private Object clientLock = new Object();
 
     @Override
@@ -43,27 +41,32 @@ public class RemoteFetchProvider implements FetchProvider {
         logger.info("RemoteFetchProvider HOST: " + host);
         logger.info("RemoteFetchProvider PORT: " + port);
 
-        transport = new TFramedTransport(new TSocket(host, port), Integer.MAX_VALUE);
-        protocol = new TCompactProtocol(transport);
-        client = new FetchCommunicationService.Client(protocol);
+        // default to 10 clients and wait up to 1 second
+        PoolConfig pc = new PoolConfig(10, 1000L);
+        ServiceConfig sc = new ServiceConfig(host, port);
+        clientPool = new ClientPool<Client>(pc, sc,
+                        transport -> new Client(new TCompactProtocol(transport)));
     }
 
     @Override
     public void close() {
-        if (transport.isOpen()) {
-            transport.close();
-        }
+        clientPool.close();
     }
 
     @Override
     public FetchResult fetch(FetchRequest request) throws ServicesException, TException {
-        if (!transport.isOpen()) {
-            transport.open();
-        }
-
         FetchResult results = null;
+
         synchronized(clientLock) {
-            results = client.fetch(request);
+            Client client = getClient();
+            try {
+                results = client.fetch(request);
+                clientPool.returnClient(client);
+            } catch (TException ex) {
+                logger.warn("client failed for fetch");
+                clientPool.invalidateClient(client);
+                throw ex;
+            }
         }
 
         return results;
@@ -71,38 +74,70 @@ public class RemoteFetchProvider implements FetchProvider {
 
     @Override
     public long getCommunicationCount() throws NotImplementedException, TException {
-        if (!transport.isOpen()) {
-            transport.open();
+        long count;
+        Client client = getClient();
+        try {
+            count = client.getCommunicationCount();
+            clientPool.returnClient(client);
+        } catch (TException ex) {
+            logger.warn("client failed for fetch");
+            clientPool.invalidateClient(client);
+            throw ex;
         }
-        long count = client.getCommunicationCount();
         return count;
     }
 
     @Override
     public List<String> getCommunicationIDs(long offset, long count) throws NotImplementedException, TException {
-        if (!transport.isOpen()) {
-            transport.open();
+        List<String> ids;
+        Client client = getClient();
+        try {
+            ids = client.getCommunicationIDs(offset, count);
+            clientPool.returnClient(client);
+        } catch (TException ex) {
+            logger.warn("client failed for fetch");
+            clientPool.invalidateClient(client);
+            throw ex;
         }
-        List<String> ids = client.getCommunicationIDs(offset, count);
         return ids;
     }
 
     @Override
     public boolean alive() throws TException {
-        if (!transport.isOpen()) {
-            transport.open();
+        boolean result;
+        Client client = getClient();
+        try {
+            result = client.alive();
+            clientPool.returnClient(client);
+        } catch (TException ex) {
+            logger.warn("client failed for fetch");
+            clientPool.invalidateClient(client);
+            throw ex;
         }
-        boolean result = client.alive();
         return result;
     }
 
     @Override
     public ServiceInfo about() throws TException {
-        if (!transport.isOpen()) {
-            transport.open();
+        ServiceInfo info;
+        Client client = getClient();
+        try {
+            info = client.about();
+            clientPool.returnClient(client);
+        } catch (TException ex) {
+            logger.warn("client failed for fetch");
+            clientPool.invalidateClient(client);
+            throw ex;
         }
-        ServiceInfo info = client.about();
         return info;
+    }
+
+    private Client getClient() throws ServicesException{
+        Client client = clientPool.borrowClient();
+        if (client == null) {
+            throw new ServicesException("No thrift clients available for fetch");
+        }
+        return client;
     }
 
 }

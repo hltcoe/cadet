@@ -4,17 +4,20 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
-import org.apache.thrift.TException;
 import org.apache.thrift.TServiceClient;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TFramedTransport;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.jhu.hlt.concrete.services.ServicesException;
 
 public class ClientPool<T extends TServiceClient> {
+    private static Logger logger = LoggerFactory.getLogger(ClientPool.class);
+
     private final LinkedBlockingDeque<T> pool;
     private int numCreatedClients = 0;
     private final PoolConfig config;
@@ -47,6 +50,7 @@ public class ClientPool<T extends TServiceClient> {
                     client = pool.pollFirst(config.getTimeout(), TimeUnit.MILLISECONDS);
                 } catch (InterruptedException e) {
                     // swallow exception
+                    logger.info("Ran out of clients for " + this.getClass().getCanonicalName());
                 }
             }
         }
