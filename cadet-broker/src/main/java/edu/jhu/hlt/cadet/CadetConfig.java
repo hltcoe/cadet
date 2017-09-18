@@ -64,6 +64,13 @@ public class CadetConfig {
     public static final String RESULTS_ANNOTATION_DEADLINE = "deadline";
 
     /**
+     * Summarization server
+     */
+    public static final String SUMMARIZATION_HOST = "cadet.summarization.host";
+    public static final String SUMMARIZATION_PORT = "cadet.summarization.port";
+    public static final String SUMMARIZATION_PROVIDER = "cadet.summarization.provider";
+
+    /**
      * File based system (rather than accumulo based)
      */
     public static final String FILES_DATA_DIR = "cadet.files.data.dir";

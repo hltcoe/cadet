@@ -6,17 +6,19 @@
            FetchCommunicationServiceClient,
            ResultsServerServiceClient, SearchClient, SearchQuery,
            SearchProxyServiceClient, SearchType,
-           StoreCommunicationServiceClient, Thrift
+           StoreCommunicationServiceClient, SummarizationServiceClient,
+           Thrift
 */
 
 var CADET = {
     // These variables are initialized by init()
     feedback: undefined,
     fetch: undefined,
+    results: undefined,
     search: undefined,
     search_proxy: undefined,
     store: undefined,
-    results: undefined,
+    summarization: undefined,
 
     // This variable is used to set the searchQuery.userId field
     userId: 'CADET User',
@@ -226,6 +228,10 @@ var CADET = {
         var store_transport = new Thrift.Transport('StoreServlet');
         var store_protocol = new Thrift.Protocol(store_transport);
         this.store = new StoreCommunicationServiceClient(store_protocol);
+
+        var summarization_transport = new Thrift.Transport('SummarizationServlet');
+        var summarization_protocol = new Thrift.Protocol(summarization_transport);
+        this.summarization = new SummarizationServiceClient(summarization_protocol);
 
         this.configureSearchProviders();
     },
