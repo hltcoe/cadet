@@ -11,13 +11,9 @@ This guide requiers access to the COE's gitlab. Request access from [Ben](mailto
 
 ## Downloading CADET
 #### Install Tomcat & Maven
-1. Tomcat is a tool for Java Servers:
-
-	- [Link for MAC](https://wolfpaulus.com/mac/tomcat/)
-
-	- Link for Linux - Add link to instructions
-
-	- Windows - you are on your own buddy
+1. Tomcat is a tool for Java Servers. Here are instructions for downloading/setting up Tomcat on [MAC](https://wolfpaulus.com/mac/tomcat/), [Linux](), [Windows]()
+	
+	***TODO*: add links for linux \& windows**
 	
 2. Maven is the tool we use to manage dependencies and build our java applications
 
@@ -44,7 +40,8 @@ At this point your structure should look like this:
 
 ## Standing up CADET
 
-##### Launch CADET-Frontend
+#### CADET Frontend
+
 1. **Compile and build the front-end client**. From `cadet-home/cadet`, run: 
 
 		mvn clean install 
