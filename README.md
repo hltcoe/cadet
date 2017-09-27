@@ -3,7 +3,12 @@
 
 CADET
 ============================
-CADET is a system for rapid discovery, annotation, and extraction on text. 
+CADET is a system for rapid discovery, annotation, and extraction on text.
+
+Instructions
+---------------
+[Instructions](https://gitlab.hltcoe.jhu.edu/research/cadet/blob/master/INSTRUCTIONS.md) for setting up and deploying a local version of **CADET**
+
 
 cadet-broker
 ---------------

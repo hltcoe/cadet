@@ -1,4 +1,4 @@
-# CADET
+# Instructions for Deploying CADET on a local machine
 
 ## Introduction:
 These are instructions for downloading, standing up cadet.
@@ -6,12 +6,8 @@ These are instructions for downloading, standing up cadet.
 ***TODO* Explain CADET **
 
 
-This guide requiers access to the COE's gitlab. Request access from [Ben](mailto:vandurme@cs.jhu.edu). Specifically ask for access to the following groups:
+This guide requiers access to the COE's gitlab. Request access from [Ben](mailto:vandurme@cs.jhu.edu).
 
-1.  [Research](https://gitlab.hltcoe.jhu.edu/research)
-2.  [hltcoe-docker]()
-
-Started on 09/27/2017
 
 ## Downloading CADET
 #### Install Tomcat & Maven
@@ -54,7 +50,7 @@ At this point your structure should look like this:
 		mvn clean install 
 	If the installation is successful you should see the following printed out:
 	
-	![image](./cadet-mvn-install-success.png =500x00)
+	![image](./instruction-pics/cadet-mvn-install-success.png =500x00)
 2. **Deploy war file to tomcat server**: From `cadet-home/cadet/cadet-ui`, run:
 
 		mvn tomcat7:redeploy
@@ -67,11 +63,11 @@ At this point your structure should look like this:
 		
 	If that is successful you should see the following printed out:
 	
-	![image](./cadet-war-tomcat-success.png =550x00)
+	![image](./instruction-pics/cadet-war-tomcat-success.png =550x00)
 	
 	Additionally, go to [localhost:8080/CadetSearch/admin.html](localhost:8080/CadetSearch/admin.html) where you should see the following admin page that will give us the status & information about the different services we will now set up: 
 	
-	![image](./cadet-admin-0.png =500x200)
+	![image](./instruction-pics/cadet-admin-0.png =500x200)
 
 #### Setting up Micro-Services	
 
@@ -84,7 +80,7 @@ In `cadet-home/docker-file-access/scripts` run the following command:
 	
 If the fetch and store services are now up and running, the following should be printed in terminal:
 
-![image](cadet-start-fetch-store-services.png =500x00)
+![image](./instruction-pics/cadet-start-fetch-store-services.png =500x00)
 
 Typing Ctrl+C or closing the terminal window will turn off the fetch and store services
 
@@ -92,7 +88,7 @@ Typing Ctrl+C or closing the terminal window will turn off the fetch and store s
 	
 We will also confirm that the service is up by checking the admin page. Please refresh [localhost:8080/CadetSearch/admin.html](localhost:8080/CadetSearch/admin.html) where you should now see the error resolved for the fetch service. The ServiceInfo should now specify that the fetch service is using file_fetch_serverv1.0.0 and give a brief description about it.
 
-![image](./cadet-admin-2.png =500x100)
+![image](./instruction-pics/cadet-admin-2.png =500x100)
 
 *TODO*: highlight the difference in the picture
 
