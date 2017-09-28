@@ -20,12 +20,12 @@ This guide requiers access to the COE's gitlab. Request access from [Ben](mailto
 #### Repos to clone
 Creating a new directory called `cadet-home` and clone the following repos there:
 
-1. [cadet](https://gitlab.hltcoe.jhu.edu/research/cadet.git)
-	- This hosts the frontend-clients
+1. [cadet](https://gitlab.hltcoe.jhu.edu/research/cadet.git) - code for the frontend-client
 	
-2. [cadet-search-lucene](https://gitlab.hltcoe.jhu.edu/research/cadet-search-lucene)
-3. [docker-ingest](https://gitlab.hltcoe.jhu.edu/hltcoe-docker/docker-ingest)
-4. [docker-file-access](https://gitlab.hltcoe.jhu.edu/hltcoe-docker/docker-file-access)
+2. [cadet-search-lucene](https://gitlab.hltcoe.jhu.edu/research/cadet-search-lucene) - code for setting up search capabilities
+ 
+3. [docker-ingest](https://gitlab.hltcoe.jhu.edu/hltcoe-docker/docker-ingest) - server for ingesting data into CADET's database (or file system)
+4. [docker-file-access](https://gitlab.hltcoe.jhu.edu/hltcoe-docker/docker-file-access) - server for accessing data from CADET's database and for storing annotated data.
 
 #### Directories for data
 In `cadet-home`, create a new directory called `data`. In `data`, make the following three new directories:
@@ -101,7 +101,8 @@ Download [this](link) tar file and store it in `cadet-home/data/input_data`
 
 ***TODO* Figure out which data and host that data on the nlp.jhu.edu/cadet or hltcoe.github.io/cadet site**
 
-###### Ingesting Data
+######  Ingesting Data
+
 From `cadet-home/docker-ingest/scripts`, run the following command:
 
 	./communications --host localhost --port 9091 < ../../data/input_data/data.tar
