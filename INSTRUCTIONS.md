@@ -71,6 +71,13 @@ At this point your structure should look like this:
 ##### Fetch and Store
 ***TODO* - briefly describe role of fetch and store**
 
+###### Requirements
+
+Before starting the services, make sure you have the most up-to-date version of concrete-python. Otherwise, there will be issues later in these instructions.[^concrete-python_coment]
+
+[^concrete-python_coment]: Ask Baekchun Kim about that one ;)
+###### Starting the services
+
 In `cadet-home/docker-file-access/scripts` run the following command:
 
 	./launch --path =../../data/storage_data
@@ -133,7 +140,7 @@ work as desired.
 ###### Running the search service
 To start the search service run:
 
-	./start.sh --fh localhost --fp 9090 -d ../data/index/
+	./start.sh --fh localhost --fp 9090 -d ../data/index/ -r -b -p 8888
 	
 	
 
