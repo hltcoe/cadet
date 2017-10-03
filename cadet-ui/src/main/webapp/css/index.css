@@ -1,0 +1,40 @@
+<style>
+img {
+    margin:10px 5px;
+}
+mark {
+    font-weight: bold;
+}
+
+.container-fluid {
+    margin-left: 1em;
+    margin-right: 1em;
+}
+
+.communication .entity_mention {
+    background-color: Linen;
+    cursor: pointer;
+}
+
+.search_result_item_text {
+    cursor: pointer;
+}
+
+/* When displaying a Communication for a SearchResultItem, if the
+   SearchResultItem includes the (optional) sentenceId field, we
+   highlight the corresponding sentence in the displayed Communication.
+ */
+.selected_search_sentence {
+    font-weight: bold;
+}
+
+.communication .sentence {
+    display: inline;
+}
+.communication .tokenization {
+    display: inline;
+}
+.section + .section {
+    padding-bottom: 1em;
+}
+</style>
