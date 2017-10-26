@@ -72,8 +72,8 @@ function createResultsTable() {
                         // the Communication when the render type is 'display'
                         //   https://datatables.net/reference/option/columns.render
                         try {
-                            if (searchResultItem.communicationId in COMMS_MAP) {
-                                var comm = COMMS_MAP[searchResultItem.communicationId];
+                            if (COMMS_MAP.has(searchResultItem.communicationId)) {
+                                var comm = COMMS_MAP.get(searchResultItem.communicationId);
                                 searchResultItem.sentence = comm.getSentenceWithUUID(searchResultItem.sentenceId);
                             } else {
                               var fetchResult = CADET.fetchComms([searchResultItem.communicationId]);
@@ -84,7 +84,7 @@ function createResultsTable() {
                                   // searchResultItem.sentence will be null if searchResultItem.sentenceId is not valid
                                   searchResultItem.sentence = searchResultItem.communication.getSentenceWithUUID(
                                       searchResultItem.sentenceId);
-                                  COMMS_MAP[searchResultItem.communicationId] = searchResultItem.communication;
+                                  COMMS_MAP.set(searchResultItem.communicationId, searchResultItem.communication);
                               }
                             }
                         }
@@ -313,9 +313,6 @@ function executeSearchQuery(searchQuery) {
     addResultToResultsTable(searchResult);
 
     $('a[href="#search_results"]').tab('show');
-    if (Object.keys(COMMS_MAP) > 35) {
-      COMMS_MAP = {};
-    }
 }
 
 function executeSearchQueryEventHandler(event) {
@@ -460,10 +457,10 @@ function updateServiceStatus() {
 
 // initialize all CADET clients
 CADET.init();
+COMMS_MAP = new LRUMap(35);
 
 $(document).ready(function() {
     updateServiceStatus();
-
     $('#greeting').on('click', promptForLoginName);
 
     // search box is focused on pageload
@@ -475,7 +472,6 @@ $(document).ready(function() {
             executeSearchQueryFromSearchBox();
         }
     });
-    COMMS_MAP = {};
     createResultsTable();
 
     $('#search_button').on('click', executeSearchQueryFromSearchBox);
