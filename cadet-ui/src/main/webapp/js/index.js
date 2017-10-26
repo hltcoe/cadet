@@ -4,6 +4,7 @@
 // Global variables
 var SEARCH_RESULT_TABLE;
 var SEARCH_RESULT;
+var COMMS_MAP;
 
 function createResultsTable() {
     SEARCH_RESULT_TABLE = $('#results_table').DataTable({
@@ -71,14 +72,20 @@ function createResultsTable() {
                         // the Communication when the render type is 'display'
                         //   https://datatables.net/reference/option/columns.render
                         try {
-                            var fetchResult = CADET.fetchComms([searchResultItem.communicationId]);
-                            if (fetchResult.communications.length === 1) {
-                                searchResultItem.communication = fetchResult.communications[0];
-                                searchResultItem.communication.addInternalReferences();
+                            if (COMMS_MAP.has(searchResultItem.communicationId)) {
+                                var comm = COMMS_MAP.get(searchResultItem.communicationId);
+                                searchResultItem.sentence = comm.getSentenceWithUUID(searchResultItem.sentenceId);
+                            } else {
+                              var fetchResult = CADET.fetchComms([searchResultItem.communicationId]);
+                              if (fetchResult.communications.length === 1) {
+                                  searchResultItem.communication = fetchResult.communications[0];
+                                  searchResultItem.communication.addInternalReferences();
 
-                                // searchResultItem.sentence will be null if searchResultItem.sentenceId is not valid
-                                searchResultItem.sentence = searchResultItem.communication.getSentenceWithUUID(
-                                    searchResultItem.sentenceId);
+                                  // searchResultItem.sentence will be null if searchResultItem.sentenceId is not valid
+                                  searchResultItem.sentence = searchResultItem.communication.getSentenceWithUUID(
+                                      searchResultItem.sentenceId);
+                                  COMMS_MAP.set(searchResultItem.communicationId, searchResultItem.communication);
+                              }
                             }
                         }
                         catch (error) {
@@ -303,7 +310,6 @@ function executeSearchQuery(searchQuery) {
     catch (error) {
         displayAndThrowError(error);
     }
-
     addResultToResultsTable(searchResult);
 
     $('a[href="#search_results"]').tab('show');
@@ -451,10 +457,10 @@ function updateServiceStatus() {
 
 // initialize all CADET clients
 CADET.init();
+COMMS_MAP = new LRUMap(35);
 
 $(document).ready(function() {
     updateServiceStatus();
-
     $('#greeting').on('click', promptForLoginName);
 
     // search box is focused on pageload
@@ -466,7 +472,6 @@ $(document).ready(function() {
             executeSearchQueryFromSearchBox();
         }
     });
-
     createResultsTable();
 
     $('#search_button').on('click', executeSearchQueryFromSearchBox);
