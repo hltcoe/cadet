@@ -80,7 +80,7 @@ Before starting the services, make sure you have the most up-to-date version of 
 
 In `cadet-home/docker-file-access/scripts` run the following command:
 
-	./launch --path =../../data/storage_data
+	./launch --path ../../data/storage_data
 	
 If the fetch and store services are now up and running, the following should be printed in terminal:
 
