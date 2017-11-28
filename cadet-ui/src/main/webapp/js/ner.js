@@ -1,3 +1,13 @@
+function assert(condition, message) {
+    if (!condition) {
+        message = message || "Assertion failed";
+        if (typeof Error !== "undefined") {
+            throw new Error(message);
+        }
+        throw message; // Fallback
+    }
+}
+
 function addTagTextBox(tagIndex) {
     $('#tag_type_list').append(
         $('<li>').addClass('tag_text_li')
@@ -22,9 +32,11 @@ function getNextCommunications(annotationUnitIdentifiers) {
     }
 
     var communicationIdToAUI = {};
+    var sentenceUUIDs = []
     var fetchRequest = new FetchRequest({'communicationIds': []});
     for (var i = 0; i < annotationUnitIdentifiers.length; i++) {
         fetchRequest.communicationIds.push(annotationUnitIdentifiers[i].communicationId)
+        sentenceUUIDs.push(annotationUnitIdentifiers[i].sentenceId);
         communicationIdToAUI[annotationUnitIdentifiers[i].communicationId] = annotationUnitIdentifiers[i];
     }
     var fetchResults = CADET.fetch.fetch(fetchRequest);
@@ -34,7 +46,8 @@ function getNextCommunications(annotationUnitIdentifiers) {
             communicationIdToAUI[fetchResults.communications[j].id];
     }
 
-    return fetchResults.communications;
+    assert(fetchResults.communications.length == sentenceUUIDs.length, "Number of sentences and communications match")
+    return [fetchResults.communications, sentenceUUIDs];
 }
 
 function getUrlParameter(sParam) {
@@ -57,16 +70,20 @@ function saveCommsToFormData() {
     // TODO: Refactor tokentagging_ui.js (which also exists in the NER_HIT repository)
 }
 
-function updateDisplayedCommunications(comms) {
+function updateDisplayedCommunications(comms, sents) {
     $('#tokenization_list').empty();
 
     for (var commIndex = 0; commIndex < comms.length; commIndex++) {
         var comm = comms[commIndex];
+        var sentUUID = sents[commIndex];
 
         var tokensDiv = $('<div>').attr('id', 'comm_' + commIndex + '_tokens');
         var tokenTagInputsDiv = $('<div>').attr('id', 'comm_' + commIndex + '_ne_inputs');
 
-        var tokenization = getFirstTokenization(comm);
+        //var tokenization = getFirstTokenization(comm);
+        var sentence = comm.getSentenceWithUUID(sentUUID)
+        var tokenization = sentence.tokenization
+
         var tokenTaggingIndex = checkForPreviousNERTags(tokenization);
         if (tokenization) {
             // If there is a previous NER TokenTagging, it is duplicated.
@@ -120,6 +137,7 @@ function updateDisplayedCommunications(comms) {
 
 // Global variables
 var COMMS = [];
+var SENTS = [];
 var RESULTS_SERVER_SESSION_ID = null;
 
 $(document).ready(function(){
@@ -145,7 +163,9 @@ $(document).ready(function(){
         try {
             RESULTS_SERVER_SESSION_ID = CADET.results.startSession(searchResultId);
             var annotationUnitIdentifiers = CADET.results.getNextChunk(RESULTS_SERVER_SESSION_ID);
-            COMMS = getNextCommunications(annotationUnitIdentifiers);
+            var res = getNextCommunications(annotationUnitIdentifiers);
+            COMMS = res[0]
+            SENTS = res[1]
         }
         catch (error) {
             // TODO: Error handling
@@ -168,9 +188,11 @@ $(document).ready(function(){
                 }
             }
             var annotationUnitIdentifiers = CADET.results.getNextChunk(RESULTS_SERVER_SESSION_ID);
-            COMMS = getNextCommunications(annotationUnitIdentifiers);
+            var res = getNextCommunications(annotationUnitIdentifiers);
+            COMMS = res[0]
+            SENTS = res[1]
             if (COMMS.length > 0) {
-                updateDisplayedCommunications(COMMS);
+                updateDisplayedCommunications(COMMS, SENTS);
             }
             else {
                 location.replace("results.html");
@@ -180,5 +202,5 @@ $(document).ready(function(){
         }
     });
 
-    updateDisplayedCommunications(COMMS);
+    updateDisplayedCommunications(COMMS, SENTS);
 });
