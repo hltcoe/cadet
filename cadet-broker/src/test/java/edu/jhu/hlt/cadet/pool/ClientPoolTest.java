@@ -1,3 +1,8 @@
+/*
+ * Copyright 2012-2017 Johns Hopkins University HLTCOE. All rights reserved.
+ * This software is released under the 2-clause BSD license.
+ * See LICENSE in the project root directory.
+ */
 package edu.jhu.hlt.cadet.pool;
 
 import static org.junit.Assert.*;
@@ -37,7 +42,7 @@ public class ClientPoolTest {
     public void test() throws TException {
         PoolConfig pc = new PoolConfig(10, 1000L);
         ServiceConfig sc = new ServiceConfig("localhost", port);
-        ClientPool<EchoService.Client> clientPool = new ClientPool<EchoService.Client>(pc, sc, 
+        ClientPool<EchoService.Client> clientPool = new ClientPool<EchoService.Client>(pc, sc,
                         transport -> new EchoService.Client(new TCompactProtocol(transport)));
 
         EchoService.Client client = clientPool.borrowClient();

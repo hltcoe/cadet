@@ -1,24 +1,24 @@
+/*
+ * Copyright 2012-2017 Johns Hopkins University HLTCOE. All rights reserved.
+ * This software is released under the 2-clause BSD license.
+ * See LICENSE in the project root directory.
+ */
 package edu.jhu.hlt.cadet.summarization;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.thrift.TException;
 
 import edu.jhu.hlt.cadet.summarization.SummarizationProvider;
-import edu.jhu.hlt.concrete.Communication;
-import edu.jhu.hlt.concrete.services.NotImplementedException;
 import edu.jhu.hlt.concrete.services.ServiceInfo;
 import edu.jhu.hlt.concrete.services.ServicesException;
 import edu.jhu.hlt.concrete.summarization.SummarizationCapability;
 import edu.jhu.hlt.concrete.summarization.SummarizationService;
 import edu.jhu.hlt.concrete.summarization.SummarizationRequest;
 import edu.jhu.hlt.concrete.summarization.Summary;
-import edu.jhu.hlt.concrete.summarization.SummarySourceType;
-import edu.jhu.hlt.concrete.summarization.SummaryConcept;
 
 public class SummarizationHandler implements SummarizationService.Iface {
     private static Logger logger = LoggerFactory.getLogger(SummarizationHandler.class);
@@ -39,13 +39,13 @@ public class SummarizationHandler implements SummarizationService.Iface {
     @Override
     public Summary summarize(SummarizationRequest query) throws ServicesException, TException {
         logger.info("summarizationHandler.summarize()");
-	return summarizationProvider.summarize(query);
+        return summarizationProvider.summarize(query);
     }
 
     @Override
     public List<SummarizationCapability> getCapabilities() throws ServicesException, TException {
         logger.info("summarizationHandler.getCapabilities()");
-	return summarizationProvider.getCapabilities();
+        return summarizationProvider.getCapabilities();
     }
 
     @Override

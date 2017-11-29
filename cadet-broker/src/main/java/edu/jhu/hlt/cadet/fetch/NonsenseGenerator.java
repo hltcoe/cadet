@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package edu.jhu.hlt.cadet.fetch;
 
 import java.util.ArrayList;
@@ -22,7 +21,7 @@ import java.util.Random;
 
 /**
  * Generator of random news. More fun than "lorem ipsum", isn't it?
- * 
+ *
  * This generator can construct headlines and news articles by randomly
  * composing sentences. Any resemblance to actual events (or, actually, any
  * resemblance to anything that makes sense) is merely coincidental!
@@ -74,7 +73,7 @@ public class NonsenseGenerator {
 
     /**
      * Produces a sentence.
-     * 
+     *
      * @param isHeadline
      *            whether the sentence should look like a headline or not.
      * @return the generated sentence.
@@ -88,7 +87,7 @@ public class NonsenseGenerator {
 
     /**
      * Produces news article text.
-     * 
+     *
      * @param numSentences
      *            how many sentences the text is to contain.
      * @return the generated text.
@@ -106,7 +105,7 @@ public class NonsenseGenerator {
 
     /**
      * Generates a sentence.
-     * 
+     *
      * @param words
      *            the list of words to which the sentence will be appended.
      * @param isHeadline

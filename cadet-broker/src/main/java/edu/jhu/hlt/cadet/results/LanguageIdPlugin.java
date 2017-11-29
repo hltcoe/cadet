@@ -1,3 +1,8 @@
+/*
+ * Copyright 2012-2017 Johns Hopkins University HLTCOE. All rights reserved.
+ * This software is released under the 2-clause BSD license.
+ * See LICENSE in the project root directory.
+ */
 package edu.jhu.hlt.cadet.results;
 
 import java.util.Map;
@@ -52,7 +57,7 @@ public class LanguageIdPlugin implements ResultsPlugin {
                 if (fetchResult.getCommunicationsSize() == 1) {
                     Communication comm = fetchResult.getCommunications().get(0);
                     if (comm.getLidListSize() > 0) {
-                        Map<String, Double> map = 
+                        Map<String, Double> map =
                                         comm.getLidList().get(0).getLanguageToProbabilityMap();
                         if (map.size() > 0) {
                             // sort map from smallest to largest and get last element

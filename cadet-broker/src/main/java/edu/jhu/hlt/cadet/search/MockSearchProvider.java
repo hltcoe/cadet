@@ -1,3 +1,8 @@
+/*
+ * Copyright 2012-2017 Johns Hopkins University HLTCOE. All rights reserved.
+ * This software is released under the 2-clause BSD license.
+ * See LICENSE in the project root directory.
+ */
 package edu.jhu.hlt.cadet.search;
 
 import java.util.ArrayList;
@@ -39,7 +44,7 @@ public class MockSearchProvider implements SearchProvider {
         comms.put("103308530316099584", "baefca4f-5eab-475b-b7da-0000292a92f4");
         comms.put("103308534485237762", "dedc4f62-69af-7c54-d3c8-00000802aa91");
         comms.put("103308534485237760", "4e67542a-5bc6-ab8a-3311-00007504f2e7");
-        comms.put("103308534489415680", "145b10ec-e73f-960a-a79e-0000072ac3a6");        
+        comms.put("103308534489415680", "145b10ec-e73f-960a-a79e-0000072ac3a6");
     }
 
     public static Map<String, String> getMockCommsIds() {

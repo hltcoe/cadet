@@ -1,3 +1,8 @@
+/*
+ * Copyright 2012-2017 Johns Hopkins University HLTCOE. All rights reserved.
+ * This software is released under the 2-clause BSD license.
+ * See LICENSE in the project root directory.
+ */
 package edu.jhu.hlt.cadet.results;
 
 import java.util.Date;
@@ -130,8 +135,8 @@ public class AnnotationSession {
     public void addAnnotation(AnnotationUnitIdentifier unitId, Communication communication) {
         synchronized(bookkeepingLock) {
             completedItems.add(unitId);
-            outForAnnotationItems.remove(unitId);            
-            // just in case the annotation came in after the item was made 
+            outForAnnotationItems.remove(unitId);
+            // just in case the annotation came in after the item was made
             // available again due to a timeout
             availableItems.remove(unitId);
         }

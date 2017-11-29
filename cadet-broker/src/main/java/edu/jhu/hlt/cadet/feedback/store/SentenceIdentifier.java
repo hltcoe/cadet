@@ -1,3 +1,8 @@
+/*
+ * Copyright 2012-2017 Johns Hopkins University HLTCOE. All rights reserved.
+ * This software is released under the 2-clause BSD license.
+ * See LICENSE in the project root directory.
+ */
 package edu.jhu.hlt.cadet.feedback.store;
 
 import java.util.regex.Pattern;
@@ -11,7 +16,7 @@ public class SentenceIdentifier {
     private final String communicationId;
     private final UUID sentenceId;
     private volatile int hashCode;
-    
+
     public SentenceIdentifier(String commId, UUID sentId) {
         if (commId == null || commId.isEmpty()) {
             throw new IllegalArgumentException("commId is not a valid string");
@@ -66,7 +71,7 @@ public class SentenceIdentifier {
         parts[0] = parts[0].substring(1);
         parts[1] = parts[1].substring(0, parts[1].length() - 1);
 
-        return new SentenceIdentifier(unescape(parts[0]), 
+        return new SentenceIdentifier(unescape(parts[0]),
                         new UUID(unescape(parts[1])));
     }
 
