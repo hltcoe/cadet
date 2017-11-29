@@ -4,7 +4,7 @@ stages:
 
 compile:
   stage: build-unit-test
-  image: $CI_REGISTRY/coe-maven-centos:latest
+  image: $CI_REGISTRY/research/coe-maven-centos:latest
   script:
     - mvn verify -B
   tags:
@@ -12,7 +12,7 @@ compile:
 
 deploy:
   stage: deploy
-  image: $CI_REGISTRY/coe-maven-centos:latest
+  image: $CI_REGISTRY/research/coe-maven-centos:latest
   script:
     - mvn deploy -Pcoe-release -B
   tags:
