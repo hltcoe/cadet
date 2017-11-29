@@ -1,0 +1,37 @@
+<style>
+.container-fluid {
+    margin-left: 1em;
+    margin-right: 1em;
+}
+
+.tag_text_li {
+    display: inline;
+}
+.tag_text_input {
+    margin-right: 1em;
+    width: 8em;
+}
+
+.token_tagging_container {
+    border: 1px solid 888;
+    padding-bottom: 2em;
+}
+
+/** Hide tokenTags. This can be commented out for debugging purposes.**/
+.tokenTag {
+    display: none;
+}
+
+ /** Create classes for BIO tags. **/
+.token_tag_type_B {
+    cursor: pointer;
+    font-weight: bold
+}
+.token_tag_type_I {
+    cursor: pointer;
+    font-style: italic
+}
+.token_tag_type_O {
+    cursor: pointer;
+}
+</style>
