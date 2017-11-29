@@ -1,4 +1,4 @@
-FROM maven
+FROM maven as builder
 WORKDIR /build
 COPY . /build
 RUN mvn -B clean package -DskipTests=true
