@@ -1,6 +1,6 @@
 Broker Library
 =======================
-Includes common components need in the Cadet servlets and tools.
+Includes common components need in the CADET servlets and tools.
 
 To include the broker library in your maven project, add it to your dependencies:
 
@@ -8,6 +8,6 @@ To include the broker library in your maven project, add it to your dependencies
     <dependency>
       <groupId>edu.jhu.hlt</groupId>
       <artifactId>cadet-broker</artifactId>
-      <version>1.0.0</version>
+      <version>x.y.z</version>
     </dependency>
 ```
