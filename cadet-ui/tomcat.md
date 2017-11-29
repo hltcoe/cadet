@@ -16,11 +16,11 @@ Add the following tags to the `<tomcat-users>` section of the `tomcat-users.xml`
 
 ```xml
 <role rolename="manager-script"/>
-<user username="CADET-user" password="tomcat" roles="manager-script"/>
+<user username="your username" password="your password" roles="manager-script"/>
 ```
 
 The username and password in the `tomcat-users.xml` file are the
-same username and password values specified in the `pom.xml` file.
+same username and password values specified in your settings.xml file.
 
 After you have updated `tomcat-users.xml`, you will need to
 restart Tomcat.  If you have installed Tomcat as a Linux package, you

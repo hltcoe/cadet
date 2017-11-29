@@ -31,7 +31,8 @@ There are 2 ways to deploy to Tomcat. You can use maven like so
 mvn tomcat7:redeploy
 ```
 
-This may require adding a profile to the pom file with the Tomcat server information.
+This will require adding a server section to your settings.xml file with the username and password.
+The cadet-broker library will also need to be installed using `mvn install`.
 
 Additionally, you can use the Tomcat manager to manually upload and run the web application.
 See tomcat.md for further instructions.
@@ -49,16 +50,16 @@ It is kept in this git repo and is included in the war that is deployed to Tomca
 To customize the configuration at runtime when using Tomcat, specify the location of a different `.conf` file by creating an XML
 configuration file located at:
 
-    $CATALINA_HOME/conf/[enginename]/[hostname]/CadetSearch.xml
+    $CATALINA_HOME/conf/[enginename]/[hostname]/Cadet.xml
 
 e.g.:
 
-    $CATALINA_HOME/conf/Catalina/localhost/CadetSearch.xml
+    $CATALINA_HOME/conf/Catalina/localhost/Cadet.xml
 
 where $CATALINA_HOME is the root of your Tomcat installation. If using the Debian package for Tomcat, the conf
 directory is probably /etc/tomcat or something similar.
 
-The `CadetSearch.xml` file should have the contents:
+The `Cadet.xml` file should have the contents:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -67,7 +68,7 @@ The `CadetSearch.xml` file should have the contents:
 </Context>
 ```
 
-Tomcat will load this context configuration file if the war is deployed to /CadetSearch.
+Tomcat will load this context configuration file if the war is deployed to /Cadet.
 If you edit the configuration file that the variable cadet.config points to while the app is running, you will need to reload the app using Tomcat's manager.
 
 
@@ -210,7 +211,7 @@ To change the log level, edit `src/main/resources/logback.xml` and change the ro
 Dumping Feedback
 ------------------
 You can dump the feedback to a tar.gz file by hitting the DumpFeedback endpoint.
-If you deployed the war to http://localhost:8080/CadetSearch, you can hit this endpoint at http://localhost:8080/CadetSearch/DumpFeedback
+If you deployed the war to http://localhost:8080/Cadet, you can hit this endpoint at http://localhost:8080/Cadet/DumpFeedback
 The tar.gz is named feedback_[date].tar.gz and the directory is controlled through the configuration.
 Each file in the tar.gz archive contains a serialized SearchResults object.
 The files are named based on the SearchResults.uuid

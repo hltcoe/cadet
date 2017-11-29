@@ -15,7 +15,7 @@
   <name>CADET user interface</name>
 
   <properties>
-    <tomcat.path>/CadetSearch</tomcat.path>
+    <tomcat.path>/Cadet</tomcat.path>
   </properties>
 
   <profiles>
@@ -40,8 +40,7 @@
           <path>${tomcat.path}</path>
           <update>true</update>
           <url>http://${build.profile.host}:${build.profile.port}/manager/text</url>
-          <username>CADET-user</username>
-          <password>tomcat</password>
+          <server>cadet-server</server>
         </configuration>
       </plugin>
       <plugin>
