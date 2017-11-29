@@ -16,10 +16,6 @@ Web-based user interfaces for CADET with backend Java servlets.
 
 Using CADET
 --------------
-CADET uses maven for building.
-```
-mvn clean package
-```
-
-Running CADET requires a container server like Tomcat and a set of Concrete services.
-More information to come on setting up and running CADET.
+CADET requires at least an external fetch/store service and a search service.
+These can be run locally or in docker containers.
+See `running.md` for detailed instructions on running CADET.

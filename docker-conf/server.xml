@@ -140,7 +140,7 @@
 
         <!-- CADET ui mapped to root -->
         <Context path="" docBase="cadet-ui" reloadable="true">
-          <Parameter name="cadet.config" value="/usr/local/tomcat/conf/cadet.conf" override="false"/>
+          <Parameter name="cadet.config" value="/config/cadet.conf" override="false"/>
         </Context>
       </Host>
     </Engine>
