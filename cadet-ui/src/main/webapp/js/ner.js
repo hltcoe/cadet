@@ -33,13 +33,30 @@ function getNextCommunications(annotationUnitIdentifiers) {
 
     var communicationIdToAUI = {};
     var sentenceUUIDs = []
+    var commIdsSet = new Set();
+    var loc2commId = {};
     var fetchRequest = new FetchRequest({'communicationIds': []});
     for (var i = 0; i < annotationUnitIdentifiers.length; i++) {
-        fetchRequest.communicationIds.push(annotationUnitIdentifiers[i].communicationId)
+        if (!commIdsSet.has(annotationUnitIdentifiers[i].communicationId)) {
+          fetchRequest.communicationIds.push(annotationUnitIdentifiers[i].communicationId);
+          commIdsSet.add(annotationUnitIdentifiers[i].communicationId);
+        }
+        loc2commId[i] = annotationUnitIdentifiers[i].communicationId;
         sentenceUUIDs.push(annotationUnitIdentifiers[i].sentenceId);
         communicationIdToAUI[annotationUnitIdentifiers[i].communicationId] = annotationUnitIdentifiers[i];
     }
     var fetchResults = CADET.fetch.fetch(fetchRequest);
+
+    var fetchedComms = {}
+    for (var j = 0; j < fetchResults.communications.length; j++) {
+      fetchedComms[fetchResults.communications[j].id] =   fetchResults.communications[j];
+    }
+
+    fetchResults.communications = new Array(Object.keys(loc2commId).length);
+    for (var j = 0; j < fetchResults.communications.length; j++) {
+      fetchResults.communications[j] = fetchedComms[loc2commId[j]];
+    }
+
 
     for (var j = 0; j < fetchResults.communications.length; j++) {
         fetchResults.communications[j].annotationUnitIdentifier =
