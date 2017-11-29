@@ -1,6 +1,3 @@
-## Master Build Status
-[![build status](https://gitlab.hltcoe.jhu.edu/research/cadet/badges/master/build.svg)](https://gitlab.hltcoe.jhu.edu/research/cadet/commits/master)
-
 CADET
 ============================
 CADET is a system for rapid discovery, annotation, and extraction on text.
