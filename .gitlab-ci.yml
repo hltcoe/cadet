@@ -14,7 +14,7 @@ deploy:
   stage: deploy
   image: $CI_REGISTRY/research/coe-maven-centos:latest
   script:
-    - mvn deploy -Pcoe-release -B
+    - mvn deploy -Pcoe -B
   tags:
     - docker
   only:

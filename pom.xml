@@ -1,6 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <parent>
+    <groupId>edu.jhu.hlt</groupId>
+    <artifactId>mvn-oss-parent</artifactId>
+    <version>7</version>
+  </parent>
+
   <groupId>edu.jhu.hlt.cadet</groupId>
   <artifactId>parent</artifactId>
   <version>2.0.1-SNAPSHOT</version>
@@ -8,12 +14,17 @@
 
   <name>CADET (Parent)</name>
   <description>Framework for discovery, annotation, and extraction (Parent POM)</description>
-  <url>https://gitlab.hltcoe.jhu.edu/CADET/cadet</url>
+  <url>https://github.com/hltcoe/cadet</url>
   <issueManagement>
-    <system>Gitlab</system>
-    <url>https://gitlab.hltcoe.jhu.edu/CADET/cadet/issues</url>
+    <system>GitHub Issues</system>
+    <url>https://github.com/hltcoe/cadet/issues</url>
   </issueManagement>
   <licenses>
+    <license>
+      <name>2-clause BSD license</name>
+      <url>http://opensource.org/licenses/BSD-2-Clause</url>
+      <distribution>repo</distribution>
+    </license>
   </licenses>
   <organization>
     <name>The Johns Hopkins University Human Language Technology Center of Excellence</name>
@@ -21,8 +32,6 @@
   </organization>
 
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jdk.version>1.8</jdk.version>
     <slf4j.version>1.7.21</slf4j.version>
     <log4j.version>2.7</log4j.version>
     <concrete.version>4.14.1</concrete.version>
@@ -125,27 +134,6 @@
   </dependencyManagement>
 
   <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
-        <configuration>
-          <source>${jdk.version}</source>
-          <target>${jdk.version}</target>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-release-plugin</artifactId>
-        <version>2.5.3</version>
-        <configuration>
-          <autoVersionSubmodules>true</autoVersionSubmodules>
-          <tagNameFormat>cadet-@{project.version}</tagNameFormat>
-        </configuration>
-      </plugin>
-    </plugins>
-
     <pluginManagement>
       <plugins>
         <plugin>
@@ -155,30 +143,19 @@
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-deploy-plugin</artifactId>
-          <version>2.8.2</version>
+          <artifactId>maven-war-plugin</artifactId>
+          <version>3.2.0</version>
         </plugin>
       </plugins>
     </pluginManagement>
   </build>
 
   <scm>
-    <connection>scm:git:git@gitlab.hltcoe.jhu.edu:12321/CADET/cadet.git</connection>
-    <developerConnection>scm:git:ssh://git@gitlab.hltcoe.jhu.edu:12321/CADET/cadet.git</developerConnection>
-    <url>https://gitlab.hltcoe.jhu.edu/CADET/cadet</url>
+    <connection>scm:git:git@github.com:hltcoe/cadet.git</connection>
+    <developerConnection>scm:git:git@github.com:hltcoe/cadet.git</developerConnection>
+    <url>https://github.com/hltcoe/cadet</url>
     <tag>HEAD</tag>
   </scm>
-
-  <distributionManagement>
-    <snapshotRepository>
-      <id>coe-mvn-snapshots</id>
-      <url>http://sparsity.ad.hltcoe.jhu.edu:8081/artifactory/libs-snapshot-local</url>
-    </snapshotRepository>
-    <repository>
-      <id>coe-mvn</id>
-      <url>http://sparsity.ad.hltcoe.jhu.edu:8081/artifactory/libs-release-local</url>
-    </repository>
-  </distributionManagement>
 
   <developers>
     <developer>
