@@ -1,0 +1,42 @@
+cadet {
+    fetch {
+        host = "localhost"
+        port = 9090
+        provider = "edu.jhu.hlt.cadet.fetch.RemoteFetchProvider"
+    }
+    search {
+	providers {
+            search_provider_one {
+                host = "localhost"
+                port = 8077
+                provider = "edu.jhu.hlt.cadet.search.RemoteSearchProvider"
+            }
+        }
+    }
+    feedback {
+        dump_dir = "/tmp/"
+        store = "edu.jhu.hlt.cadet.feedback.store.MemoryFeedbackStore"
+    }
+    store {
+        host = "localhost"
+        port = 9091
+        provider = "edu.jhu.hlt.cadet.store.RemoteStoreProvider"
+    }
+    learn {
+        status = off
+        host = "localhost"
+        port = 9999
+        provider = "edu.jhu.hlt.cadet.learn.SimpleMockActiveLearningClient"
+    }
+    sort {
+        port = 9998
+    }
+    results {
+        plugins = []
+    }
+    summarization {
+        host = localhost
+        port = 9988
+        provider = "edu.jhu.hlt.cadet.summarization.RemoteSummarizationProvider"
+    }
+}
