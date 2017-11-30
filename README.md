@@ -18,4 +18,4 @@ Using CADET
 --------------
 CADET requires at least an external fetch/store service and a search service.
 These can be run locally or in docker containers.
-See `running.md` for detailed instructions on running CADET.
+See `getting_started.md` for detailed instructions on running CADET.

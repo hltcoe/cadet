@@ -1,4 +1,4 @@
-Configuring Tomcat
+Using Tomcat
 ======================
 
 Install [Tomcat](http://tomcat.apache.org/), version 7 or higher.  The
@@ -41,8 +41,8 @@ $CATALINA_HOME/bin/catalina.sh start
 Updating Maven to Deploy to Tomcat
 ----------------------------------
 The username and password in the `tomcat-users.xml` file are the
-same username and password values specified in your settings.xml file.
-This file should have a section that looks like this:
+same username and password values specified in your maven `settings.xml` file.
+This file needs to have a section that looks like this:
 ```
   <servers>
     <server>
@@ -52,4 +52,17 @@ This file should have a section that looks like this:
     </server>
   </servers>
 ```
+Detailed information on the maven settings file is [here](https://maven.apache.org/settings.html). 
 
+Deploying to Tomcat
+---------------------
+You will need to install the cadet jars to deploy to Tomcat:
+```
+mvn clean install package
+```
+Then you can deploy the war to Tomcat with
+```
+mvn tomcat7:redeploy
+```
+
+The application is then available at http://localhost:8080/Cadet/.
