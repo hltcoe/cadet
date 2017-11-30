@@ -40,7 +40,10 @@ This will build the search index over the communications from the fetch server.
 
 Deploying to Tomcat
 --------------------
-1. Update your maven settings.xml file to include a server entry for cadet-server.
+1. Prepare Tomcat
+ * Edit Tomcat's tomcat-users.xml to add a user with a manager-script role.
+ * Update your maven settings.xml file to include a server entry for cadet-server.
+ * For more details on preparing Tomcat, see `tomcat.md` in cadet-ui.
 2. Build the war file: `mvn clean install package`.
 3. Deploy to Tomcat: `mvn tomcat7:redeploy`.
 4. In a web browser go to [localhost:8080/Cadet/admin.html](http://localhost:8080/Cadet/admin.html) to check that the services are up.
