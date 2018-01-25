@@ -206,9 +206,9 @@ $(document).ready(function(){
             }
             var annotationUnitIdentifiers = CADET.results.getNextChunk(RESULTS_SERVER_SESSION_ID);
             var res = getNextCommunications(annotationUnitIdentifiers);
-            COMMS = res[0]
-            SENTS = res[1]
             if (res.length > 0) {
+                COMMS = res[0]
+                SENTS = res[1]
                 updateDisplayedCommunications(COMMS, SENTS);
             }
             else {
