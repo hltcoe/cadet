@@ -208,7 +208,7 @@ $(document).ready(function(){
             var res = getNextCommunications(annotationUnitIdentifiers);
             COMMS = res[0]
             SENTS = res[1]
-            if (COMMS.length > 0) {
+            if (res.length > 0) {
                 updateDisplayedCommunications(COMMS, SENTS);
             }
             else {
