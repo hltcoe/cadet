@@ -17,7 +17,7 @@ import edu.jhu.hlt.concrete.services.AnnotationUnitIdentifier;
 /**
  * Passive expiring set
  *
- * Call expire() to remove elements that have been in the too long.
+ * Call expire() to remove elements that have been in the set too long.
  */
 public class ExpiringSet implements Set<AnnotationUnitIdentifier> {
 
@@ -37,10 +37,13 @@ public class ExpiringSet implements Set<AnnotationUnitIdentifier> {
     public Set<AnnotationUnitIdentifier> expire() {
         long currentTime = getTime();
         Set<AnnotationUnitIdentifier> expired = new HashSet<>();
-        for (AnnotationUnitIdentifier item : timestamps.keySet()) {
-            if ((currentTime - timestamps.get(item)) > timeToLive) {
-                expired.add(item);
-                remove(item);
+        for (Iterator<Map.Entry<AnnotationUnitIdentifier, Long>> it =
+                        timestamps.entrySet().iterator(); it.hasNext();) {
+            Map.Entry<AnnotationUnitIdentifier, Long> entry = it.next();
+            if ((currentTime - entry.getValue()) > timeToLive) {
+                expired.add(entry.getKey());
+                data.remove(entry.getKey());
+                it.remove();
             }
         }
         return expired;
